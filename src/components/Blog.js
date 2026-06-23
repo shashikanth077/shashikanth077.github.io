@@ -7,7 +7,7 @@ const blogData = [
     category: "Web Development",
     date: "02 June, 2022",
     author: "John Smith",
-    img: "img/news/1.jpg",
+    img: "/img/news/1.jpg",
     description: [
       "Orido is a leading web design agency with an award-winning design team that creates innovative, effective websites that capture your brand, improve your conversion rates, and maximize your revenue to help grow your business and achieve your goals.",
       "In today’s digital world, your website is the first interaction consumers have with your business. That's why almost 95 percent of a user’s first impression relates to web design. It’s also why web design services can have an immense impact on your company’s bottom line.",
@@ -19,7 +19,7 @@ const blogData = [
     category: "Web Development",
     date: "02 June, 2022",
     author: "John Smith",
-    img: "img/news/2.jpg",
+    img: "/img/news/2.jpg",
     description: [
       "Orido is a leading web design agency with an award-winning design team that creates innovative, effective websites that capture your brand, improve your conversion rates, and maximize your revenue to help grow your business and achieve your goals.",
       "In today’s digital world, your website is the first interaction consumers have with your business. That's why almost 95 percent of a user’s first impression relates to web design. It’s also why web design services can have an immense impact on your company’s bottom line.",
@@ -31,7 +31,7 @@ const blogData = [
     category: "Web Development",
     date: "02 June, 2022",
     author: "John Smith",
-    img: "img/news/3.jpg",
+    img: "/img/news/3.jpg",
     description: [
       "Orido is a leading web design agency with an award-winning design team that creates innovative, effective websites that capture your brand, improve your conversion rates, and maximize your revenue to help grow your business and achieve your goals.",
       "In today’s digital world, your website is the first interaction consumers have with your business. That's why almost 95 percent of a user’s first impression relates to web design. It’s also why web design services can have an immense impact on your company’s bottom line.",
@@ -73,7 +73,7 @@ const Blog = () => {
                   >
                     <div className="list_inner">
                       <div className="image">
-                        <img src="img/thumbs/42-29.jpg" alt="" />
+                        <img src="/img/thumbs/42-29.jpg" alt="" />
                         <div className="main" data-img-url={blog.img} />
                         <a
                           className="devman_tm_full_link"

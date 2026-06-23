@@ -2,7 +2,7 @@ name: Deploy Portfolio to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches: [master]
   workflow_dispatch:
 
 permissions:
@@ -26,26 +26,22 @@ jobs:
         with:
           node-version: 18
           cache: npm
-          cache-dependency-path: package/devman/package-lock.json
 
       - name: Install dependencies
-        working-directory: package/devman
         run: npm ci
 
       - name: Build and Export
-        working-directory: package/devman
         run: npm run export
         env:
           NODE_ENV: production
 
       - name: Add .nojekyll
-        working-directory: package/devman
         run: touch out/.nojekyll
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: package/devman/out
+          path: out
 
   deploy:
     environment:

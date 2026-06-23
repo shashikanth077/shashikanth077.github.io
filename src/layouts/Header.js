@@ -13,10 +13,10 @@ const Header = () => {
         <div className="header_inner">
           <div className="logo">
             <a className="light" href="#">
-              <img src="img/logo/logo.png" alt="" />
+              <img src="/img/logo/logo.png" alt="" />
             </a>
             <a className="dark" href="#">
-              <img src="img/logo/dark.png" alt="" />
+              <img src="/img/logo/dark.png" alt="" />
             </a>
           </div>
           <div className="menu">
@@ -40,7 +40,7 @@ const Header = () => {
                 <a href="#blog">Blog</a>
               </li>
               <li className="download_cv">
-                <a href="img/cv/1.jpg" download>
+                <a href="/img/cv/1.jpg" download>
                   Download CV
                 </a>
               </li>

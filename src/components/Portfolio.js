@@ -23,7 +23,7 @@ const Portfolio = () => {
                   <div className="list_inner">
                     <div
                       className="background_image"
-                      data-img-url="img/portfolio/1.jpg"
+                      data-img-url="/img/portfolio/1.jpg"
                     />
                     <div className="content">
                       <div className="details">
@@ -54,7 +54,7 @@ const Portfolio = () => {
                   <div className="list_inner">
                     <div
                       className="background_image"
-                      data-img-url="img/portfolio/2.jpg"
+                      data-img-url="/img/portfolio/2.jpg"
                     />
                     <div className="content">
                       <div className="details">
@@ -85,7 +85,7 @@ const Portfolio = () => {
                   <div className="list_inner">
                     <div
                       className="background_image"
-                      data-img-url="img/portfolio/3.jpg"
+                      data-img-url="/img/portfolio/3.jpg"
                     />
                     <div className="content">
                       <div className="details">
@@ -116,7 +116,7 @@ const Portfolio = () => {
                   <div className="list_inner">
                     <div
                       className="background_image"
-                      data-img-url="img/portfolio/4.jpg"
+                      data-img-url="/img/portfolio/4.jpg"
                     />
                     <div className="content">
                       <div className="details">

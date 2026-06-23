@@ -1,17 +1,17 @@
 const features_list = [
   {
     title: "Full-Stack Expert",
-    icon: "img/svg/design.svg",
+    icon: "/img/svg/design.svg",
     text: "11+ years building end-to-end web applications using React, Redux Toolkit, Node.js, TypeScript, and MySQL — from UI design to API architecture and database optimisation.",
   },
   {
     title: "Cloud & DevOps",
-    icon: "img/svg/development.svg",
+    icon: "/img/svg/development.svg",
     text: "Hands-on experience with Docker, Kubernetes, and Azure for CI/CD pipelines, containerised deployments, and scalable cloud infrastructure.",
   },
   {
     title: "AI Engineering",
-    icon: "img/svg/landing.svg",
+    icon: "/img/svg/landing.svg",
     text: "Transitioning into AI Engineering with an upcoming Master's in AI at VILNIUS TECH. Skilled in AI-assisted development using GitHub Copilot and Cursor.",
   },
 ];

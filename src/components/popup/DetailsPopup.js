@@ -4,11 +4,11 @@ const DetailsPopup = ({ open, close }) => {
     <Popup open={open} close={close}>
       <div className="popup_details">
         <div className="top_image">
-          <img src="img/thumbs/4-2.jpg" alt="" />
+          <img src="/img/thumbs/4-2.jpg" alt="" />
           <div
             className="main"
-            data-img-url="img/portfolio/4.jpg"
-            style={{ backgroundImage: 'url("img/portfolio/4.jpg")' }}
+            data-img-url="/img/portfolio/4.jpg"
+            style={{ backgroundImage: 'url("/img/portfolio/4.jpg")' }}
           />
         </div>
         <div className="portfolio_main_title">
@@ -58,24 +58,24 @@ const DetailsPopup = ({ open, close }) => {
             <li>
               <div className="list_inner">
                 <div className="my_image">
-                  <img src="img/thumbs/4-2.jpg" alt="" />
-                  <div className="main" data-img-url="img/service/1.jpg" />
+                  <img src="/img/thumbs/4-2.jpg" alt="" />
+                  <div className="main" data-img-url="/img/service/1.jpg" />
                 </div>
               </div>
             </li>
             <li>
               <div className="list_inner">
                 <div className="my_image">
-                  <img src="img/thumbs/4-2.jpg" alt="" />
-                  <div className="main" data-img-url="img/service/2.jpg" />
+                  <img src="/img/thumbs/4-2.jpg" alt="" />
+                  <div className="main" data-img-url="/img/service/2.jpg" />
                 </div>
               </div>
             </li>
             <li>
               <div className="list_inner">
                 <div className="my_image">
-                  <img src="img/thumbs/4-2.jpg" alt="" />
-                  <div className="main" data-img-url="img/service/3.jpg" />
+                  <img src="/img/thumbs/4-2.jpg" alt="" />
+                  <div className="main" data-img-url="/img/service/3.jpg" />
                 </div>
               </div>
             </li>

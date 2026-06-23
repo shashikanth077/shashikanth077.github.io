@@ -30,7 +30,7 @@ const Testimonials = () => {
             >
               <SwiperSlide>
                 <div className="list_inner">
-                  <img className="svg" src="img/svg/quote.svg" alt="" />
+                  <img className="svg" src="/img/svg/quote.svg" alt="" />
                   <p className="text">
                     Duis aute irure dolor in repre hen derit in voluptate velit
                     esse cillum dolore eu fugiat nulla pariatur.
@@ -39,7 +39,7 @@ const Testimonials = () => {
                     <div className="image">
                       <div
                         className="main"
-                        data-img-url="img/testimonials/1.jpg"
+                        data-img-url="/img/testimonials/1.jpg"
                       />
                     </div>
                     <div className="short">
@@ -51,7 +51,7 @@ const Testimonials = () => {
               </SwiperSlide>
               <SwiperSlide>
                 <div className="list_inner">
-                  <img className="svg" src="img/svg/quote.svg" alt="" />
+                  <img className="svg" src="/img/svg/quote.svg" alt="" />
                   <p className="text">
                     Duis aute irure dolor in repre hen derit in voluptate velit
                     esse cillum dolore eu fugiat nulla pariatur.
@@ -60,7 +60,7 @@ const Testimonials = () => {
                     <div className="image">
                       <div
                         className="main"
-                        data-img-url="img/testimonials/3.jpg"
+                        data-img-url="/img/testimonials/3.jpg"
                       />
                     </div>
                     <div className="short">
@@ -72,7 +72,7 @@ const Testimonials = () => {
               </SwiperSlide>
               <SwiperSlide>
                 <div className="list_inner">
-                  <img className="svg" src="img/svg/quote.svg" alt="" />
+                  <img className="svg" src="/img/svg/quote.svg" alt="" />
                   <p className="text">
                     Duis aute irure dolor in repre hen derit in voluptate velit
                     esse cillum dolore eu fugiat nulla pariatur.
@@ -81,7 +81,7 @@ const Testimonials = () => {
                     <div className="image">
                       <div
                         className="main"
-                        data-img-url="img/testimonials/4.jpg"
+                        data-img-url="/img/testimonials/4.jpg"
                       />
                     </div>
                     <div className="short">
@@ -93,7 +93,7 @@ const Testimonials = () => {
               </SwiperSlide>
               <SwiperSlide>
                 <div className="list_inner">
-                  <img className="svg" src="img/svg/quote.svg" alt="" />
+                  <img className="svg" src="/img/svg/quote.svg" alt="" />
                   <p className="text">
                     Duis aute irure dolor in repre hen derit in voluptate velit
                     esse cillum dolore eu fugiat nulla pariatur.
@@ -102,7 +102,7 @@ const Testimonials = () => {
                     <div className="image">
                       <div
                         className="main"
-                        data-img-url="img/testimonials/5.jpg"
+                        data-img-url="/img/testimonials/5.jpg"
                       />
                     </div>
                     <div className="short">

@@ -5,7 +5,7 @@ const homeData = {
   lastName: "H R",
   designation: "Principal Engineer",
   address: "Bengaluru, India",
-  img: "img/hero/2.jpg",
+  img: "/img/hero/profile.jpg",
   bio: "Accomplished Principal Engineer with 11+ years of experience in full-stack development, systems architecture, and engineering leadership across Wipro, IBM, Sonata & more.",
   numberOfProject: 50,
   numberofyear: 11,
@@ -16,7 +16,7 @@ const Home = () => {
     <div className="devman_tm_section" id="home">
       <div className="devman_tm_hero">
         <div className="background">
-          <div className="image" data-img-url="img/hero/1.jpg" />
+          <div className="image" data-img-url="/img/hero/1.jpg" />
         </div>
         <div className="container">
           <div className="content">
@@ -31,11 +31,6 @@ const Home = () => {
                 </h3>
                 <p className="text">{homeData.bio}</p>
                 <div className="buttons">
-                  <div className="devman_tm_button">
-                    <a className="anchor" href="#contact">
-                      Get a Quote
-                    </a>
-                  </div>
                   <div className="simple_button">
                     <a className="anchor" href="#about">
                       About Me
@@ -48,10 +43,10 @@ const Home = () => {
             </div>
             <div className="right">
               <div className="image">
-                <img src="img/thumbs/53-61.jpg" alt="" />
+                <img src="/img/thumbs/53-61.jpg" alt="" />
                 <div className="main" data-img-url={homeData.img} />
                 <span className="win">
-                  <img src="img/svg/award.svg" alt="" className="svg" />
+                  <img src="/img/svg/award.svg" alt="" className="svg" />
                 </span>
                 <div className="numbers year">
                   <div className="wrapper">
@@ -79,7 +74,7 @@ const Home = () => {
                   </div>
                 </div>
                 <span className="circle anim_circle">
-                  <img src="img/hero/circle.png" alt="" />
+                  <img src="/img/hero/circle.png" alt="" />
                 </span>
               </div>
             </div>

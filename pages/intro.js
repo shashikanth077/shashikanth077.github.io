@@ -22,7 +22,7 @@ const Intro = () => {
           </a>
         </div>
         <div className="short_info">
-          <img src="img/logo/dark.png" alt="" />
+          <img src="/img/logo/dark.png" alt="" />
           <h3>Personal Portfolio React NextJs Template</h3>
         </div>
         <span className="intro_line" />
@@ -31,7 +31,7 @@ const Intro = () => {
         <div className="demos">
           <div className="left">
             <div className="desc">
-              <img src="img/intro/1.png" alt="" />
+              <img src="/img/intro/1.png" alt="" />
               <h3 className="title">Light Demo</h3>
             </div>
             <a
@@ -43,7 +43,7 @@ const Intro = () => {
           </div>
           <div className="right">
             <div className="desc">
-              <img src="img/intro/1.png" alt="" />
+              <img src="/img/intro/1.png" alt="" />
               <h3 className="title">Dark Demo</h3>
             </div>
             <a

@@ -8,7 +8,7 @@ const MobileHeader = () => {
         <div className="mobile_in">
           <div className="logo">
             <a href="#">
-              <img src="img/logo/dark.png" alt="" />
+              <img src="/img/logo/dark.png" alt="" />
             </a>
           </div>
           <div className="trigger">
@@ -51,7 +51,7 @@ const MobileHeader = () => {
               <a href="#blog">Blog</a>
             </li>
             <li className="download_cv">
-              <a href="img/cv/1.jpg" download>
+              <a href="/img/cv/1.jpg" download>
                 Download CV
               </a>
             </li>

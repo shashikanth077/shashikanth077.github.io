@@ -6,10 +6,10 @@ const aboutData = {
     "Expert in designing and delivering scalable web applications with demonstrated 25–40% operational efficiency improvements. Currently transitioning to AI Engineering, enrolling in the Master's in Engineering of Artificial Intelligence at VILNIUS TECH (VGTU), Lithuania (September 2026).",
   ],
   skillIcons: [
-    { name: "frontend", icon: "img/svg/design.svg" },
-    { name: "backend", icon: "img/svg/development.svg" },
-    { name: "cloud", icon: "img/svg/cpu.svg" },
-    { name: "web", icon: "img/svg/web.svg" },
+    { name: "frontend", icon: "/img/svg/design.svg" },
+    { name: "backend", icon: "/img/svg/development.svg" },
+    { name: "cloud", icon: "/img/svg/cpu.svg" },
+    { name: "web", icon: "/img/svg/web.svg" },
   ],
 };
 
@@ -21,14 +21,14 @@ const About = () => {
           <div className="about_inner">
             <div className="left">
               <div className="image_wrap">
-                <img src="img/thumbs/64-49.jpg" alt="" />
-                <div className="main" data-img-url="img/about/1.jpg" />
+                <img src="/img/thumbs/64-49.jpg" alt="" />
+                <div className="main" data-img-url="/img/hero/profile.jpg" />
                 <div className="extra_image">
                   <div className="image_inner">
-                    <img src="img/thumbs/1-1.jpg" alt="" />
+                    <img src="/img/thumbs/1-1.jpg" alt="" />
                     <div
                       className="main_extra"
-                      data-img-url="img/about/2.jpg"
+                      data-img-url="/img/about/2.jpg"
                     />
                   </div>
                 </div>
