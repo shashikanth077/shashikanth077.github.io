@@ -11,7 +11,10 @@ const Process = () => {
                 <span>Driven by Excellence</span>
                 <h3>Engineering Solutions That Scale</h3>
                 <p>
-                  With 11+ years of proven expertise in full-stack development and systems architecture, I deliver high-impact solutions that improve operational efficiency by 25-40%. My approach combines technical excellence with strategic leadership.
+                  With 11+ years of proven expertise in full-stack development
+                  and systems architecture, I deliver high-impact solutions that
+                  improve operational efficiency by 25-40%. My approach combines
+                  technical excellence with strategic leadership.
                 </p>
               </div>
             </div>
