@@ -5,8 +5,8 @@ const homeData = {
   lastName: "H R",
   designation: "Principal Engineer",
   address: "Bengaluru, India",
-  img: "/img/hero/profile.jpg",
-  bio: "Accomplished Principal Engineer with 11+ years of experience in full-stack development, systems architecture, and engineering leadership across Wipro, IBM, Sonata & more.",
+  img: "/img/hero/profile.png",
+  bio: "Accomplished Principal Engineer with 12+ years of experience in full-stack development, systems architecture, and engineering leadership across Wipro, IBM, Sonata & more.",
   numberOfProject: 15,
   numberofyear: 11,
 };

@@ -8,11 +8,10 @@ const Process = () => {
           <div className="process_inner">
             <div className="left">
               <div className="devman_tm_main_title" data-text-align="left">
-                <span>Working to make difference</span>
-                <h3>Real Passion to Create Amazing Things</h3>
+                <span>Driven by Excellence</span>
+                <h3>Engineering Solutions That Scale</h3>
                 <p>
-                  Dliquip ex ea commo do conse namber onequa ute irure dolor in
-                  reprehen derit in voluptate
+                  With 11+ years of proven expertise in full-stack development and systems architecture, I deliver high-impact solutions that improve operational efficiency by 25-40%. My approach combines technical excellence with strategic leadership.
                 </p>
               </div>
             </div>

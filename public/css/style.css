@@ -544,17 +544,14 @@ h6 {
 .devman_tm_hero .text {
   color: #fff;
   font-size: 21px;
+  font-weight: 600;
   margin-bottom: 40px;
+  line-height: 1.8;
 }
 .devman_tm_hero .buttons {
   width: 100%;
-  display: flex;
-  align-items: center;
-}
-.devman_tm_hero .buttons {
-  width: 100%;
-  display: flex;
-  align-items: center;
+  display: block;
+  clear: both;
 }
 .devman_tm_hero .devman_tm_button {
   width: auto;
@@ -585,7 +582,8 @@ h6 {
   background-color: var(--main-color);
 }
 .devman_tm_hero .simple_button {
-  margin-left: 50px;
+  margin-top: 20px;
+  margin-left: 0px;
 }
 .devman_tm_hero .simple_button a {
   color: #fff;
@@ -595,6 +593,19 @@ h6 {
   font-family: var(--font-family-extra);
   position: relative;
   top: -2px;
+  border: 2px solid #fff;
+  border-radius: 50px;
+  padding: 12px 40px 15px 40px;
+
+  -webkit-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  -ms-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+}
+.devman_tm_hero .simple_button a:hover {
+  background-color: #fff;
+  color: #000;
 }
 .devman_tm_hero .stroke_1,
 .devman_tm_hero .stroke_2 {
@@ -2044,8 +2055,10 @@ h6 {
   position: relative;
   margin: 0px 12px;
 }
-.devman_tm_testimonials .owl-theme .owl-dots .swiper-pagination-bullet.swiper-pagination-bullet-active
- {
+.devman_tm_testimonials
+  .owl-theme
+  .owl-dots
+  .swiper-pagination-bullet.swiper-pagination-bullet-active {
   background-color: #142eb5;
 }
 /* .devman_tm_testimonials .owl-theme .owl-dots .swiper-pagination-bullet:before {
@@ -2261,13 +2274,15 @@ h6 {
   text-align: left;
   font-weight: 500;
 }
-.devman_tm_contact .devman_tm_button a,.devman_tm_contact .devman_tm_button input {
+.devman_tm_contact .devman_tm_button a,
+.devman_tm_contact .devman_tm_button input {
   display: block;
   text-align: center;
   border-radius: 5px;
   background-color: var(--main-color);
 }
-.devman_tm_contact .devman_tm_button a:hover,.devman_tm_contact .devman_tm_button input:hover {
+.devman_tm_contact .devman_tm_button a:hover,
+.devman_tm_contact .devman_tm_button input:hover {
   background-color: #fff;
   color: #000;
 }
@@ -2645,10 +2660,16 @@ h6 {
   height: 6px;
   z-index: 100;
   background-color: var(--main-color);
-  -webkit-transition: width 0.3s ease-in-out, height 0.3s ease-in-out,
-    margin 0.3s ease-in-out, opacity 0.3s ease-in-out;
-  transition: width 0.3s ease-in-out, height 0.3s ease-in-out,
-    margin 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  -webkit-transition:
+    width 0.3s ease-in-out,
+    height 0.3s ease-in-out,
+    margin 0.3s ease-in-out,
+    opacity 0.3s ease-in-out;
+  transition:
+    width 0.3s ease-in-out,
+    height 0.3s ease-in-out,
+    margin 0.3s ease-in-out,
+    opacity 0.3s ease-in-out;
 }
 .cursor-inner.cursor-hover {
   margin-left: -40px;

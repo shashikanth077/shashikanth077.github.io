@@ -2,24 +2,24 @@ import { Fragment, useEffect, useRef, useState } from "react";
 
 const accordionData = [
   {
-    title: "Work Strategy",
+    title: "Agile & Architecture-First Approach",
     details:
-      "Ut enim ad minim veniam, quis nostrud exercitation utur adipisicing elit, sed do eiusmod einisha chor amay vebona sukher mohona kobita tumi sopono carini hoye.",
+      "I prioritize clean architecture, scalability, and maintainability. Using Agile/Scrum methodologies, I lead cross-functional teams through sprint cycles while ensuring code quality and adherence to engineering best practices. Every solution is designed with long-term growth in mind.",
   },
   {
-    title: "The Process of Our Work",
+    title: "Full-Stack Development Lifecycle",
     details:
-      "Ut enim ad minim veniam, quis nostrud exercitation utur adipisicing elit, sed do eiusmod einisha chor amay vebona sukher mohona kobita tumi sopono carini hoye.",
+      "From UI/UX design with React and modern frameworks, through robust backend APIs with Node.js and GraphQL, to database optimization with MySQL and cloud deployments. I manage the entire stack with TypeScript for type safety and DevOps practices for continuous deployment.",
   },
   {
-    title: "Core Value of Development",
+    title: "Performance & Efficiency First",
     details:
-      "Ut enim ad minim veniam, quis nostrud exercitation utur adipisicing elit, sed do eiusmod einisha chor amay vebona sukher mohona kobita tumi sopono carini hoye.",
+      "Core value is delivering systems that work smarter, not just harder. Through UI workflow redesign, data validation layers, and API optimization, I have consistently achieved 25-40% operational efficiency improvements while maintaining code quality and team velocity.",
   },
   {
-    title: "Desire to Work Hard",
+    title: "Mentorship & Team Excellence",
     details:
-      "Ut enim ad minim veniam, quis nostrud exercitation utur adipisicing elit, sed do eiusmod einisha chor amay vebona sukher mohona kobita tumi sopono carini hoye.",
+      "Passionate about building high-performing teams. I mentor developers, conduct thorough code reviews, establish coding standards, and foster a culture of learning. Proven track record of leading 5+ developer teams and maintaining 100% client satisfaction ratings.",
   },
 ];
 

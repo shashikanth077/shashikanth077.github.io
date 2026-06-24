@@ -2,7 +2,7 @@ const aboutData = {
   designation: "Principal Engineer",
   title: "I Build Scalable, High-Performance Web Applications",
   text: [
-    "Accomplished Principal Engineer with 11+ years of progressive experience in full-stack software development, systems architecture, and engineering team leadership across multinational organisations including Wipro, IBM, Sonata Software, and Theorem Inc.",
+    "Accomplished Principal Engineer with 12+ years of progressive experience in full-stack software development, systems architecture, and engineering team leadership across multinational organisations including Wipro, IBM, Sonata Software, and Theorem Inc.",
     "Expert in designing and delivering scalable web applications with demonstrated 25–40% operational efficiency improvements. Currently transitioning to AI Engineering, enrolling in the Master's in Engineering of Artificial Intelligence at VILNIUS TECH (VGTU), Lithuania (September 2026).",
   ],
   skillIcons: [
@@ -21,14 +21,14 @@ const About = () => {
           <div className="about_inner">
             <div className="left">
               <div className="image_wrap">
-                <img src="/img/thumbs/64-49.jpg" alt="" />
-                <div className="main" data-img-url="/img/about/profile.jpg" />
+                <img src="/img/about/1.png" alt="" />
+                <div className="main" data-img-url="/img/about/2.png" />
                 <div className="extra_image">
                   <div className="image_inner">
-                    <img src="/img/thumbs/1-1.jpg" alt="" />
+                    <img src="/img/about/1.png" alt="" />
                     <div
                       className="main_extra"
-                      data-img-url="/img/about/2.jpg"
+                      data-img-url="/img/about/1.png"
                     />
                   </div>
                 </div>
