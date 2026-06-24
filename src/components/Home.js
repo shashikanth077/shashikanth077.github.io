@@ -7,7 +7,7 @@ const homeData = {
   address: "Bengaluru, India",
   img: "/img/hero/profile.jpg",
   bio: "Accomplished Principal Engineer with 11+ years of experience in full-stack development, systems architecture, and engineering leadership across Wipro, IBM, Sonata & more.",
-  numberOfProject: 50,
+  numberOfProject: 15,
   numberofyear: 11,
 };
 

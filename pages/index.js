@@ -1,6 +1,5 @@
 import dynamic from "next/dynamic";
 import About from "../src/components/About";
-import Blog from "../src/components/Blog";
 import Contact from "../src/components/Contact";
 import Copyright from "../src/components/Copyright";
 import CounterSection from "../src/components/CounterSection";
@@ -40,7 +39,6 @@ const Index = () => {
       <Testimonials />
       <Partners />
       <Contact />
-      <Blog />
       <Copyright />
       <Mouse />
       <ScrollTop />
