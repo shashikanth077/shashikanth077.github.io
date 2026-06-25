@@ -3266,7 +3266,7 @@ h6 {
     padding: 8px 30px 11px 30px;
   }
   .devman_tm_hero .simple_button {
-    margin-left: 30px;
+    /* margin-left: 30px; */
   }
   .devman_tm_hero .buttons {
     justify-content: center;
