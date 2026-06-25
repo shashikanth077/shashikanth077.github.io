@@ -4,8 +4,6 @@ A personal portfolio website for **Shashikanth H R**, Principal Engineer with 12
 
 Live site: [shashikanth077.github.io](https://shashikanth077.github.io)
 
----
-
 ## Tech Stack
 
 | Layer        | Technology                                                   |
