@@ -9,6 +9,7 @@ const Contact = () => {
   });
   const { name, email, message } = mailData;
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
   const onChange = (e) =>
     setMailData({ ...mailData, [e.target.name]: e.target.value });
   const onSubmit = (e) => {
@@ -18,29 +19,45 @@ const Contact = () => {
       clearError();
     } else {
       // https://www.emailjs.com/
+      const templateParams = {
+        to_email: "shashikanth033@gmail.com",
+        from_name: name,
+        name: name,
+        email: email,
+        message: message,
+      };
       emailjs
         .send(
-          "", // service id
-          "", // template id
-          mailData,
-          "" // public api
+          "service_r3gn9r3", // service id
+          "template_hi8gmx6", // template id
+          templateParams,
+          "F65e6eKRPSgfInlIv", // public api
         )
         .then(
           (response) => {
-            setError(false);
-            clearError();
+            setSuccess(true);
+            setError(null);
             setMailData({ name: "", email: "", message: "" });
+            clearSuccess();
           },
           (err) => {
+            setError(true);
+            setSuccess(false);
             console.log(err.text);
-          }
+            clearError();
+          },
         );
     }
   };
   const clearError = () => {
     setTimeout(() => {
       setError(null);
-    }, 2000);
+    }, 3000);
+  };
+  const clearSuccess = () => {
+    setTimeout(() => {
+      setSuccess(false);
+    }, 4000);
   };
   return (
     <div className="devman_tm_section" id="contact">
@@ -64,16 +81,34 @@ const Contact = () => {
                       className="returnmessage"
                       data-success="Your message has been received, We will contact you soon."
                     />
-                    <div
-                      className={error ? "empty_notice" : "returnmessage"}
-                      style={{ display: error == null ? "none" : "block" }}
-                    >
-                      <span>
-                        {error
-                          ? "Please Fill Required Fields"
-                          : "Your message has been received, We will contact you soon."}
-                      </span>
-                    </div>
+                    {error && (
+                      <div
+                        className="empty_notice"
+                        style={{ display: "block" }}
+                      >
+                        <span style={{ color: "#e74c3c", fontWeight: "600" }}>
+                          ❌ Please Fill Required Fields
+                        </span>
+                      </div>
+                    )}
+                    {success && (
+                      <div
+                        className="returnmessage"
+                        style={{
+                          display: "block",
+                          backgroundColor: "#27ae60",
+                          padding: "15px",
+                          borderRadius: "5px",
+                          color: "white",
+                          marginBottom: "20px",
+                        }}
+                      >
+                        <span style={{ fontWeight: "600" }}>
+                          ✅ Email sent successfully! Thank you for reaching
+                          out. I will get back to you soon.
+                        </span>
+                      </div>
+                    )}
                     <div className="first">
                       <ul>
                         <li>
@@ -123,7 +158,9 @@ const Contact = () => {
                       </div>
                       <div className="short">
                         <h3>Address</h3>
-                        <span>20, Somewhere in world</span>
+                        <span>
+                          Saulėtekio al. 11, LT-10223 Vilnius, Lithuania
+                        </span>
                       </div>
                     </div>
                   </li>
@@ -135,7 +172,9 @@ const Contact = () => {
                       <div className="short">
                         <h3>Email</h3>
                         <span>
-                          <a href="#">hello@devman.com</a>
+                          <a href="mailto:shashikanth033@gmail.com">
+                            shashikanth033@gmail.com
+                          </a>
                         </span>
                       </div>
                     </div>
@@ -147,7 +186,7 @@ const Contact = () => {
                       </div>
                       <div className="short">
                         <h3>Phone</h3>
-                        <span>+123 456 7890</span>
+                        <span>+91 8123192799</span>
                       </div>
                     </div>
                   </li>

@@ -13,16 +13,7 @@ const Copyright = () => {
                 © {new Date().getFullYear()}
               </p>
             </div>
-            <div className="right wow fadeInRight" data-wow-duration="1s">
-              <ul>
-                <li>
-                  <a href="#">Terms &amp; Condition</a>
-                </li>
-                <li>
-                  <a href="#">Privacy Policy</a>
-                </li>
-              </ul>
-            </div>
+            <div className="right wow fadeInRight" data-wow-duration="1s"></div>
           </div>
         </div>
       </div>

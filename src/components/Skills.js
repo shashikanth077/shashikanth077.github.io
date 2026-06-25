@@ -14,7 +14,7 @@ const Skills = () => {
             <span>My Skills</span>
             <h3>Technologies I Work With</h3>
             <p>
-              11+ years of hands-on experience across the full stack — from
+              12+ years of hands-on experience across the full stack — from
               React frontends to Node.js APIs, cloud infrastructure, and DevOps.
             </p>
           </div>

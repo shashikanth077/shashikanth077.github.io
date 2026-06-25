@@ -2,9 +2,9 @@ import { lineBreak } from "../utilits";
 import Counter from "./Counter";
 
 const counterData = [
-  { smallVlaue: true, value: 11, name: "Years of\nExperience" },
+  { smallVlaue: true, value: 12, name: "Years of\nExperience" },
   { smallVlaue: true, value: 6, name: "Companies\nWorked" },
-  { smallVlaue: true, value: 50, name: "Projects\nDelivered" },
+  { smallVlaue: true, value: 15, name: "Projects\nDelivered" },
 ];
 const CounterSection = () => {
   return (

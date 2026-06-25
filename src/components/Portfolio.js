@@ -3,7 +3,7 @@ import DetailsPopup from "./popup/DetailsPopup";
 
 const portfolioData = [
   {
-    img: "/img/portfolio/1.jpg",
+    img: "/img/portfolio/1.png",
     category: "Clinical Data Management",
     client: "IQVIA",
     date: "2020 – 2022",
@@ -21,7 +21,7 @@ const portfolioData = [
     ],
   },
   {
-    img: "/img/portfolio/2.jpg",
+    img: "/img/portfolio/2.png",
     category: "Financial Technology",
     client: "New Zealand Banking Consortium",
     date: "2021 – 2023",
@@ -39,7 +39,7 @@ const portfolioData = [
     ],
   },
   {
-    img: "/img/portfolio/3.jpg",
+    img: "/img/portfolio/3.png",
     category: "E-Commerce & Retail",
     client: "Aditya Birla Fashion & Retail",
     date: "2022 – 2024",
@@ -69,7 +69,11 @@ const Portfolio = () => {
 
   return (
     <Fragment>
-      <DetailsPopup open={popup} close={() => setPopup(false)} data={activeData} />
+      <DetailsPopup
+        open={popup}
+        close={() => setPopup(false)}
+        data={activeData}
+      />
       <div className="devman_tm_section" id="portfolio">
         <div className="devman_tm_portfolio">
           <div className="container">

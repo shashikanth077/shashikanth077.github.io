@@ -8,7 +8,7 @@ const homeData = {
   img: "/img/hero/profile.png",
   bio: "Accomplished Principal Engineer with 12+ years of experience in full-stack development, systems architecture, and engineering leadership across Wipro, IBM, Sonata & more.",
   numberOfProject: 15,
-  numberofyear: 11,
+  numberofyear: 12,
 };
 
 const Home = () => {
