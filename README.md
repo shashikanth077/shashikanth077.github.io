@@ -78,18 +78,7 @@ This runs `next build && next export` and outputs a static site to the `out/` di
 - **Services** — Service offerings
 - **Process** — Work process / methodology
 - **Counter** — Stats (years of experience, projects, etc.)
-- **Testimonials** — Client/colleague testimonials (client-side only)
-- **Partners** — Company / client logos
-- **Blog** — Articles or news entries
 - **Contact** — EmailJS-powered contact form
-
----
-
-## Dark Mode
-
-A dark variant of the homepage is available at `/index-dark`. The dark stylesheet is loaded from `public/css/dark.css`.
-
----
 
 ## Customization
 
