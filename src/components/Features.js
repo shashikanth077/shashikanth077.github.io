@@ -7,7 +7,7 @@ const features_list = [
   {
     title: "Cloud & DevOps",
     icon: "/img/svg/development.svg",
-    text: "Hands-on experience with Docker, Kubernetes, and Azure for CI/CD pipelines, containerised deployments, and scalable cloud infrastructure.",
+    text: "Hands-on experience with Docker, Kubernetes, and Azure for CI/CD pipelines, containerised deployments, and scalable cloud infrastructure",
   },
   {
     title: "AI Engineering",

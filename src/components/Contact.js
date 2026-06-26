@@ -20,7 +20,7 @@ const Contact = () => {
     } else {
       // https://www.emailjs.com/
       const templateParams = {
-        to_email: "shashikanth033@gmail.com",
+        to_email: process.env.NEXT_PUBLIC_EMAILJS_TO_EMAIL,
         from_name: name,
         name: name,
         email: email,
@@ -28,10 +28,10 @@ const Contact = () => {
       };
       emailjs
         .send(
-          "service_r3gn9r3", // service id
-          "template_hi8gmx6", // template id
+          process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
+          process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
           templateParams,
-          "F65e6eKRPSgfInlIv", // public api
+          process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY,
         )
         .then(
           (response) => {
