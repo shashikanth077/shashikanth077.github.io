@@ -21,7 +21,7 @@ const About = () => {
           <div className="about_inner">
             <div className="left">
               <div className="image_wrap">
-                <img src="/img/about/1.png" alt="" />
+                <img src="/img/about/1.png" alt="image" />
                 <div className="main" data-img-url="/img/about/2.png" />
                 <div className="extra_image">
                   <div className="image_inner">
