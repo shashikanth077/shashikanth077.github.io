@@ -43,7 +43,6 @@ const Contact = () => {
           (err) => {
             setError(true);
             setSuccess(false);
-            console.log(err.text);
             clearError();
           },
         );

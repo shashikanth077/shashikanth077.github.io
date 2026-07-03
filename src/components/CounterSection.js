@@ -1,11 +1,6 @@
 import { lineBreak } from "../utilits";
 import Counter from "./Counter";
-
-const counterData = [
-  { smallVlaue: true, value: 12, name: "Years of\nExperience" },
-  { smallVlaue: true, value: 6, name: "Companies\nWorked" },
-  { smallVlaue: true, value: 15, name: "Projects\nDelivered" },
-];
+import { counterData } from "../constants";
 const CounterSection = () => {
   return (
     <div className="devman_tm_section">

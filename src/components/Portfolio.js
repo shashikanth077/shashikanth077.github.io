@@ -1,63 +1,6 @@
 ﻿import { Fragment, useState } from "react";
 import DetailsPopup from "./popup/DetailsPopup";
-
-const portfolioData = [
-  {
-    img: "/img/portfolio/1.png",
-    category: "Clinical Data Management",
-    client: "IQVIA",
-    date: "2024 – 2026",
-    title: "BIOS Clinical Trial Platform",
-    tech: "React · Node.js · TypeScript · MySQL · REST APIs · Micro-frontend · Redux Toolkit · GitLab",
-    description: [
-      "Designing and developing IQVIA's BIOS — a comprehensive clinical trial data management platform used across multiple global study phases. The platform streamlines regulatory compliance workflows, automates complex data collection processes, and provides advanced reporting capabilities tailored for clinical researchers, data managers, and trial coordinators. IQVIA's BIOS unit consists of global teams of biostatisticians and programmers providing statistical consulting, complex study design (e.g., adaptive Phase I-III designs), data insights, and regulatory submission support for global clinical trials.",
-      "Key contributions include architecting a multi-tenant data validation layer that eliminates manual entry errors, redesigning UI workflows to improve coordinator efficiency by 35%, and integrating with IQVIA's upstream clinical systems via secure REST APIs. The solution supports Preclinical through Phase IV trial stages and meets 21 CFR Part 11 compliance standards.",
-    ],
-    highlights: [
-      "Reduced manual data entry errors by 40% through automated validation",
-      "Supports Phase I–IV clinical trial lifecycle management",
-      "Compliant with 21 CFR Part 11 and GDPR regulations",
-      "Micro-frontend architecture with global biostatistics team integration",
-    ],
-  },
-  {
-    img: "/img/portfolio/2.png",
-    category: "Financial Technology",
-    client: "New Zealand Banking Consortium",
-    date: "2021 – 2023",
-    title: "Banking & Investment Portal",
-    tech: "React · Redux Toolkit · Node.js · GraphQL · Azure · Semantic UI",
-    description: [
-      "Built an enterprise-grade banking and investment management portal for New Zealand's financial sector, enabling investment professionals to generate, manage, and distribute detailed investment reports across multiple output formats including PDF, Excel, and CSV.",
-      "The platform features advanced full-text search and dynamic filtering across large financial datasets, real-time portfolio analytics dashboards, and role-based access control. Deployed on Azure with banking-grade authentication and compliance with New Zealand Financial Markets Authority (FMA) reporting requirements.",
-    ],
-    highlights: [
-      "Multi-format report generation (PDF, Excel, CSV) at enterprise scale",
-      "Advanced investment search with real-time filtering across NZ bank data",
-      "Role-based access control with banking-grade security",
-      "Deployed on Azure with 99.9% uptime SLA",
-    ],
-  },
-
-  {
-    img: "/img/portfolio/3.png",
-    category: "E-Commerce & Retail",
-    client: "Aditya Birla Fashion & Retail",
-    date: "2019 – 2021",
-    title: "Multi-Brand Retail Platform",
-    tech: "React · Node.js · TypeScript · MySQL · Redux · Docker · Kubernetes",
-    description: [
-      "Developed a unified multi-brand online retail platform for Aditya Birla Fashion & Retail, one of India's largest fashion conglomerates. The platform aggregates flagship brands — Van Heusen, Allen Solly, Peter England, and Louis Philippe — under a single seamless shopping experience.",
-      "Delivered AI-powered product recommendations, intelligent inventory management across 500+ retail locations, real-time order tracking, and an optimised mobile-first checkout flow that reduced cart abandonment by 28%. Handles over 100,000 daily active users with Kubernetes-based scaling.",
-    ],
-    highlights: [
-      "Unified platform for 4+ major Aditya Birla fashion brands",
-      "28% reduction in cart abandonment through optimised checkout UX",
-      "Handles 100,000+ daily active users with Kubernetes-based scaling",
-      "Real-time inventory sync across 500+ retail locations",
-    ],
-  },
-];
+import { portfolioData } from "../constants";
 
 const Portfolio = () => {
   const [activeData, setActiveData] = useState(null);

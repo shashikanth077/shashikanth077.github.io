@@ -12,10 +12,11 @@ const Skills = () => {
         <div className="container">
           <div className="devman_tm_main_title" data-text-align="center">
             <span>My Skills</span>
-            <h3>Technologies I Work With</h3>
+            <h3>Technologies I Work With — Full Stack Expert</h3>
             <p>
               12+ years of hands-on experience across the full stack — from
-              React frontends to Node.js APIs, cloud infrastructure, and DevOps.
+              React frontends to Node.js APIs, PHP backends, cloud
+              infrastructure, and DevOps.
             </p>
           </div>
           <div className="skills_wrapper">
@@ -77,6 +78,21 @@ const Skills = () => {
                 >
                   <span>
                     <span className="label">MySQL / Databases</span>
+                    <span className="number">85%</span>
+                  </span>
+                  <div className="background">
+                    <div className="bar">
+                      <div className="bar_in" />
+                    </div>
+                  </div>
+                </div>
+                <div
+                  className="skillsInner___ progress_inner"
+                  data-value={85}
+                  data-color="#142eb5"
+                >
+                  <span>
+                    <span className="label">PHP</span>
                     <span className="number">85%</span>
                   </span>
                   <div className="background">

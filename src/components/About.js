@@ -1,17 +1,4 @@
-const aboutData = {
-  designation: "Principal Engineer",
-  title: "I Build Scalable, High-Performance Web Applications",
-  text: [
-    "Accomplished Principal Engineer with 12+ years of progressive experience in full-stack software development, systems architecture, and engineering team leadership across multinational organisations including Wipro, IBM, Sonata Software, and Theorem Inc.",
-    "Expert in designing and delivering scalable web applications with demonstrated 25–40% operational efficiency improvements. Currently transitioning to AI Engineering, enrolling in the Master's in Engineering of Artificial Intelligence at VILNIUS TECH (VGTU), Lithuania (September 2026).",
-  ],
-  skillIcons: [
-    { name: "frontend", icon: "/img/svg/design.svg" },
-    { name: "backend", icon: "/img/svg/development.svg" },
-    { name: "cloud", icon: "/img/svg/cpu.svg" },
-    { name: "web", icon: "/img/svg/web.svg" },
-  ],
-};
+import { aboutData } from "../constants";
 
 const About = () => {
   return (

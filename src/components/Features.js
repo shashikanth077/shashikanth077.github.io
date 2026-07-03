@@ -2,7 +2,7 @@ const features_list = [
   {
     title: "Full-Stack Expert",
     icon: "/img/svg/design.svg",
-    text: "12+ years building end-to-end web applications using React, Redux Toolkit, Node.js, TypeScript, and MySQL — from UI design to API architecture and database optimisation.",
+    text: "12+ years building end-to-end web applications using React, Redux Toolkit, Node.js, PHP, TypeScript, and MySQL — from UI design to API architecture and database optimisation.",
   },
   {
     title: "Cloud & DevOps",
