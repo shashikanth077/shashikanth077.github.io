@@ -1,4 +1,5 @@
 import { homeData } from "../constants";
+import Image from "next/image";
 import Counter from "./Counter";
 
 const Home = () => {
@@ -33,10 +34,10 @@ const Home = () => {
             </div>
             <div className="right">
               <div className="image">
-                <img src="/img/thumbs/53-61.jpg" alt="" />
+                <Image src="/img/thumbs/53-61.jpg" alt="" width={400} height={300} />
                 <div className="main" data-img-url={homeData.img} />
                 <span className="win">
-                  <img src="/img/svg/award.svg" alt="" className="svg" />
+                  <Image src="/img/svg/award.svg" alt="" className="svg" width={60} height={60} />
                 </span>
                 <div className="numbers year">
                   <div className="wrapper">
@@ -64,7 +65,7 @@ const Home = () => {
                   </div>
                 </div>
                 <span className="circle anim_circle">
-                  <img src="/img/hero/circle.png" alt="" />
+                  <Image src="/img/hero/circle.png" alt="" width={150} height={150} />
                 </span>
               </div>
             </div>

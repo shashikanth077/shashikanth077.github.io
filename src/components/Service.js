@@ -1,4 +1,5 @@
 import { Fragment, useState } from "react";
+import Image from "next/image";
 import ServicePopup from "./popup/ServicePopup";
 import { serviceData } from "../constants";
 
@@ -24,7 +25,7 @@ const Service = () => {
                     key={i}
                   >
                     <div className="list_inner">
-                      <img className="svg" src={service.icon} alt="" />
+                      <Image className="svg" src={service.icon} alt="" width={50} height={50} />
                       <h3 className="title">{service.name}</h3>
                       <p className="text">
                         {service.description[0].substring(0, 138)}.
@@ -36,10 +37,12 @@ const Service = () => {
                           setOpen(true);
                         }}
                       />
-                      <img
+                      <Image
                         className="popup_service_image"
                         src="/img/service/1.jpg"
                         alt=""
+                        width={300}
+                        height={200}
                       />
                     </div>
                   </li>

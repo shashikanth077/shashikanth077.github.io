@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const features_list = [
   {
     title: "Full-Stack Expert",
@@ -36,7 +38,7 @@ const Features = () => {
                         <h3>{feature.title}</h3>
                       </div>
                       <div className="icon">
-                        <img className="svg" src={feature.icon} alt="" />
+                        <Image className="svg" src={feature.icon} alt="" width={50} height={50} />
                       </div>
                     </div>
                     <div className="text">

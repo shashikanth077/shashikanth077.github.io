@@ -1,4 +1,5 @@
 import Head from "next/head";
+import Image from "next/image";
 import Layout from "../src/layouts/Layout";
 import Mouse from "../src/layouts/Mouse";
 const Intro = () => {
@@ -22,7 +23,7 @@ const Intro = () => {
           </a>
         </div>
         <div className="short_info">
-          <img src="/img/logo/dark.png" alt="" />
+          <Image src="/img/logo/dark.png" alt="" width={120} height={50} />
           <h3>Personal Portfolio React NextJs Template</h3>
         </div>
         <span className="intro_line" />
@@ -31,7 +32,7 @@ const Intro = () => {
         <div className="demos">
           <div className="left">
             <div className="desc">
-              <img src="/img/intro/1.png" alt="" />
+              <Image src="/img/intro/1.png" alt="" width={300} height={200} />
               <h3 className="title">Light Demo</h3>
             </div>
             <a
@@ -43,7 +44,7 @@ const Intro = () => {
           </div>
           <div className="right">
             <div className="desc">
-              <img src="/img/intro/1.png" alt="" />
+              <Image src="/img/intro/1.png" alt="" width={300} height={200} />
               <h3 className="title">Dark Demo</h3>
             </div>
             <a

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Popup from "./Popup";
 
 const BlogPopup = ({ data, open, close }) => {
@@ -5,7 +6,7 @@ const BlogPopup = ({ data, open, close }) => {
     <Popup open={open} close={close}>
       <div className="news_popup_informations">
         <div className="image">
-          <img src="/img/thumbs/4-2.jpg" alt="" />
+          <Image src="/img/thumbs/4-2.jpg" alt="" width={400} height={300} />
           <div
             className="main"
             data-img-url={data.img}

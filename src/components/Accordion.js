@@ -6,7 +6,7 @@ const Accordion = () => {
   const contentEl = useRef();
   useEffect(() => {
     setActive(0);
-  }, [contentEl.current]);
+  }, []);
 
   const onClick = (value) =>
     value === active ? setActive(null) : setActive(value);
