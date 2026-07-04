@@ -8,7 +8,7 @@ const Copyright = () => {
               <p>
                 Developed by{" "}
                 <a href="#" rel="noreferrer" target="_blank">
-                  Shashikanth H R
+                  Shashikanth Hosur Ramegowda
                 </a>{" "}
                 © {new Date().getFullYear()}
               </p>
