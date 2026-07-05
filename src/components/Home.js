@@ -42,6 +42,7 @@ const Home = () => {
                 />
                 <div className="main" data-img-url={homeData.img} />
                 <span className="win">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src="/img/svg/award.svg" alt="" className="svg" />
                 </span>
                 <div className="numbers year">

@@ -36,6 +36,7 @@ const Features = () => {
                         <h3>{feature.title}</h3>
                       </div>
                       <div className="icon">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img className="svg" src={feature.icon} alt="" />
                       </div>
                     </div>

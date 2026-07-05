@@ -25,6 +25,7 @@ const Service = () => {
                     key={i}
                   >
                     <div className="list_inner">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img className="svg" src={service.icon} alt="" />
                       <h3 className="title">{service.name}</h3>
                       <p className="text">
