@@ -1,7 +1,7 @@
 import ReactDOM from "react-dom";
 const preloader_ = () => {
   let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(
-    navigator.userAgent
+    navigator.userAgent,
   )
     ? true
     : false;
@@ -31,10 +31,10 @@ export const customCursor = () => {
 
   function mouseEvent(element) {
     ReactDOM.findDOMNode(element).addEventListener("mouseenter", function () {
-      e.classList.add("cursor-hover"), t.classList.add("cursor-hover");
+      (e.classList.add("cursor-hover"), t.classList.add("cursor-hover"));
     });
     ReactDOM.findDOMNode(element).addEventListener("mouseleave", function () {
-      e.classList.remove("cursor-hover"), t.classList.remove("cursor-hover");
+      (e.classList.remove("cursor-hover"), t.classList.remove("cursor-hover"));
     });
   }
   if (myCursor.length) {
@@ -42,21 +42,21 @@ export const customCursor = () => {
       let n,
         i = 0,
         o = !1;
-      (window.onmousemove = function (s) {
-        o ||
+      ((window.onmousemove = function (s) {
+        (o ||
           (t.style.transform =
             "translate(" + s.clientX + "px, " + s.clientY + "px)"),
           (e.style.transform =
             "translate(" + s.clientX + "px, " + s.clientY + "px)"),
           (n = s.clientY),
-          (i = s.clientX);
+          (i = s.clientX));
       }),
         document.body.addEventListener(
           "mouseenter",
           // "a,.kura_tm_topbar .trigger, .cursor-pointer",
           function () {
             let a = document.querySelectorAll("a");
-            e.classList.add("cursor-inner"), t.classList.add("cursor-outer");
+            (e.classList.add("cursor-inner"), t.classList.add("cursor-outer"));
 
             for (let i = 0; i < a.length; i++) {
               const element = a[i];
@@ -66,10 +66,10 @@ export const customCursor = () => {
             hamburger && mouseEvent(hamburger);
             kura_tm_topbar && mouseEvent(kura_tm_topbar);
             pointer && mouseEvent(pointer);
-          }
+          },
         ),
         (e.style.visibility = "visible"),
-        (t.style.visibility = "visible");
+        (t.style.visibility = "visible"));
     }
   }
 };
@@ -96,7 +96,7 @@ export const dataImage = () => {
   for (let i = 0; i < d.length; i++) {
     const element = d[i];
     element.style.backgroundImage = `url(${element.getAttribute(
-      "data-img-url"
+      "data-img-url",
     )})`;
   }
 };
@@ -111,20 +111,22 @@ export const imgToSVG = () => {
       .then((data) => data.text())
       .then((response) => {
         const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(response, "text/html");
+        const xmlDoc = parser.parseFromString(response, "image/svg+xml");
         let svg = xmlDoc.querySelector("svg");
 
-        if (typeof imgID !== "undefined") {
+        if (svg && typeof imgID !== "undefined") {
           svg.setAttribute("id", imgID);
         }
 
-        if (typeof imgClass !== "undefined") {
+        if (svg && typeof imgClass !== "undefined") {
           svg.setAttribute("class", imgClass + " replaced-svg");
         }
 
-        svg.removeAttribute("xmlns:a");
-        if (el.parentNode) {
-          el.parentNode.replaceChild(svg, el);
+        if (svg) {
+          svg.removeAttribute("xmlns:a");
+          if (el.parentNode) {
+            el.parentNode.replaceChild(svg, el);
+          }
         }
       });
   });
