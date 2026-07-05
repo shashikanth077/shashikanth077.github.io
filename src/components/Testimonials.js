@@ -30,6 +30,7 @@ const Testimonials = () => {
             >
               <SwiperSlide>
                 <div className="list_inner">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img className="svg" src="/img/svg/quote.svg" alt="" />
                   <p className="text">
                     Duis aute irure dolor in repre hen derit in voluptate velit
@@ -51,6 +52,7 @@ const Testimonials = () => {
               </SwiperSlide>
               <SwiperSlide>
                 <div className="list_inner">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img className="svg" src="/img/svg/quote.svg" alt="" />
                   <p className="text">
                     Duis aute irure dolor in repre hen derit in voluptate velit
@@ -72,6 +74,7 @@ const Testimonials = () => {
               </SwiperSlide>
               <SwiperSlide>
                 <div className="list_inner">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img className="svg" src="/img/svg/quote.svg" alt="" />
                   <p className="text">
                     Duis aute irure dolor in repre hen derit in voluptate velit
@@ -93,6 +96,7 @@ const Testimonials = () => {
               </SwiperSlide>
               <SwiperSlide>
                 <div className="list_inner">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img className="svg" src="/img/svg/quote.svg" alt="" />
                   <p className="text">
                     Duis aute irure dolor in repre hen derit in voluptate velit
