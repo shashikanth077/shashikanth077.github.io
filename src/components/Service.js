@@ -25,7 +25,7 @@ const Service = () => {
                     key={i}
                   >
                     <div className="list_inner">
-                      <Image className="svg" src={service.icon} alt="" width={50} height={50} />
+                      <img className="svg" src={service.icon} alt="" />
                       <h3 className="title">{service.name}</h3>
                       <p className="text">
                         {service.description[0].substring(0, 138)}.

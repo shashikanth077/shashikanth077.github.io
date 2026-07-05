@@ -34,10 +34,15 @@ const Home = () => {
             </div>
             <div className="right">
               <div className="image">
-                <Image src="/img/thumbs/53-61.jpg" alt="" width={400} height={300} />
+                <Image
+                  src="/img/thumbs/53-61.jpg"
+                  alt=""
+                  width={400}
+                  height={300}
+                />
                 <div className="main" data-img-url={homeData.img} />
                 <span className="win">
-                  <Image src="/img/svg/award.svg" alt="" className="svg" width={60} height={60} />
+                  <img src="/img/svg/award.svg" alt="" className="svg" />
                 </span>
                 <div className="numbers year">
                   <div className="wrapper">
@@ -65,7 +70,12 @@ const Home = () => {
                   </div>
                 </div>
                 <span className="circle anim_circle">
-                  <Image src="/img/hero/circle.png" alt="" width={150} height={150} />
+                  <Image
+                    src="/img/hero/circle.png"
+                    alt=""
+                    width={150}
+                    height={150}
+                  />
                 </span>
               </div>
             </div>

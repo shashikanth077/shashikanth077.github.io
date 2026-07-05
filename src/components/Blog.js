@@ -36,7 +36,12 @@ const Blog = () => {
                   >
                     <div className="list_inner">
                       <div className="image">
-                        <Image src="/img/thumbs/42-29.jpg" alt="" width={400} height={300} />
+                        <Image
+                          src="/img/thumbs/42-29.jpg"
+                          alt=""
+                          width={400}
+                          height={300}
+                        />
                         <div className="main" data-img-url={blog.img} />
                         <a
                           className="devman_tm_full_link"
