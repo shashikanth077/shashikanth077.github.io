@@ -8,7 +8,7 @@ const nextConfig = {
   // Required for GitHub Pages static export: disable image optimization
   // See: https://nextjs.org/docs/messages/export-image-api
   images: {
-    unoptimized: true,
+    unoptimized: false,
   },
   trailingSlash: true,
 };
