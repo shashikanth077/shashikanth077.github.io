@@ -5,8 +5,11 @@
 // so basePath and assetPrefix must be empty — no subpath needed.
 const nextConfig = {
   reactStrictMode: true,
-  // Required for GitHub Pages: disables Next.js image optimisation (not supported in static export)
-  images: { unoptimized: true },
+  // Required for GitHub Pages static export: disable image optimization
+  // See: https://nextjs.org/docs/messages/export-image-api
+  images: {
+    unoptimized: true,
+  },
   trailingSlash: true,
 };
 
