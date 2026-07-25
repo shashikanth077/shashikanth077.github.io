@@ -91,7 +91,7 @@ export const serviceData = [
     img: "/img/service/1.jpg",
     description: [
       "Expert full-stack development using React, Redux Toolkit, Node.js, TypeScript, and MySQL. Delivered clinical-data management platforms, energy grid balancing systems, wealth management portals, and e-commerce applications.",
-      "Proven track record of improving operational efficiency by 25-40% through UI workflow redesign, data validation layer architecture, and back-end API optimisation.",
+      "Proven track record of improving operational efficiency by 25-40% through UI workflow redesign, data validation layer architecture, back-end API optimisation, and modular microservice-oriented application design.",
       "Experienced in leading multi-developer teams through Agile/Scrum sprints, conducting code reviews, mentoring junior developers, and delivering zero-defect releases at sprint cadence.",
     ],
   },
@@ -100,9 +100,10 @@ export const serviceData = [
     icon: "/img/svg/cpu.svg",
     img: "/img/service/2.jpg",
     description: [
-      "Design and implement scalable, high-performance system architectures. Experienced with real-time streaming pipelines (Kafka-style), GraphQL APIs, RESTful services, and complex data routing solutions.",
-      "Built the INFRS17 DATA Platform - a real-time streaming and routing solution for insurance data management - and contributed to the Open Balancing Platform for automated energy supply optimisation.",
-      "Strong focus on clean architecture, separation of concerns, and engineering best practices to ensure long-term maintainability and scalability of solutions.",
+      "Design and develop scalable, high-performance enterprise applications with a strong focus on frontend and full-stack architecture using React, TypeScript, JavaScript, and Node.js. Experienced in designing Micro-Frontend architectures, RESTful API integrations, reusable component architectures, state management solutions, and modular application platforms.",
+      "Built and contributed to large-scale enterprise applications across banking, insurance, healthcare, and e-commerce domains, working on complex business workflows, frontend modernization, API-driven applications, and scalable user interfaces.",
+      "Hands-on experience with Redux Toolkit, GraphQL, Node.js, Docker, Kubernetes, Nginx, Azure, and CI/CD pipelines, providing a strong understanding of application architecture from development through deployment.",
+      "Strong focus on clean architecture, separation of concerns, performance optimization, reusable design patterns, code quality, security, and engineering best practices to ensure applications remain scalable, maintainable, and reliable as products and development teams grow.",
     ],
   },
   {
@@ -110,9 +111,9 @@ export const serviceData = [
     icon: "/img/svg/development.svg",
     img: "/img/service/3.jpg",
     description: [
-      "Hands-on experience with Docker, Kubernetes, Azure, and GitLab CI/CD pipelines for building and deploying containerised microservices and cloud-native applications.",
-      "Implement automated smoke-testing scripts, reduce post-deployment defect rates, and establish CI/CD workflows that accelerate delivery and improve software quality.",
-      "Experienced in cloud infrastructure setup, container orchestration, and DevOps tooling to support Agile development teams and ensure reliable, repeatable deployments.",
+      "Strong hands-on knowledge of Docker, Kubernetes, Azure, Nginx, and CI/CD practices for building, packaging, and deploying modern web and microservice-based applications.",
+      "Experience with GitLab CI/CD and GitHub Actions, including automated build, test, and deployment workflows to improve delivery speed, reliability, and release quality.",
+      "Comfortable working with containerized environments, deployment pipelines, and DevOps tooling to support Agile teams and ensure consistent, scalable application deliveryments.",
     ],
   },
   {
