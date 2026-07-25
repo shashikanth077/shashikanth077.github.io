@@ -88,7 +88,7 @@ export const serviceData = [
   {
     name: "Full-Stack Development",
     icon: "/img/svg/web.svg",
-    img: "/img/service/1.jpg",
+    img: "/img/service/1.png",
     description: [
       "Expert full-stack development using React, Redux Toolkit, Node.js, TypeScript, and MySQL. Delivered clinical-data management platforms, energy grid balancing systems, wealth management portals, and e-commerce applications.",
       "Proven track record of improving operational efficiency by 25-40% through UI workflow redesign, data validation layer architecture, back-end API optimisation, and modular microservice-oriented application design.",
@@ -98,7 +98,7 @@ export const serviceData = [
   {
     name: "System Architecture",
     icon: "/img/svg/cpu.svg",
-    img: "/img/service/2.jpg",
+    img: "/img/service/2.png",
     description: [
       "Design and develop scalable, high-performance enterprise applications with a strong focus on frontend and full-stack architecture using React, TypeScript, JavaScript, and Node.js. Experienced in designing Micro-Frontend architectures, RESTful API integrations, reusable component architectures, state management solutions, and modular application platforms.",
       "Built and contributed to large-scale enterprise applications across banking, insurance, healthcare, and e-commerce domains, working on complex business workflows, frontend modernization, API-driven applications, and scalable user interfaces.",
@@ -109,7 +109,7 @@ export const serviceData = [
   {
     name: "Cloud & DevOps",
     icon: "/img/svg/development.svg",
-    img: "/img/service/3.jpg",
+    img: "/img/service/3.png",
     description: [
       "Strong hands-on knowledge of Docker, Kubernetes, Azure, Nginx, and CI/CD practices for building, packaging, and deploying modern web and microservice-based applications.",
       "Experience with GitLab CI/CD and GitHub Actions, including automated build, test, and deployment workflows to improve delivery speed, reliability, and release quality.",
@@ -119,7 +119,7 @@ export const serviceData = [
   {
     name: "Technical Leadership",
     icon: "/img/svg/star.svg",
-    img: "/img/service/4.jpg",
+    img: "/img/service/4.png",
     description: [
       "Lead and manage multi-developer engineering teams, conducting sprint planning, backlog grooming, code reviews, and stakeholder demos. Experienced liaising with US and European clients.",
       "Mentored teams of 5+ developers at IBM, enforcing coding standards and Agile documentation practices. Managed end-to-end client relationships at Sonata Software across two major accounts.",
