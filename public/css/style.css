@@ -706,11 +706,11 @@ h6 {
   bottom: 0px;
   left: 0px;
   z-index: 1;
-  left: -70px;
-  bottom: -70px;
+  left: -50px;
+  bottom: -50px;
 }
 .devman_tm_hero .circle img {
-  max-width: 160px;
+  max-width: 120px;
   opacity: 1 !important;
 }
 .anim_circle {
@@ -728,16 +728,18 @@ h6 {
 
 .devman_tm_hero .right {
   width: 55%;
-  padding-left: 80px;
+  padding-left: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
 }
 .devman_tm_hero .right .image {
   position: relative;
   width: 100%;
-  max-width: 480px;
+  max-width: 340px;
   aspect-ratio: 1;
+  z-index: 2;
 }
 .devman_tm_hero .right .image img {
   position: relative;
@@ -2965,7 +2967,10 @@ h6 {
     left: -185px;
   }
   .devman_tm_hero .right {
-    padding-left: 60px;
+    padding-left: 30px;
+  }
+  .devman_tm_hero .right .image {
+    max-width: 300px;
   }
   .devman_tm_hero .numbers .wrapper h3 {
     font-size: 45px;
@@ -3542,6 +3547,25 @@ h6 {
   .devman_tm_features .features_list ul li {
     width: 100%;
     padding-left: 0px;
+  }
+  .devman_tm_hero .content {
+    flex-direction: column;
+  }
+  .devman_tm_hero .right {
+    width: 100%;
+    padding-left: 0px;
+    padding-top: 40px;
+    justify-content: center;
+  }
+  .devman_tm_hero .right .image {
+    max-width: 280px;
+  }
+  .devman_tm_hero .circle {
+    left: -40px;
+    bottom: -40px;
+  }
+  .devman_tm_hero .circle img {
+    max-width: 100px;
   }
   .devman_tm_service .service_list ul li {
     width: 100%;
