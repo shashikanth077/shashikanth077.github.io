@@ -7,11 +7,7 @@ const BlogPopup = ({ data, open, close }) => {
       <div className="news_popup_informations">
         <div className="image">
           <Image src="/img/thumbs/4-2.jpg" alt="" width={400} height={300} />
-          <div
-            className="main"
-            data-img-url={data.img}
-            style={{ backgroundImage: `url(${data.img})` }}
-          />
+          <div className="main popup-image-bg" data-img-url={data.img} />
         </div>
         <div className="details">
           <h3>{data.title}</h3>

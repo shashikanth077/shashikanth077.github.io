@@ -19,7 +19,10 @@ const Index = () => {
   return (
     <Layout>
       <Head>
-        <title>Shashikanth H R | Principal Engineer</title>
+        <title>
+          Shashikanth Hosur Ramegowda | Full Stack Engineer | UI Developer |
+          React Developer | Web Developer
+        </title>
       </Head>
       <MobileHeader />
       <Header />

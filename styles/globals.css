@@ -11,6 +11,57 @@
 html {
   scroll-behavior: smooth;
 }
+
+.service-popup-image {
+  width: 100%;
+  max-width: 100%;
+}
+
+.service-popup-image__img {
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.service-popup-image__fallback {
+  width: 100%;
+  min-height: 220px;
+  background-size: cover;
+  background-position: center;
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .service-popup-image {
+    margin-bottom: 16px;
+  }
+
+  .service-popup-image__img {
+    max-height: 260px;
+  }
+}
+
+.popup-image-bg {
+  background-image: var(--popup-bg-image, none);
+  background-size: cover;
+  background-position: center;
+}
+
+.popup-highlights-list {
+  padding-left: 20px;
+  margin-top: 16px;
+}
+
+.popup-highlights-item {
+  margin-bottom: 6px;
+  color: #54545f;
+}
+
+.popup-overlay {
+  overflow: hidden auto;
+}
 .c-pointer {
   cursor: pointer;
 }

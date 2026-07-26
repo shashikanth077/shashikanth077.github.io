@@ -9,9 +9,8 @@ const VideoPopup_ = ({ close, videoID }) => {
     <Fragment>
       <div className="mfp-bg mfp-ready" onClick={() => close(false)}></div>
       <div
-        className="mfp-wrap mfp-close-btn-in mfp-auto-cursor mfp-ready"
+        className="mfp-wrap mfp-close-btn-in mfp-auto-cursor mfp-ready popup-overlay"
         tabIndex={-1}
-        style={{ overflow: "hidden auto" }}
       >
         <div className="mfp-container mfp-s-ready mfp-iframe-holder">
           <div className="mfp-content" ref={domNode}>
@@ -59,14 +58,14 @@ const VideoPopup = () => {
             let href = a.href;
             if (href.includes("youtube")) {
               setVideoValue(
-                `//www.youtube.com/embed/${href.split("=")[1]}?autoplay=1`
+                `//www.youtube.com/embed/${href.split("=")[1]}?autoplay=1`,
               );
             } else if (href.includes("vimeo")) {
               let splitData = href.split("/");
               setVideoValue(
                 `//player.vimeo.com/video/${
                   splitData[splitData.length - 1]
-                }?autoplay=1`
+                }?autoplay=1`,
               );
             } else {
               setVideoValue(href);

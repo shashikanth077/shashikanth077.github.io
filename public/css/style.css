@@ -728,10 +728,16 @@ h6 {
 
 .devman_tm_hero .right {
   width: 55%;
-  padding-left: 250px;
+  padding-left: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .devman_tm_hero .right .image {
   position: relative;
+  width: 100%;
+  max-width: 480px;
+  aspect-ratio: 1;
 }
 .devman_tm_hero .right .image img {
   position: relative;
@@ -745,7 +751,7 @@ h6 {
   left: 0px;
   right: 0px;
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: contain;
   background-position: center;
   border-radius: 12px;
 }
@@ -1595,14 +1601,23 @@ h6 {
   margin: 0px 0px 0px 0px;
   width: 50%;
   float: left;
+  min-height: 400px;
 }
 .devman_tm_service .service_list ul li .list_inner {
   width: 100%;
   height: 100%;
+  min-height: 400px;
   clear: both;
   float: left;
   position: relative;
   padding: 125px 70px 75px 70px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  z-index: 1;
 
   -webkit-transition: all 0.3s ease;
   -moz-transition: all 0.3s ease;
@@ -1610,20 +1625,31 @@ h6 {
   -o-transition: all 0.3s ease;
   transition: all 0.3s ease;
 }
-.devman_tm_service .service_list ul li:nth-child(1) .list_inner {
-  background-color: #6e7fd1;
+.devman_tm_service .service_list ul li .list_inner:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(110, 127, 209, 0.95) 0%, rgba(52, 60, 85, 0.95) 100%);
+  z-index: -1;
+  border-radius: 0;
 }
-.devman_tm_service .service_list ul li:nth-child(2) .list_inner {
-  background-color: #343c55;
+.devman_tm_service .service_list ul li:nth-child(1) .list_inner:before {
+  background: linear-gradient(135deg, rgba(110, 127, 209, 0.95) 0%, rgba(110, 127, 209, 0.9) 100%);
 }
-.devman_tm_service .service_list ul li:nth-child(3) .list_inner {
-  background-color: #142eb5;
+.devman_tm_service .service_list ul li:nth-child(2) .list_inner:before {
+  background: linear-gradient(135deg, rgba(52, 60, 85, 0.95) 0%, rgba(52, 60, 85, 0.9) 100%);
 }
-.devman_tm_service .service_list ul li:nth-child(4) .list_inner {
-  background-color: #6b97d3;
+.devman_tm_service .service_list ul li:nth-child(3) .list_inner:before {
+  background: linear-gradient(135deg, rgba(20, 46, 181, 0.95) 0%, rgba(20, 46, 181, 0.9) 100%);
 }
-.devman_tm_service .service_list ul li .list_inner:hover {
-  background-color: var(--main-color);
+.devman_tm_service .service_list ul li:nth-child(4) .list_inner:before {
+  background: linear-gradient(135deg, rgba(107, 151, 211, 0.95) 0%, rgba(107, 151, 211, 0.9) 100%);
+}
+.devman_tm_service .service_list ul li .list_inner:hover:before {
+  background: linear-gradient(135deg, var(--main-color) 0%, var(--main-color) 100%) !important;
 }
 .devman_tm_service .service_list ul li .svg {
   width: 85px;
@@ -2939,7 +2965,7 @@ h6 {
     left: -185px;
   }
   .devman_tm_hero .right {
-    padding-left: 225px;
+    padding-left: 60px;
   }
   .devman_tm_hero .numbers .wrapper h3 {
     font-size: 45px;
@@ -3265,6 +3291,10 @@ h6 {
   .devman_tm_button a {
     padding: 8px 30px 11px 30px;
   }
+  .project-image {
+    width: 100%;
+    height: 320px;
+  }
   .devman_tm_hero .simple_button {
     /* margin-left: 30px; */
   }
@@ -3365,12 +3395,16 @@ h6 {
     height: 60px;
     margin-bottom: 25px;
   }
-  .devman_tm_service .service_list ul li .title {
-    font-size: 24px;
-    margin-bottom: 25px;
+  .devman_tm_service .service_list ul li {
+    min-height: 350px;
   }
   .devman_tm_service .service_list ul li .list_inner {
-    padding: 75px 30px 50px 30px;
+    min-height: 350px;
+    padding: 60px 25px 40px 25px;
+  }
+  .devman_tm_service .service_list ul li .title {
+    font-size: 24px;
+    margin-bottom: 20px;
   }
   .devman_tm_process .process_inner {
     flex-direction: column;
@@ -3511,6 +3545,24 @@ h6 {
   }
   .devman_tm_service .service_list ul li {
     width: 100%;
+    min-height: 300px;
+  }
+  .devman_tm_service .service_list ul li .list_inner {
+    min-height: 300px;
+    padding: 50px 20px 35px 20px;
+  }
+  .devman_tm_service .service_list ul li .svg {
+    width: 55px;
+    height: 55px;
+    margin-bottom: 15px;
+  }
+  .devman_tm_service .service_list ul li .title {
+    font-size: 22px;
+    margin-bottom: 15px;
+  }
+  .devman_tm_service .service_list ul li .text {
+    font-size: 15px;
+    line-height: 1.5;
   }
   .devman_tm_news ul {
     margin: 0px;

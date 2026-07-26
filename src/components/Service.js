@@ -24,7 +24,7 @@ const Service = () => {
                     data-wow-duration="1s"
                     key={i}
                   >
-                    <div className="list_inner">
+                    <div className="list_inner" style={{ backgroundImage: `url(${service.img})` }}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img className="svg" src={service.icon} alt="" />
                       <h3 className="title">{service.name}</h3>
@@ -40,7 +40,7 @@ const Service = () => {
                       />
                       <Image
                         className="popup_service_image"
-                        src="/img/service/1.jpg"
+                        src={service.img}
                         alt=""
                         width={300}
                         height={200}

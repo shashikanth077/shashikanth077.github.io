@@ -8,11 +8,7 @@ const DetailsPopup = ({ open, close, data }) => {
       <div className="popup_details">
         <div className="top_image">
           <Image src="/img/thumbs/4-2.png" alt="" width={400} height={300} />
-          <div
-            className="main"
-            data-img-url={data.img}
-            style={{ backgroundImage: `url("${data.img}")` }}
-          />
+          <div className="main popup-image-bg" data-img-url={data.img} />
         </div>
         <div className="portfolio_main_title">
           <h3>{data.title}</h3>
@@ -29,9 +25,9 @@ const DetailsPopup = ({ open, close, data }) => {
               <p key={i}>{para}</p>
             ))}
             {data.highlights && (
-              <ul style={{ paddingLeft: "20px", marginTop: "16px" }}>
+              <ul className="popup-highlights-list">
                 {data.highlights.map((h, i) => (
-                  <li key={i} style={{ marginBottom: "6px", color: "#54545f" }}>
+                  <li key={i} className="popup-highlights-item">
                     {h}
                   </li>
                 ))}

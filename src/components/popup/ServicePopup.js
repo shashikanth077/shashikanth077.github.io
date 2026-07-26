@@ -8,7 +8,7 @@ const ServicePopup = ({ data, open, close }) => {
         <div className="image">
           <Image src="/img/thumbs/4-2.jpg" alt="" width={400} height={300} />
           <div
-            className="main"
+            className="main project-image"
             data-img-url={data.img}
             style={{ backgroundImage: `url(${data.img})` }}
           />

@@ -10,9 +10,8 @@ const ImgViews = ({ close, src }) => {
     <Fragment>
       <div className="mfp-bg mfp-ready" onClick={() => close(false)}></div>
       <div
-        className="mfp-wrap mfp-close-btn-in mfp-auto-cursor mfp-ready"
+        className="mfp-wrap mfp-close-btn-in mfp-auto-cursor mfp-ready popup-overlay"
         tabIndex={-1}
-        style={{ overflow: "hidden auto" }}
       >
         <div
           className={`mfp-container mfp-s-ready mfp-iframe-holder mfp-img-container`}
