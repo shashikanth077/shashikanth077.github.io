@@ -3637,3 +3637,158 @@ h6 {
     height: 20px;
   }
 }
+
+/* Mobile Small Devices (max-width: 480px) */
+@media (max-width: 480px) {
+  .devman_tm_hero {
+    height: auto;
+    min-height: 100vh;
+    padding-top: 60px;
+    padding-bottom: 40px;
+  }
+
+  .devman_tm_hero .content {
+    flex-direction: column-reverse;
+    padding-top: 20px;
+  }
+
+  .devman_tm_hero .left {
+    width: 100%;
+    padding: 0 20px;
+    text-align: center;
+  }
+
+  .devman_tm_hero .left .inner {
+    padding: 0;
+  }
+
+  .devman_tm_hero .hello {
+    font-size: 16px;
+    margin-bottom: 5px;
+  }
+
+  .devman_tm_hero .name {
+    font-size: 28px;
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+
+  .devman_tm_hero .job {
+    font-size: 16px;
+    margin-bottom: 15px;
+    line-height: 1.5;
+  }
+
+  .devman_tm_hero .text {
+    font-size: 14px;
+    line-height: 1.8;
+    margin-bottom: 25px;
+    max-width: 100%;
+    padding: 0;
+    letter-spacing: 0.2px;
+  }
+
+  .devman_tm_hero .buttons {
+    justify-content: center;
+    margin-top: 15px;
+  }
+
+  .devman_tm_hero .simple_button a {
+    padding: 12px 25px;
+    font-size: 14px;
+  }
+
+  .devman_tm_hero .right {
+    width: 100%;
+    max-width: 250px;
+    margin: 20px auto;
+    padding: 0;
+  }
+
+  .devman_tm_hero .right .image {
+    max-width: 250px;
+  }
+
+  .devman_tm_hero .numbers {
+    display: none;
+  }
+
+  .devman_tm_hero .circle {
+    display: none;
+  }
+
+  .devman_tm_hero .win {
+    display: none;
+  }
+
+  .devman_tm_hero .stroke_1,
+  .devman_tm_hero .stroke_2 {
+    display: none;
+  }
+
+  /* Main title paragraphs on mobile */
+  .devman_tm_main_title {
+    padding: 0 20px;
+  }
+
+  .devman_tm_main_title span {
+    font-size: 18px;
+  }
+
+  .devman_tm_main_title h3 {
+    font-size: 24px;
+  }
+
+  .devman_tm_main_title p {
+    font-size: 14px;
+    line-height: 1.8;
+    max-width: 100%;
+    margin-top: 15px;
+  }
+
+  /* Features on mobile */
+  .devman_tm_features .features_list ul li {
+    width: 100%;
+    padding: 30px 20px;
+  }
+
+  .devman_tm_features .features_list ul li .title span {
+    font-size: 20px;
+  }
+
+  .devman_tm_features .features_list ul li .title h3 {
+    font-size: 20px;
+  }
+
+  .devman_tm_features .features_list ul li .text p {
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  /* About section on mobile */
+  .devman_tm_about .right .text p {
+    font-size: 14px;
+    line-height: 1.8;
+    max-width: 100%;
+  }
+
+  /* Service section on mobile */
+  .devman_tm_service .service_list ul li .list_inner {
+    padding: 30px 15px;
+  }
+
+  .devman_tm_service .service_list ul li .title {
+    font-size: 18px;
+  }
+
+  .devman_tm_service .service_list ul li .text {
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  /* Container padding on mobile */
+  .container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
