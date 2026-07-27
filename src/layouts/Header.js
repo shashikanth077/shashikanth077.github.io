@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { scrollSection, stickyNav } from "../utilits";
+import { assets, navItems, sectionIds } from "../constants";
 
 const Header = () => {
   useEffect(() => {
@@ -13,31 +14,25 @@ const Header = () => {
         <div className="header_inner">
           <div className="logo">
             <a className="light" href="#">
-              <img src="/img/logo/logoss.png" alt="" />
+              <img src={assets.logoLight} alt="" />
             </a>
           </div>
           <div className="menu">
             <ul className="anchor_nav">
-              <li className="current">
-                <a href="#home">Home</a>
-              </li>
-              <li>
-                <a href="#about">About</a>
-              </li>
-              <li>
-                <a href="#portfolio">Portfolio</a>
-              </li>
-              <li>
-                <a href="#service">Service</a>
-              </li>
-              <li>
-                <a href="#contact">Contact</a>
-              </li>
-              <li className="download_cv">
-                <a href="/Shashikanth_Hosur_Ramegowda.pdf" download>
-                  Download CV
-                </a>
-              </li>
+              {navItems.map((item) => {
+                const className = item.download
+                  ? "download_cv"
+                  : item.href === `#${sectionIds.home}`
+                    ? "current"
+                    : "";
+                return (
+                  <li key={item.href} className={className}>
+                    <a href={item.href} download={item.download}>
+                      {item.label}
+                    </a>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         </div>

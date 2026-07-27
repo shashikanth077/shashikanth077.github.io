@@ -1,20 +1,5 @@
-const features_list = [
-  {
-    title: "Full-Stack Expert",
-    icon: "/img/svg/design.svg",
-    text: "12+ years building end-to-end web applications using React, Redux Toolkit, Node.js, PHP, TypeScript, and MySQL — from UI design to API architecture and database optimisation.",
-  },
-  {
-    title: "Cloud & DevOps",
-    icon: "/img/svg/development.svg",
-    text: "Hands-on experience with Docker, Kubernetes, and Azure for CI/CD pipelines, containerised deployments, and scalable cloud infrastructure",
-  },
-  {
-    title: "AI Engineering",
-    icon: "/img/svg/landing.svg",
-    text: "Transitioning into AI Engineering with an upcoming Master's in AI at VILNIUS TECH. Skilled in AI-assisted development using GitHub Copilot and Cursor.",
-  },
-];
+import { featuresData, wowDelay } from "../constants";
+
 const Features = () => {
   return (
     <div className="devman_tm_section">
@@ -22,11 +7,11 @@ const Features = () => {
         <div className="container">
           <div className="features_list">
             <ul>
-              {features_list.map((feature, i) => (
+              {featuresData.map((feature, i) => (
                 <li
                   className="wow fadeInUp"
                   data-wow-duration="1s"
-                  data-wow-delay={`"0.${i * 2}s"`}
+                  data-wow-delay={wowDelay(i)}
                   key={i}
                 >
                   <div className="list_inner">

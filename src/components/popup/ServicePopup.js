@@ -1,12 +1,18 @@
 import Image from "next/image";
 import Popup from "./Popup";
+import { POPUP_PLACEHOLDER_IMAGE } from "../../constants";
 
 const ServicePopup = ({ data, open, close }) => {
   return (
     <Popup open={open} close={close}>
       <div className="service_popup_informations">
         <div className="image">
-          <Image src="/img/thumbs/4-2.jpg" alt="" width={400} height={300} />
+          <Image
+            src={POPUP_PLACEHOLDER_IMAGE}
+            alt=""
+            width={400}
+            height={300}
+          />
           <div
             className="main project-image"
             data-img-url={data.img}

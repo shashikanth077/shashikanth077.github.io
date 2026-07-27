@@ -1,7 +1,7 @@
 import { Fragment, useState } from "react";
 import Image from "next/image";
 import ServicePopup from "./popup/ServicePopup";
-import { serviceData } from "../constants";
+import { sectionIds, serviceData } from "../constants";
 
 const Service = () => {
   const [activeData, setActiveData] = useState({});
@@ -13,7 +13,7 @@ const Service = () => {
         close={() => setOpen(false)}
         data={activeData}
       />
-      <div className="devman_tm_section" id="service">
+      <div className="devman_tm_section" id={sectionIds.service}>
         <div className="devman_tm_service">
           <div className="container">
             <div className="service_list">

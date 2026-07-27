@@ -1,32 +1,32 @@
-import { aboutData } from "../constants";
+import { aboutData, sectionIds, wowDelay } from "../constants";
 import Image from "next/image";
 
 const About = () => {
   return (
-    <div className="devman_tm_section" id="about">
+    <div className="devman_tm_section" id={sectionIds.about}>
       <div className="devman_tm_about">
         <div className="container">
           <div className="about_inner">
             <div className="left">
               <div className="image_wrap">
                 <Image
-                  src="/img/about/1.png"
+                  src={aboutData.mainImage}
                   alt="image"
                   width={400}
                   height={400}
                 />
-                <div className="main" data-img-url="/img/about/2.png" />
+                <div className="main" data-img-url={aboutData.overlayImage} />
                 <div className="extra_image">
                   <div className="image_inner">
                     <Image
-                      src="/img/about/1.png"
+                      src={aboutData.mainImage}
                       alt=""
                       width={300}
                       height={300}
                     />
                     <div
                       className="main_extra"
-                      data-img-url="/img/about/1.png"
+                      data-img-url={aboutData.mainImage}
                     />
                   </div>
                 </div>
@@ -35,7 +35,7 @@ const About = () => {
                     <span
                       className={`icon_${i + 1} wow fadeIn`}
                       data-wow-duration="1s"
-                      data-wow-delay={`0.${i * 2}s`}
+                      data-wow-delay={wowDelay(i)}
                     >
                       <Image
                         className="svg"
@@ -62,7 +62,7 @@ const About = () => {
                 ))}
               </div>
               <div className="devman_tm_button">
-                <a className="anchor" href="#portfolio">
+                <a className="anchor" href={`#${sectionIds.portfolio}`}>
                   View Portfolio
                 </a>
               </div>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { assets, navItems } from "../constants";
 
 const MobileHeader = () => {
   const [toggle, setToggle] = useState(false);
@@ -8,7 +9,7 @@ const MobileHeader = () => {
         <div className="mobile_in">
           <div className="logo">
             <a href="#">
-              <img src="/img/logo/dark.png" alt="" />
+              <img src={assets.logoDark} alt="" />
             </a>
           </div>
           <div className="trigger">
@@ -32,26 +33,13 @@ const MobileHeader = () => {
       >
         <div className="dropdown_inner">
           <ul className="anchor_nav">
-            <li>
-              <a href="#home">Home</a>
-            </li>
-            <li>
-              <a href="#about">About</a>
-            </li>
-            <li>
-              <a href="#portfolio">Portfolio</a>
-            </li>
-            <li>
-              <a href="#service">Service</a>
-            </li>
-            <li>
-              <a href="#contact">Contact</a>
-            </li>
-            <li className="download_cv">
-              <a href="/Shashikanth_Hosur_Ramegowda.pdf" download>
-                Download CV
-              </a>
-            </li>
+            {navItems.map((item) => (
+              <li key={item.href} className={item.download ? "download_cv" : ""}>
+                <a href={item.href} download={item.download}>
+                  {item.label}
+                </a>
+              </li>
+            ))}
           </ul>
         </div>
       </div>

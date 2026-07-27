@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { testimonialsSlider } from "../sliderProps";
 import { dataImage, imgToSVG } from "../utilits";
+import { testimonialsData, testimonialsIntro } from "../constants";
+
 const Testimonials = () => {
   useEffect(() => {
     dataImage();
@@ -13,12 +15,9 @@ const Testimonials = () => {
       <div className="devman_tm_testimonials">
         <div className="container">
           <div className="devman_tm_main_title" data-text-align="center">
-            <span>Testimonial</span>
-            <h3>What Clients Say</h3>
-            <p>
-              Dliquip ex ea commo do conse namber onequa ute irure dolor in
-              reprehen derit in voluptate
-            </p>
+            <span>{testimonialsIntro.eyebrow}</span>
+            <h3>{testimonialsIntro.heading}</h3>
+            <p>{testimonialsIntro.description}</p>
           </div>
           <div
             className="testimonials_list wow fadeInUp"
@@ -28,94 +27,27 @@ const Testimonials = () => {
               {...testimonialsSlider}
               className="owl-carousel owl-theme owl-loaded"
             >
-              <SwiperSlide>
-                <div className="list_inner">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img className="svg" src="/img/svg/quote.svg" alt="" />
-                  <p className="text">
-                    Duis aute irure dolor in repre hen derit in voluptate velit
-                    esse cillum dolore eu fugiat nulla pariatur.
-                  </p>
-                  <div className="details">
-                    <div className="image">
-                      <div
-                        className="main"
-                        data-img-url="/img/testimonials/1.jpg"
-                      />
-                    </div>
-                    <div className="short">
-                      <h3>Selena Brook</h3>
-                      <span>ABC Studio</span>
-                    </div>
-                  </div>
-                </div>
-              </SwiperSlide>
-              <SwiperSlide>
-                <div className="list_inner">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img className="svg" src="/img/svg/quote.svg" alt="" />
-                  <p className="text">
-                    Duis aute irure dolor in repre hen derit in voluptate velit
-                    esse cillum dolore eu fugiat nulla pariatur.
-                  </p>
-                  <div className="details">
-                    <div className="image">
-                      <div
-                        className="main"
-                        data-img-url="/img/testimonials/3.jpg"
-                      />
-                    </div>
-                    <div className="short">
-                      <h3>David Parker</h3>
-                      <span>Designer</span>
+              {testimonialsData.map((testimonial, i) => (
+                <SwiperSlide key={i}>
+                  <div className="list_inner">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img className="svg" src="/img/svg/quote.svg" alt="" />
+                    <p className="text">{testimonial.text}</p>
+                    <div className="details">
+                      <div className="image">
+                        <div
+                          className="main"
+                          data-img-url={testimonial.avatar}
+                        />
+                      </div>
+                      <div className="short">
+                        <h3>{testimonial.name}</h3>
+                        <span>{testimonial.company}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </SwiperSlide>
-              <SwiperSlide>
-                <div className="list_inner">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img className="svg" src="/img/svg/quote.svg" alt="" />
-                  <p className="text">
-                    Duis aute irure dolor in repre hen derit in voluptate velit
-                    esse cillum dolore eu fugiat nulla pariatur.
-                  </p>
-                  <div className="details">
-                    <div className="image">
-                      <div
-                        className="main"
-                        data-img-url="/img/testimonials/4.jpg"
-                      />
-                    </div>
-                    <div className="short">
-                      <h3>Jessica Smith</h3>
-                      <span>Vivaco Group</span>
-                    </div>
-                  </div>
-                </div>
-              </SwiperSlide>
-              <SwiperSlide>
-                <div className="list_inner">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img className="svg" src="/img/svg/quote.svg" alt="" />
-                  <p className="text">
-                    Duis aute irure dolor in repre hen derit in voluptate velit
-                    esse cillum dolore eu fugiat nulla pariatur.
-                  </p>
-                  <div className="details">
-                    <div className="image">
-                      <div
-                        className="main"
-                        data-img-url="/img/testimonials/5.jpg"
-                      />
-                    </div>
-                    <div className="short">
-                      <h3>Collin Mattew</h3>
-                      <span>Photographer</span>
-                    </div>
-                  </div>
-                </div>
-              </SwiperSlide>
+                </SwiperSlide>
+              ))}
               <div className="owl-dots"></div>
             </Swiper>
             <div

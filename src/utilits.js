@@ -1,19 +1,19 @@
+import { timeouts } from "./constants";
+
+const MOBILE_USER_AGENT_REGEX = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i;
+
 const preloader_ = () => {
-  let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(
-    navigator.userAgent,
-  )
-    ? true
-    : false;
+  const isMobile = MOBILE_USER_AGENT_REGEX.test(navigator.userAgent);
   let preloader = document.getElementById("preloader");
 
   if (preloader) {
     if (!isMobile) {
       setTimeout(function () {
         preloader.classList.add("preloaded");
-      }, 800);
+      }, timeouts.preloaderFadeMs);
       setTimeout(function () {
         preloader.remove();
-      }, 2000);
+      }, timeouts.preloaderRemoveMs);
     } else {
       preloader.remove();
     }
@@ -77,7 +77,7 @@ export const preloader = () => {
   preloader_();
   setTimeout(() => {
     document.querySelector("body").classList.add("opened");
-  }, 3000);
+  }, timeouts.bodyOpenDelayMs);
 };
 
 export const aTagClick = () => {
@@ -128,18 +128,6 @@ export const imgToSVG = () => {
           }
         }
       });
-  });
-};
-
-export const activeSection = (value) => {
-  const sections = document.querySelectorAll(".edrea_tm_section");
-  sections.forEach((section) => {
-    let id = section.getAttribute("id");
-    if (id == value) {
-      section.className = "edrea_tm_section active wow animated fadeInUp";
-    } else {
-      section.className = "edrea_tm_section hidden animated";
-    }
   });
 };
 

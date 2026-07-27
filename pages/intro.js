@@ -2,11 +2,12 @@ import Head from "next/head";
 import Image from "next/image";
 import Layout from "../src/layouts/Layout";
 import Mouse from "../src/layouts/Mouse";
+import { assets } from "../src/constants";
 const Intro = () => {
   return (
     <Layout>
       <Head>
-        <title>Devman | Intro</title>
+        <title>Shashikanth H R | Intro</title>
       </Head>
       <div className="devman_tm_intro">
         <div className="devman_tm_intro_fixed_price">
@@ -23,7 +24,7 @@ const Intro = () => {
           </a>
         </div>
         <div className="short_info">
-          <Image src="/img/logo/dark.png" alt="" width={120} height={50} />
+          <Image src={assets.logoDark} alt="" width={120} height={50} />
           <h3>Personal Portfolio React NextJs Template</h3>
         </div>
         <span className="intro_line" />

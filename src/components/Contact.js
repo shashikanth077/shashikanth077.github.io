@@ -1,5 +1,6 @@
 import emailjs from "emailjs-com";
 import { useState } from "react";
+import { contactInfo, contactIntro, sectionIds, timeouts } from "../constants";
 
 const Contact = () => {
   const [mailData, setMailData] = useState({
@@ -51,21 +52,21 @@ const Contact = () => {
   const clearError = () => {
     setTimeout(() => {
       setError(null);
-    }, 3000);
+    }, timeouts.contactErrorClearMs);
   };
   const clearSuccess = () => {
     setTimeout(() => {
       setSuccess(false);
-    }, 4000);
+    }, timeouts.contactSuccessClearMs);
   };
   return (
-    <div className="devman_tm_section" id="contact">
+    <div className="devman_tm_section" id={sectionIds.contact}>
       <div className="devman_tm_contact">
         <div className="container">
           <div className="contact_inner">
             <div className="devman_tm_main_title" data-text-align="left">
-              <span>{`Don't`} be shy</span>
-              <h3>Drop Me a Line</h3>
+              <span>{contactIntro.eyebrow}</span>
+              <h3>{contactIntro.heading}</h3>
             </div>
             <div className="in">
               <div className="left wow fadeInLeft" data-wow-duration="1s">
@@ -76,33 +77,14 @@ const Contact = () => {
                     autoComplete="off"
                     onSubmit={(e) => onSubmit(e)}
                   >
-                    <div
-                      className="returnmessage"
-                      data-success="Your message has been received, We will contact you soon."
-                    />
                     {error && (
-                      <div
-                        className="empty_notice"
-                        style={{ display: "block" }}
-                      >
-                        <span style={{ color: "#e74c3c", fontWeight: "600" }}>
-                          ❌ Please Fill Required Fields
-                        </span>
+                      <div className="empty_notice contact-error-message">
+                        <span>❌ Please Fill Required Fields</span>
                       </div>
                     )}
                     {success && (
-                      <div
-                        className="returnmessage"
-                        style={{
-                          display: "block",
-                          backgroundColor: "#27ae60",
-                          padding: "15px",
-                          borderRadius: "5px",
-                          color: "white",
-                          marginBottom: "20px",
-                        }}
-                      >
-                        <span style={{ fontWeight: "600" }}>
+                      <div className="returnmessage contact-success-message">
+                        <span>
                           ✅ Email sent successfully! Thank you for reaching
                           out. I will get back to you soon.
                         </span>
@@ -144,7 +126,6 @@ const Contact = () => {
                     <div className="devman_tm_button" data-position="left">
                       <input type="submit" value="Submit Message" />
                     </div>
-                    {/* If you want to change mail address to yours, please open modal.php and go to line 4 */}
                   </form>
                 </div>
               </div>
@@ -157,9 +138,7 @@ const Contact = () => {
                       </div>
                       <div className="short">
                         <h3>Address</h3>
-                        <span>
-                          Saulėtekio al. 11, LT-10223 Vilnius, Lithuania
-                        </span>
+                        <span>{contactInfo.address}</span>
                       </div>
                     </div>
                   </li>
@@ -171,8 +150,8 @@ const Contact = () => {
                       <div className="short">
                         <h3>Email</h3>
                         <span>
-                          <a href="mailto:shashikanth033@gmail.com">
-                            shashikanth033@gmail.com
+                          <a href={`mailto:${contactInfo.email}`}>
+                            {contactInfo.email}
                           </a>
                         </span>
                       </div>
@@ -185,7 +164,7 @@ const Contact = () => {
                       </div>
                       <div className="short">
                         <h3>Phone</h3>
-                        <span>+91 8123192799</span>
+                        <span>{contactInfo.phone}</span>
                       </div>
                     </div>
                   </li>

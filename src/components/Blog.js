@@ -1,7 +1,13 @@
 import { Fragment, useState } from "react";
 import Image from "next/image";
 import BlogPopup from "./popup/BlogPopup";
-import { blogData } from "../constants";
+import {
+  BLOG_THUMBNAIL_PLACEHOLDER,
+  blogData,
+  blogIntro,
+  sectionIds,
+  wowDelay,
+} from "../constants";
 
 const Blog = () => {
   const [activeData, setActiveData] = useState({});
@@ -14,16 +20,13 @@ const Blog = () => {
   return (
     <Fragment>
       <BlogPopup open={open} close={() => setOpen(false)} data={activeData} />
-      <div className="devman_tm_section" id="blog">
+      <div className="devman_tm_section" id={sectionIds.blog}>
         <div className="devman_tm_news">
           <div className="container">
             <div className="devman_tm_main_title" data-text-align="center">
-              <span>Latest News</span>
-              <h3>Checkout My Recent Blogs</h3>
-              <p>
-                Dliquip ex ea commo do conse namber onequa ute irure dolor in
-                reprehen derit in voluptate
-              </p>
+              <span>{blogIntro.eyebrow}</span>
+              <h3>{blogIntro.heading}</h3>
+              <p>{blogIntro.description}</p>
             </div>
             <div className="news_list">
               <ul>
@@ -32,12 +35,12 @@ const Blog = () => {
                     key={i}
                     className="wow fadeInUp"
                     data-wow-duration="1s"
-                    data-wow-delay={`0.${i * 2}s`}
+                    data-wow-delay={wowDelay(i)}
                   >
                     <div className="list_inner">
                       <div className="image">
                         <Image
-                          src="/img/thumbs/42-29.jpg"
+                          src={BLOG_THUMBNAIL_PLACEHOLDER}
                           alt=""
                           width={400}
                           height={300}

@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useState } from "react";
 import Image from "next/image";
 import useClickOutside from "../../useClickOutside";
+import { timeouts } from "../../constants";
 
 const ImgViews = ({ close, src }) => {
   let domNode = useClickOutside(() => {
@@ -52,7 +53,7 @@ const ImageView = () => {
           }
         }
       });
-    }, 1500);
+    }, timeouts.linkInterceptDelayMs);
   }, []);
   return (
     <Fragment>

@@ -1,13 +1,13 @@
-import { homeData } from "../constants";
+import { homeData, sectionIds } from "../constants";
 import Image from "next/image";
 import Counter from "./Counter";
 
 const Home = () => {
   return (
-    <div className="devman_tm_section" id="home">
+    <div className="devman_tm_section" id={sectionIds.home}>
       <div className="devman_tm_hero">
         <div className="background">
-          <div className="image" data-img-url="/img/hero/1.jpg" />
+          <div className="image" data-img-url={homeData.backgroundImage} />
         </div>
         <div className="container">
           <div className="content">
@@ -23,7 +23,7 @@ const Home = () => {
                 <p className="text">{homeData.bio}</p>
                 <div className="buttons">
                   <div className="simple_button">
-                    <a className="anchor" href="#about">
+                    <a className="anchor" href={`#${sectionIds.about}`}>
                       About Me
                     </a>
                   </div>
@@ -35,7 +35,7 @@ const Home = () => {
             <div className="right">
               <div className="image">
                 <Image
-                  src="/img/thumbs/53-61.jpg"
+                  src={homeData.placeholderImage}
                   alt=""
                   width={400}
                   height={300}
@@ -43,7 +43,7 @@ const Home = () => {
                 <div className="main" data-img-url={homeData.img} />
                 <span className="win">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/img/svg/award.svg" alt="" className="svg" />
+                  <img src={homeData.awardIcon} alt="" className="svg" />
                 </span>
                 <div className="numbers year">
                   <div className="wrapper">
@@ -72,7 +72,7 @@ const Home = () => {
                 </div>
                 <span className="circle anim_circle">
                   <Image
-                    src="/img/hero/circle.png"
+                    src={homeData.circleImage}
                     alt=""
                     width={150}
                     height={150}

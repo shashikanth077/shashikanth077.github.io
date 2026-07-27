@@ -13,11 +13,7 @@ const Accordion = () => {
 
   return (
     <Fragment>
-      <div
-        className="devman_tm_accordion"
-        data-active={1}
-        data-type="accordion"
-      >
+      <div className="devman_tm_accordion" data-type="accordion">
         {accordionData.map((accordion, i) => (
           <div
             className={`accordion_in ${active == i ? "acc_active" : ""}`}

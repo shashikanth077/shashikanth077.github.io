@@ -62,6 +62,26 @@ html {
 .popup-overlay {
   overflow: hidden auto;
 }
+
+.contact-error-message {
+  display: block;
+}
+.contact-error-message span {
+  color: #e74c3c;
+  font-weight: 600;
+}
+
+.contact-success-message {
+  display: block;
+  background-color: #27ae60;
+  padding: 15px;
+  border-radius: 5px;
+  color: #fff;
+  margin-bottom: 20px;
+}
+.contact-success-message span {
+  font-weight: 600;
+}
 .c-pointer {
   cursor: pointer;
 }

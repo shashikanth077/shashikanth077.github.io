@@ -1,10 +1,14 @@
 import CountUp from "react-countup";
 import ReactVisibilitySensor from "react-visibility-sensor";
+import { timeouts } from "../constants";
+
+const DEFAULT_COUNTER_END = 100;
+
 const Counter = ({ end, decimals }) => {
   return (
     <CountUp
-      end={end ? end : 100}
-      duration={3}
+      end={end ? end : DEFAULT_COUNTER_END}
+      duration={timeouts.counterDurationSec}
       decimals={decimals ? decimals : 0}
     >
       {({ countUpRef, start }) => (

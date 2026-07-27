@@ -5,12 +5,18 @@ import SwiperCore, {
   Pagination,
 } from "swiper";
 SwiperCore.use([Pagination, Navigation, EffectFade, Autoplay]);
+
+const SLIDE_GAP_PX = 25;
+const AUTOPLAY_DELAY_MS = 6000;
+const TABLET_BREAKPOINT_PX = 768;
+const DESKTOP_BREAKPOINT_PX = 1200;
+
 export const testimonialsSlider = {
   slidesPerView: 1,
-  spaceBetween: 25,
+  spaceBetween: SLIDE_GAP_PX,
   loop: true,
   autoplay: {
-    delay: 6000,
+    delay: AUTOPLAY_DELAY_MS,
     disableOnInteraction: false,
   },
   pagination: {
@@ -19,7 +25,7 @@ export const testimonialsSlider = {
   },
   breakpoints: {
     0: { slidesPerView: 1 },
-    768: { slidesPerView: 2, spaceBetween: 25 },
-    1200: { slidesPerView: 3, spaceBetween: 25 },
+    [TABLET_BREAKPOINT_PX]: { slidesPerView: 2, spaceBetween: SLIDE_GAP_PX },
+    [DESKTOP_BREAKPOINT_PX]: { slidesPerView: 3, spaceBetween: SLIDE_GAP_PX },
   },
 };

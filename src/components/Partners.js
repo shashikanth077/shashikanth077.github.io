@@ -1,4 +1,8 @@
 import Image from "next/image";
+import { PARTNERS_COUNT } from "../constants";
+
+const PARTNER_WOW_DELAY_STEP_SEC = 0.2;
+const partnerIndexes = Array.from({ length: PARTNERS_COUNT }, (_, i) => i + 1);
 
 const Partners = ({ dark }) => {
   return (
@@ -7,116 +11,22 @@ const Partners = ({ dark }) => {
         <div className="container">
           <div className="partners_inner">
             <ul>
-              <li>
-                <div className="list_inner">
-                  <Image
-                    className="wow fadeIn"
-                    data-wow-duration="1s"
-                    src={`/img/partners/${dark ? "light" : "dark"}/1.png`}
-                    alt=""
-                    width={150}
-                    height={150}
-                  />
-                  <a className="devman_tm_full_link" href="#" />
-                </div>
-              </li>
-              <li>
-                <div className="list_inner">
-                  <Image
-                    className="wow fadeIn"
-                    data-wow-duration="1s"
-                    data-wow-delay="0.2s"
-                    src={`/img/partners/${dark ? "light" : "dark"}/2.png`}
-                    alt=""
-                    width={150}
-                    height={150}
-                  />
-                  <a className="devman_tm_full_link" href="#" />
-                </div>
-              </li>
-              <li>
-                <div className="list_inner">
-                  <Image
-                    className="wow fadeIn"
-                    data-wow-duration="1s"
-                    data-wow-delay="0.4s"
-                    src={`/img/partners/${dark ? "light" : "dark"}/3.png`}
-                    alt=""
-                    width={150}
-                    height={150}
-                  />
-                  <a className="devman_tm_full_link" href="#" />
-                </div>
-              </li>
-              <li>
-                <div className="list_inner">
-                  <Image
-                    className="wow fadeIn"
-                    data-wow-duration="1s"
-                    data-wow-delay="0.6s"
-                    src={`/img/partners/${dark ? "light" : "dark"}/4.png`}
-                    alt=""
-                    width={150}
-                    height={150}
-                  />
-                  <a className="devman_tm_full_link" href="#" />
-                </div>
-              </li>
-              <li>
-                <div className="list_inner">
-                  <Image
-                    className="wow fadeIn"
-                    data-wow-duration="1s"
-                    src={`/img/partners/${dark ? "light" : "dark"}/5.png`}
-                    alt=""
-                    width={150}
-                    height={150}
-                  />
-                  <a className="devman_tm_full_link" href="#" />
-                </div>
-              </li>
-              <li>
-                <div className="list_inner">
-                  <Image
-                    className="wow fadeIn"
-                    data-wow-duration="1s"
-                    data-wow-delay="0.2s"
-                    src={`/img/partners/${dark ? "light" : "dark"}/6.png`}
-                    alt=""
-                    width={150}
-                    height={150}
-                  />
-                  <a className="devman_tm_full_link" href="#" />
-                </div>
-              </li>
-              <li>
-                <div className="list_inner">
-                  <Image
-                    className="wow fadeIn"
-                    data-wow-duration="1s"
-                    data-wow-delay="0.4s"
-                    src={`/img/partners/${dark ? "light" : "dark"}/7.png`}
-                    alt=""
-                    width={150}
-                    height={150}
-                  />
-                  <a className="devman_tm_full_link" href="#" />
-                </div>
-              </li>
-              <li>
-                <div className="list_inner">
-                  <Image
-                    className="wow fadeIn"
-                    data-wow-duration="1s"
-                    data-wow-delay="0.6s"
-                    src={`/img/partners/${dark ? "light" : "dark"}/8.png`}
-                    alt=""
-                    width={150}
-                    height={150}
-                  />
-                  <a className="devman_tm_full_link" href="#" />
-                </div>
-              </li>
+              {partnerIndexes.map((n, i) => (
+                <li key={n}>
+                  <div className="list_inner">
+                    <Image
+                      className="wow fadeIn"
+                      data-wow-duration="1s"
+                      data-wow-delay={`${(i % 4) * PARTNER_WOW_DELAY_STEP_SEC}s`}
+                      src={`/img/partners/${dark ? "light" : "dark"}/${n}.png`}
+                      alt=""
+                      width={150}
+                      height={150}
+                    />
+                    <a className="devman_tm_full_link" href="#" />
+                  </div>
+                </li>
+              ))}
             </ul>
           </div>
         </div>

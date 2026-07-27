@@ -15,7 +15,7 @@ const CounterSection = () => {
                       <div className="value">
                         <span className="abs">
                           <Counter end={counter.value} />
-                          {counter.smallVlaue ? (
+                          {counter.smallValue ? (
                             <label className="small">+</label>
                           ) : (
                             <label className="big">M</label>

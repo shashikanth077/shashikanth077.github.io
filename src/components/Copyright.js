@@ -1,3 +1,5 @@
+import { siteConfig } from "../constants";
+
 const Copyright = () => {
   return (
     <div className="devman_tm_section">
@@ -8,7 +10,7 @@ const Copyright = () => {
               <p>
                 Developed by{" "}
                 <a href="#" rel="noreferrer" target="_blank">
-                  Shashikanth Hosur Ramegowda
+                  {siteConfig.fullName}
                 </a>{" "}
                 © {new Date().getFullYear()}
               </p>

@@ -15,14 +15,12 @@ import Layout from "../src/layouts/Layout";
 import MobileHeader from "../src/layouts/MobileHeader";
 import Mouse from "../src/layouts/Mouse";
 import ScrollTop from "../src/layouts/ScrollTop";
+import { siteConfig } from "../src/constants";
 const Index = () => {
   return (
     <Layout>
       <Head>
-        <title>
-          Shashikanth Hosur Ramegowda | Full Stack Engineer | UI Developer |
-          React Developer | Web Developer
-        </title>
+        <title>{siteConfig.pageTitle}</title>
       </Head>
       <MobileHeader />
       <Header />

@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useState } from "react";
 import useClickOutside from "../../useClickOutside";
+import { timeouts, videoHosts } from "../../constants";
 
 const VideoPopup_ = ({ close, videoID }) => {
   let domNode = useClickOutside(() => {
@@ -47,9 +48,9 @@ const VideoPopup = () => {
       const a = document.querySelectorAll("a");
       a.forEach((a) => {
         if (
-          a.href.includes("www.youtube.com") ||
-          a.href.includes("vimeo.com") ||
-          a.href.includes("soundcloud.com")
+          a.href.includes(videoHosts.youtube) ||
+          a.href.includes(videoHosts.vimeo) ||
+          a.href.includes(videoHosts.soundcloud)
         ) {
           a.addEventListener("click", (e) => {
             e.preventDefault();
@@ -73,7 +74,7 @@ const VideoPopup = () => {
           });
         }
       });
-    }, 1500);
+    }, timeouts.linkInterceptDelayMs);
   }, []);
   return (
     <Fragment>

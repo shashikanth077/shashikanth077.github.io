@@ -1,6 +1,6 @@
 ﻿import { Fragment, useState } from "react";
 import DetailsPopup from "./popup/DetailsPopup";
-import { portfolioData } from "../constants";
+import { portfolioData, portfolioIntro, sectionIds, wowDelay } from "../constants";
 
 const Portfolio = () => {
   const [activeData, setActiveData] = useState(null);
@@ -18,16 +18,13 @@ const Portfolio = () => {
         close={() => setPopup(false)}
         data={activeData}
       />
-      <div className="devman_tm_section" id="portfolio">
+      <div className="devman_tm_section" id={sectionIds.portfolio}>
         <div className="devman_tm_portfolio">
           <div className="container">
             <div className="devman_tm_main_title" data-text-align="center">
-              <span>Portfolio</span>
-              <h3>Featured Projects</h3>
-              <p>
-                A selection of enterprise-scale products I have architected and
-                delivered across healthcare, fintech, and e-commerce industries.
-              </p>
+              <span>{portfolioIntro.eyebrow}</span>
+              <h3>{portfolioIntro.heading}</h3>
+              <p>{portfolioIntro.description}</p>
             </div>
             <div className="portfolio_list">
               <ul>
@@ -36,7 +33,7 @@ const Portfolio = () => {
                     key={i}
                     className="wow fadeInUp"
                     data-wow-duration="1s"
-                    data-wow-delay={`0.${i * 2}s`}
+                    data-wow-delay={wowDelay(i)}
                   >
                     <div className="list_inner">
                       <div
