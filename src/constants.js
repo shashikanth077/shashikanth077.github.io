@@ -5,7 +5,7 @@ export const homeData = {
   designation: "Master's Student in AI Engineering",
   address: "Vilnius, Lithuania",
   img: "/img/hero/profile.png",
-  bio: "Full-Stack Principal Engineer with 12+ years of experience in healthcare IT, energy, banking, and e-commerce — now based in Vilnius, Lithuania, pursuing a Master's in Engineering of Artificial Intelligence at VILNIUS TECH (VGTU). Leveraging deep expertise in React, Node.js, TypeScript, and systems architecture to transition into AI model design, development, and Generative AI.",
+  bio: "Full-Stack & Front-End Developer with 12+ years of experience in healthcare IT, energy, banking, and e-commerce — based in Vilnius, Lithuania, currently pursuing a Master's in Engineering of Artificial Intelligence at VILNIUS TECH (VGTU). Bringing deep expertise in React, Node.js, TypeScript, and systems architecture, with a growing focus on AI model design, development, and Generative AI.",
   numberOfProject: 15,
   numberofyear: 12,
   backgroundImage: "/img/hero/1.jpg",
@@ -16,13 +16,13 @@ export const homeData = {
 
 // About Data
 export const aboutData = {
-  designation: "Principal Engineer",
+  designation: "Full stack Developer/Frontend Developer",
   title: "I Build Scalable, High-Performance Web Applications",
   mainImage: "/img/about/1.png",
   overlayImage: "/img/about/2.png",
   text: [
-    "Accomplished Principal Engineer with 12+ years of progressive experience in full-stack software development, systems architecture, and engineering team leadership across multinational organisations including Wipro, IBM, Sonata Software, and Theorem Inc.",
-    "Expert in designing and delivering scalable web applications with demonstrated 25–40% operational efficiency improvements. Currently transitioning to AI Engineering, enrolling in the Master's in Engineering of Artificial Intelligence at VILNIUS TECH (VGTU), Lithuania (September 2026).",
+    "Full-Stack and Front-End Developer with 12+ years of progressive experience in software development and systems architecture across multinational organisations including Wipro, IBM, Sonata Software, and Theorem Inc.",
+    "Skilled in designing and delivering scalable web applications with demonstrated 25–40% operational efficiency improvements. Currently based in Vilnius, Lithuania, pursuing a Master's in Engineering of Artificial Intelligence at VILNIUS TECH (VGTU), and open to Front-End or Full-Stack Developer roles across the EU. Authorized for full-time employment with valid EU work permit.",
   ],
   skillIcons: [
     { name: "frontend", icon: "/img/svg/design.svg" },
@@ -43,7 +43,7 @@ export const portfolioData = [
     title: "Clinical Trial Business Rules Engine",
     tech: "React · Redux Toolkit · Node.js · MongoDB · Micro-Frontend · GitLab CI/CD · Docker · Kubernetes",
     description: [
-      "As Principal Engineer at Wipro, architected a full-stack clinical trial business rules engine using React, Redux Toolkit, Node.js, and MongoDB, improving data accuracy for healthcare IT operations.",
+      "Architected a full-stack clinical trial business rules engine using React, Redux Toolkit, Node.js, and MongoDB, improving data accuracy for healthcare IT operations.",
       "Enabled parallel deployments across 3 independent teams by implementing a Micro-Frontend architecture, and drove CI/CD pipelines using GitLab, Docker, and Kubernetes for reliable production releases. Leveraged AI tools (Cursor, Claude, GitHub Copilot) to reduce development time by 30%.",
     ],
     highlights: [
@@ -62,7 +62,7 @@ export const portfolioData = [
     tech: "React · Redux Toolkit · Node.js · Express.js · REST APIs · Material UI · MySQL",
     description: [
       "Delivered IBM's Investor Advisory Portal — a portfolio management and interactive dashboard platform for a banking client — using React, Redux Toolkit, Node.js, Express.js, Material UI, and MySQL.",
-      "Built as part of a 3-year engagement as Senior System Analyst at IBM, mentoring 5 developers through code reviews, technical design, sprint planning, and Agile ceremonies using JIRA and Scrum.",
+      "Built over a 3-year engagement at IBM, collaborating on code reviews, technical design, sprint planning, and Agile ceremonies using JIRA and Scrum.",
     ],
     highlights: [
       "Portfolio management and interactive dashboards for a banking client",
@@ -79,8 +79,8 @@ export const portfolioData = [
     title: "MFL Booking E-Commerce Platform",
     tech: "React · Redux · Node.js · Microservices · JavaScript · HTML5 · CSS3 · REST APIs · GitHub · Azure CI/CD",
     description: [
-      "Managed full-stack development of Sonata Software's MFL Booking e-commerce platform using React, Redux, Node.js, Microservices, JavaScript, HTML5, and CSS3, enabling real-time vendor inventory and purchase order management.",
-      "Improved order processing speed through React UI enhancements, Node.js microservices optimization, and API performance tuning, while managing end-to-end delivery for two enterprise retail clients.",
+      "Developed Sonata Software's MFL Booking e-commerce platform using React, Redux, Node.js, Microservices, JavaScript, HTML5, and CSS3, enabling real-time vendor inventory and purchase order management.",
+      "Improved order processing speed through React UI enhancements, Node.js microservices optimization, and API performance tuning, while supporting end-to-end delivery for two enterprise retail clients.",
     ],
     highlights: [
       "Real-time vendor inventory and purchase order management",
@@ -100,7 +100,7 @@ export const serviceData = [
     description: [
       "Expert full-stack development using React, Redux Toolkit, Node.js, TypeScript, and MySQL. Delivered clinical-data management platforms, energy grid balancing systems, wealth management portals, and e-commerce applications.",
       "Proven track record of improving operational efficiency by 25-40% through UI workflow redesign, data validation layer architecture, back-end API optimisation, and modular microservice-oriented application design.",
-      "Experienced in leading multi-developer teams through Agile/Scrum sprints, conducting code reviews, mentoring junior developers, and delivering zero-defect releases at sprint cadence.",
+      "Experienced working within Agile/Scrum sprints, conducting code reviews, and delivering zero-defect releases at sprint cadence.",
     ],
   },
   {
@@ -274,7 +274,7 @@ export const siteConfig = {
   fullName: "Shashikanth Hosur Ramegowda",
   shortName: "Shashikanth H R",
   pageTitle:
-    "Shashikanth Hosur Ramegowda | Full Stack Engineer | UI Developer | React Developer | Web Developer",
+    "Shashikanth Hosur Ramegowda | Full-Stack Developer | Front-End Developer | React Developer",
   cvFile: "/Shashikanth_Hosur_Ramegowda.pdf",
 };
 
