@@ -1,0 +1,34 @@
+{
+  "name": "devtools-platform",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "libs/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "scripts": {
+    "dev": "concurrently -n remote,shell -c magenta,cyan \"npm:dev:remote\" \"npm:dev:shell\"",
+    "dev:remote": "npm run dev --workspace @devtools/utility-tools",
+    "dev:shell": "npm run dev --workspace @devtools/shell",
+    "build": "npm run build:remote && npm run build:shell && npm run assemble",
+    "build:remote": "npm run build --workspace @devtools/utility-tools",
+    "build:shell": "npm run build --workspace @devtools/shell",
+    "//assemble": "NOT named 'postbuild' — npm would then run it twice, once explicitly from `build` and once via its implicit post-<script> lifecycle hook.",
+    "assemble": "node scripts/postbuild.mjs",
+    "test": "node scripts/postbuild.test.mjs",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^9.1.0",
+    "typescript": "^5.7.2",
+    "vite": "7.3.6"
+  }
+}

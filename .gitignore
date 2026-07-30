@@ -6,6 +6,11 @@ dist/
 build/
 out/
 
+# DevTools platform (tools/) — deps and per-app build output.
+# tools/package-lock.json IS committed: CI runs `npm ci` against it.
+tools/node_modules/
+tools/apps/*/dist/
+
 # Environment variables
 .env
 .env.local

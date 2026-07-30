@@ -6,6 +6,19 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
       "port": 3000
+    },
+    {
+      "name": "tools",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "tools"],
+      "port": 5000,
+      "url": "http://localhost:5000"
+    },
+    {
+      "name": "tools-static",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["tools/scripts/serve-static.mjs"],
+      "port": 4173
     }
   ]
 }
