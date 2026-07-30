@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "baseUrl": ".",
+    "types": ["vite/client", "node"]
+  },
+  "include": [
+    "apps/**/*.ts",
+    "apps/**/*.tsx",
+    "apps/**/*.d.ts",
+    "libs/**/*.ts",
+    "libs/**/*.tsx",
+    "apps/**/vite.config.ts"
+  ],
+  "exclude": ["**/dist/**", "**/node_modules/**"]
+}

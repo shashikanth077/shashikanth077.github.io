@@ -247,6 +247,9 @@ export const navItems = [
   { href: `#${sectionIds.portfolio}`, label: "Portfolio" },
   { href: `#${sectionIds.service}`, label: "Service" },
   { href: `#${sectionIds.contact}`, label: "Contact" },
+  // Real page, not an in-page anchor. scrollSection() only ever matches
+  // "#"-prefixed hrefs, so this entry is simply never marked current.
+  { href: "/tools/", label: "Tools" },
   { href: siteConfig.cvFile, label: "Download CV", download: true },
 ];
 

@@ -1,8 +1,12 @@
-name: Deploy Portfolio to GitHub Pages
+name: Deploy Portfolio and Tools to GitHub Pages
 
+# Builds on every branch and pull request so a broken build is caught before
+# it reaches master. Only master actually publishes — see the `if` on the
+# deploy job below. Without that guard, pushing any branch would overwrite the
+# live site.
 on:
   push:
-    branches: [master]
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -21,16 +25,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      # ---- Portfolio (Next 12) ----
+      # Pinned to Node 18 deliberately: this build is known-good and Next 12
+      # predates Node 22 by three years. The tools build gets its own Node below.
+      - name: Setup Node.js 18 for the portfolio
         uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: npm
 
-      - name: Install dependencies
+      - name: Install portfolio dependencies
         run: npm ci
 
-      - name: Build and Export
+      # Must run BEFORE the tools build: `next export` rewrites out/ wholesale
+      # and would delete out/tools if the order were reversed.
+      - name: Build and Export portfolio
         run: npm run export
         env:
           NODE_ENV: production
@@ -38,6 +47,34 @@ jobs:
           NEXT_PUBLIC_EMAILJS_TEMPLATE_ID: ${{ secrets.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID }}
           NEXT_PUBLIC_EMAILJS_PUBLIC_KEY: ${{ secrets.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY }}
           NEXT_PUBLIC_EMAILJS_TO_EMAIL: ${{ secrets.NEXT_PUBLIC_EMAILJS_TO_EMAIL }}
+
+      # ---- DevTools platform (Vite + Module Federation) ----
+      # Needs Node >=20.19; @module-federation/vite and Vite 7 both refuse 18.
+      - name: Setup Node.js 24 for the tools platform
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: tools/package-lock.json
+
+      - name: Install tools dependencies
+        run: npm ci
+        working-directory: tools
+
+      - name: Typecheck tools
+        run: npm run typecheck
+        working-directory: tools
+
+      # Guards the prerender rewrite. A regex that stops matching would still
+      # build, but every tool page would ship with the shell's generic metadata.
+      - name: Test tools
+        run: npm test
+        working-directory: tools
+
+      # Builds the remote, then the shell, then assembles + prerenders into out/tools.
+      - name: Build tools platform
+        run: npm run build
+        working-directory: tools
 
       - name: Add .nojekyll
         run: touch out/.nojekyll
@@ -48,6 +85,9 @@ jobs:
           path: out
 
   deploy:
+    # Publishing is master-only. Every other ref stops after `build`, which is
+    # what makes it safe to run this workflow on branches and pull requests.
+    if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

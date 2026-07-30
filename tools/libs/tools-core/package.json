@@ -1,0 +1,25 @@
+{
+  "name": "@devtools/tools-core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts"
+  },
+  "//sideEffects": "Every module here is pure functions — no top-level work, no globals. Marking it lets Rollup drop unreferenced re-exports from the barrel, which otherwise pulls bwip-js (1.2MB) into every tool that imports anything from this package.",
+  "sideEffects": false,
+  "dependencies": {
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
+    "bwip-js": "^4.11.2",
+    "dompurify": "^3.4.12",
+    "marked": "^18.0.7",
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "@types/qrcode": "^1.5.5"
+  }
+}
