@@ -22,7 +22,7 @@ export const aboutData = {
   overlayImage: "/img/about/2.png",
   text: [
     "Full-Stack and Front-End Developer with 12+ years of progressive experience in software development and systems architecture across multinational organisations including Wipro, IBM, Sonata Software, and Theorem Inc.",
-    "Skilled in designing and delivering scalable web applications with demonstrated 25–40% operational efficiency improvements. Currently based in Vilnius, Lithuania, pursuing a Master's in Engineering of Artificial Intelligence at VILNIUS TECH (VGTU), and open to Front-End or Full-Stack Developer roles across the EU. Authorized for full-time employment with valid Lithuanian Work Permit permit.",
+    "Skilled in designing and delivering scalable web applications with demonstrated 25–40% operational efficiency improvements. Currently based in Vilnius, Lithuania, pursuing a Master's in Engineering of Artificial Intelligence at VILNIUS TECH (VGTU), and open to Front-End or Full-Stack Developer roles across the Lithuania. Authorized for full-time employment with valid Lithuanian Work Permit permit.",
   ],
   skillIcons: [
     { name: "frontend", icon: "/img/svg/design.svg" },
