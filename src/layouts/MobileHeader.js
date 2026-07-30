@@ -8,9 +8,7 @@ const MobileHeader = () => {
       <div className="mobile_menu_inner">
         <div className="mobile_in">
           <div className="logo">
-            <a href="#">
-              <img src={assets.logoDark} alt={siteConfig.shortName} />
-            </a>
+            <a href="#"></a>
           </div>
           <div className="trigger">
             <div
@@ -34,7 +32,10 @@ const MobileHeader = () => {
         <div className="dropdown_inner">
           <ul className="anchor_nav">
             {navItems.map((item) => (
-              <li key={item.href} className={item.download ? "download_cv" : ""}>
+              <li
+                key={item.href}
+                className={item.download ? "download_cv" : ""}
+              >
                 <a href={item.href} download={item.download}>
                   {item.label}
                 </a>
