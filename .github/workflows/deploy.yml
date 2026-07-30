@@ -1,8 +1,12 @@
 name: Deploy Portfolio and Tools to GitHub Pages
 
+# Builds on every branch and pull request so a broken build is caught before
+# it reaches master. Only master actually publishes — see the `if` on the
+# deploy job below. Without that guard, pushing any branch would overwrite the
+# live site.
 on:
   push:
-    branches: [master]
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -81,6 +85,9 @@ jobs:
           path: out
 
   deploy:
+    # Publishing is master-only. Every other ref stops after `build`, which is
+    # what makes it safe to run this workflow on branches and pull requests.
+    if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
