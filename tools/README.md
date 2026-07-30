@@ -19,14 +19,18 @@ everything else:
 | Category | Examples | Where |
 | --- | --- | --- |
 | Pure computation | JWT decode, UUID, Base64, URL, JSON, Markdown, QR, barcode | Browser |
-| Media manipulation | Image convert/resize, PDF merge/split | Browser (Canvas, `pdf-lib`) |
-| Native binaries | PDF compress, DOCX↔PDF | Genuinely needs a server — **not shipped** |
+| Document structure | PDF merge, split, rotate, delete pages, images→PDF | Browser (`pdf-lib`) |
+| Rasterising / parsing | PDF→images, PDF→text, DOCX→HTML | Browser (`pdf.js`, `mammoth`) |
+| Image processing | Convert, resize, compress | Browser (Canvas) |
+| Native binaries | OCR, Ghostscript-grade compression, true DOCX↔PDF | Needs a server — **approximated or omitted** |
 
-Two-thirds of the catalogue needs no server at all. Putting a UUID generator behind an API gateway
-makes it slower, less private and more expensive than four lines of client-side code. Dropping the
-three tools that genuinely need LibreOffice or Ghostscript kept every shipped tool one that actually
-works properly, and turned "nothing is uploaded" into a guarantee that is true by construction
-rather than by privacy policy.
+23 tools, none of which upload anything. Putting a UUID generator behind an API gateway makes it
+slower, less private and more expensive than four lines of client-side code — and the same argument
+holds surprisingly far up the stack: page-level PDF surgery is pure object-graph editing, and
+`pdf-lib` does it losslessly without ever re-encoding a content stream.
+
+Where the browser genuinely cannot match a server the tool still ships, but says exactly what it is
+giving up. See [The compromised conversions](#the-compromised-conversions).
 
 ### On the micro-frontend split
 
@@ -52,13 +56,18 @@ remote into its own repository with its own workflow is what would make it real.
 tools/
 ├── apps/
 │   ├── shell/              MF host — routing, layout, RTK store, error boundaries
-│   └── utility-tools/      MF remote — 9 tools, also runs standalone
+│   ├── utility-tools/      MF remote — 9 encoding/format/generator tools
+│   ├── pdf-tools/          MF remote — 11 PDF and Word tools
+│   └── image-tools/        MF remote — 3 image tools
 ├── libs/
 │   ├── tools-core/         Pure tool logic. No React import anywhere.
-│   ├── ui/                 Design tokens + shared primitives
+│   ├── ui/                 Design tokens, primitives, file drop / result grid
 │   └── shell-contract/     The only interface a remote may use to reach the shell
 └── scripts/postbuild.mjs   Assembles out/tools + prerenders one page per route
 ```
+
+Each remote runs on its own dev port (5001–5003) and is independently loadable. The shell picks one
+per route from the manifest's `remote` field and passes a slug — it never knows what a tool does.
 
 `libs/tools-core` deliberately imports no React. That keeps every tool unit-testable without a DOM
 renderer, and means a tool could move behind an API later without its logic being rewritten.
@@ -79,7 +88,7 @@ npm run dev
 ```
 
 - Shell: <http://localhost:5000/tools/>
-- Remote standalone: <http://localhost:5001/>
+- Remotes standalone: utility <http://localhost:5001/> · pdf <http://localhost:5002/> · image <http://localhost:5003/>
 
 The dev server uses the same `/tools/` base as production on purpose. Diverging would hide
 basename bugs until deploy, since every in-app link is router-relative.
@@ -104,11 +113,13 @@ and would delete `out/tools` if it ran second. The CI workflow enforces that ord
 
 ## How a tool renders
 
-1. Shell matches `/tools/:slug` and renders `ToolPage`.
-2. `ToolPage` lazily imports `utility_tools/ToolRoutes` — fetched at runtime from
-   `/tools/utility-tools/remoteEntry.js`, so shipping the remote needs no shell rebuild.
-3. The remote maps the slug to a lazily-imported component, so it splits into per-tool chunks
-   rather than shipping all nine on first load.
+1. Shell matches `/tools/:slug`, looks the slug up in the manifest, and renders `ToolPage`.
+2. `ToolPage` lazily imports `<remote>/ToolRoutes` for that route's remote — fetched at runtime from
+   `/tools/<remote>/remoteEntry.js`, so shipping a remote needs no shell rebuild. Only the remote a
+   route actually names is ever downloaded; opening a PDF tool never fetches the image bundle.
+3. The remote maps the slug to a lazily-imported component, so it splits into per-tool chunks rather
+   than shipping all of them on first load. This matters here: bwip-js is 1.2 MB and pdf.js is
+   ~350 KB, and neither reaches a user who doesn't open the tool that needs it.
 4. An `ErrorBoundary` wraps the remote. If it fails to fetch, that one route degrades and the rest
    of the app keeps working — the main runtime payoff of loading remotes at runtime.
 
@@ -144,16 +155,29 @@ prerenderer and the sitemap all read from it, so they cannot drift. The build em
 
 ---
 
-## Not shipped, and why
+## The compromised conversions
 
-| Tool | Reason |
+Three tools do ship, but not at the quality a server-side pipeline would give. Each carries a
+`caveat` in the route manifest that renders as a note at the top of the tool — the limitation is
+stated before the user relies on the output, not discovered afterwards.
+
+| Tool | What actually happens |
 | --- | --- |
-| PDF → DOCX | No open-source converter produces usable output. PDF stores positioned glyphs, not paragraphs; reconstruction is inference. Needs a commercial API. |
-| PDF Compress | Ghostscript. No credible WASM equivalent. |
-| DOCX → PDF | LibreOffice headless — a ~900 MB container. No free tier runs it. |
+| **PDF → Word** | Text is extracted and rebuilt as a plain `.docx`. PDF stores positioned glyphs, not paragraphs, so paragraph breaks are inferred from vertical gaps. Fonts, columns and tables do not survive. Editable in Word, which is the real goal. |
+| **Word → PDF** | Two paths. The download button rasterises via html2canvas — looks right, text becomes an image. **Print to PDF** hands it to the browser's own print engine, which produces real selectable text; the user picks the destination. Word's exact pagination cannot be reproduced. |
+| **Compress PDF** | Rasterises pages to JPEG and rebuilds. Genuinely lossy and one-way. Good on scans; on a text PDF it usually makes the file **bigger**, and the tool says so with the actual numbers after it runs. |
 
-## Roadmap
+Not shipped at all: OCR (no scanned-PDF text recovery), and PDF password *cracking* — the unlock
+path only strips permission flags from files that already open without a password.
 
-- **Slice 2** — `image-tools` remote: JPG⇄PNG⇄WebP, resize, compress (Canvas / `wasm-vips`).
-- **Slice 3** — `pdf-tools` remote: merge, split (`pdf-lib`), HTML→PDF. Password/unlock depends on
-  `qpdf-wasm` proving usable; if it doesn't hold up, those get cut like the tools above.
+## Two things worth knowing about pdf.js
+
+Both cost real debugging time, so they are commented at the call site in `pdf-render.ts`:
+
+- **`canvas` and `canvasContext` are mutually exclusive.** `canvasContext` is the legacy path and
+  requires `canvas: null`. Passing both leaves the render promise pending forever — no error, no
+  rejection, just a hang.
+- **`intent: "print"`, not the default `"display"`.** pdf.js drives its render loop with
+  `requestAnimationFrame` for display intent, and browsers stop firing that in a hidden tab. A user
+  who starts a long conversion and switches tabs would watch it stall. `"print"` schedules with
+  `setTimeout`, and is the more accurate intent for output that becomes a file.

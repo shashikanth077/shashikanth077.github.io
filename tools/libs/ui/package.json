@@ -8,9 +8,13 @@
   "exports": {
     ".": "./src/index.ts",
     "./tokens.css": "./src/tokens.css",
-    "./components.css": "./src/components.css"
+    "./components.css": "./src/components.css",
+    "./files.css": "./src/files.css"
   },
   "sideEffects": ["*.css"],
+  "dependencies": {
+    "@devtools/tools-core": "*"
+  },
   "peerDependencies": {
     "react": "^19.0.0"
   }

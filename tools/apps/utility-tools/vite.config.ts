@@ -20,8 +20,8 @@ export default defineConfig(({ command }) => ({
       // tries to pre-bundle the symlinked package and chokes on raw .ts/.tsx.
       "@devtools/tools-core": resolve(lib("tools-core"), "index.ts"),
       "@devtools/shell-contract": resolve(lib("shell-contract"), "index.ts"),
-      "@devtools/ui/tokens.css": resolve(lib("ui"), "tokens.css"),
-      "@devtools/ui/components.css": resolve(lib("ui"), "components.css"),
+      // Trailing slash first so any subpath resolves generically — see shell config.
+      "@devtools/ui/": `${lib("ui")}/`,
       "@devtools/ui": resolve(lib("ui"), "index.ts"),
     },
   },

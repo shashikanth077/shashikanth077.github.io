@@ -26,7 +26,13 @@ const toolsRoot = resolve(here, "..");
 const repoRoot = resolve(toolsRoot, "..");
 
 const SHELL_DIST = join(toolsRoot, "apps/shell/dist");
-const REMOTE_DIST = join(toolsRoot, "apps/utility-tools/dist");
+
+/** Each remote is copied to out/tools/<dir>/, matching the entry URLs in the shell's config. */
+const REMOTES = [
+  { dir: "utility-tools", dist: join(toolsRoot, "apps/utility-tools/dist") },
+  { dir: "pdf-tools", dist: join(toolsRoot, "apps/pdf-tools/dist") },
+  { dir: "image-tools", dist: join(toolsRoot, "apps/image-tools/dist") },
+];
 const OUT_ROOT = join(repoRoot, "out");
 const OUT_TOOLS = join(OUT_ROOT, "tools");
 const SITEMAP = join(OUT_ROOT, "sitemap.xml");
@@ -135,7 +141,11 @@ async function mergeSitemap(routes) {
 
 async function main() {
   if (!existsSync(SHELL_DIST)) fail(`shell build missing at ${SHELL_DIST} — run "npm run build:shell" first.`);
-  if (!existsSync(REMOTE_DIST)) fail(`remote build missing at ${REMOTE_DIST} — run "npm run build:remote" first.`);
+  for (const remote of REMOTES) {
+    if (!existsSync(remote.dist)) {
+      fail(`remote build missing at ${remote.dist} — run "npm run build:remotes" first.`);
+    }
+  }
   if (!existsSync(OUT_ROOT)) {
     fail(
       `out/ does not exist. The portfolio must build first — run "npm run export" at the repo root, ` +
@@ -154,8 +164,10 @@ async function main() {
   await mkdir(OUT_TOOLS, { recursive: true });
 
   await cp(SHELL_DIST, OUT_TOOLS, { recursive: true });
-  await cp(REMOTE_DIST, join(OUT_TOOLS, "utility-tools"), { recursive: true });
-  console.log(`  · copied shell + utility-tools`);
+  for (const remote of REMOTES) {
+    await cp(remote.dist, join(OUT_TOOLS, remote.dir), { recursive: true });
+  }
+  console.log(`  · copied shell + ${REMOTES.length} remotes`);
 
   // routes.json is a build artefact, not something to serve.
   await rm(join(OUT_TOOLS, "routes.json"), { force: true });

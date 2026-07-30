@@ -9,6 +9,7 @@ import { store } from "./store.js";
 
 import "@devtools/ui/tokens.css";
 import "@devtools/ui/components.css";
+import "@devtools/ui/files.css";
 import "./shell.css";
 
 /**
