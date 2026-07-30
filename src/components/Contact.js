@@ -66,7 +66,7 @@ const Contact = () => {
           <div className="contact_inner">
             <div className="devman_tm_main_title" data-text-align="left">
               <span>{contactIntro.eyebrow}</span>
-              <h3>{contactIntro.heading}</h3>
+              <h2>{contactIntro.heading}</h2>
             </div>
             <div className="in">
               <div className="left wow fadeInLeft" data-wow-duration="1s">

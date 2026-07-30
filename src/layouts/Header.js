@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { scrollSection, stickyNav } from "../utilits";
-import { assets, navItems, sectionIds } from "../constants";
+import { assets, navItems, sectionIds, siteConfig } from "../constants";
 
 const Header = () => {
   useEffect(() => {
@@ -13,9 +13,7 @@ const Header = () => {
       <div className="container">
         <div className="header_inner">
           <div className="logo">
-            <a className="light" href="#">
-              <img src={assets.logoLight} alt="" />
-            </a>
+            <a className="light" href="#"></a>
           </div>
           <div className="menu">
             <ul className="anchor_nav">

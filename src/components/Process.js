@@ -10,7 +10,7 @@ const Process = () => {
             <div className="left">
               <div className="devman_tm_main_title" data-text-align="left">
                 <span>{processIntro.eyebrow}</span>
-                <h3>{processIntro.heading}</h3>
+                <h2>{processIntro.heading}</h2>
                 <p>{processIntro.description}</p>
               </div>
             </div>

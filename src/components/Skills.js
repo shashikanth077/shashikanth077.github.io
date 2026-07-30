@@ -34,7 +34,7 @@ const Skills = () => {
         <div className="container">
           <div className="devman_tm_main_title" data-text-align="center">
             <span>{skillsIntro.eyebrow}</span>
-            <h3>{skillsIntro.heading}</h3>
+            <h2>{skillsIntro.heading}</h2>
             <p>{skillsIntro.description}</p>
           </div>
           <div className="skills_wrapper">

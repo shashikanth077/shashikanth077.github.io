@@ -414,6 +414,8 @@ h6 {
 }
 .devman_tm_header .logo img {
   max-width: 200px;
+  max-height: 50px;
+  width: auto;
 }
 .devman_tm_header .logo .light {
   display: block;
@@ -1009,7 +1011,7 @@ h6 {
   font-family: var(--font-family-extra);
   font-weight: 600;
 }
-.devman_tm_about .right .title h3 {
+.devman_tm_about .right .title h2 {
   font-size: 48px;
   line-height: 1.25;
 }
@@ -1149,7 +1151,7 @@ h6 {
   font-family: var(--font-family-extra);
   font-weight: 600;
 }
-.devman_tm_main_title h3 {
+.devman_tm_main_title h2 {
   font-size: 48px;
   line-height: 1.25;
   margin-bottom: 30px;
@@ -2257,7 +2259,7 @@ h6 {
 .devman_tm_contact .left {
   width: 50%;
 }
-.devman_tm_contact .devman_tm_main_title h3 {
+.devman_tm_contact .devman_tm_main_title h2 {
   color: #fff;
 }
 .devman_tm_contact .fields {
@@ -2957,6 +2959,8 @@ h6 {
   }
   .devman_tm_header .logo img {
     max-width: 150px;
+    max-height: 45px;
+    width: auto;
   }
   .devman_tm_hero .hello {
     font-size: 30px;
@@ -3037,7 +3041,7 @@ h6 {
   .devman_tm_about .right .title span {
     font-size: 20px;
   }
-  .devman_tm_about .right .title h3 {
+  .devman_tm_about .right .title h2 {
     font-size: 35px;
   }
   .devman_tm_about .right {
@@ -3112,7 +3116,7 @@ h6 {
   .devman_tm_main_title span {
     font-size: 20px;
   }
-  .devman_tm_main_title h3 {
+  .devman_tm_main_title h2 {
     font-size: 35px;
     margin-bottom: 20px;
   }
@@ -3352,7 +3356,7 @@ h6 {
   .devman_tm_about .right .title span {
     font-size: 20px;
   }
-  .devman_tm_about .right .title h3 {
+  .devman_tm_about .right .title h2 {
     font-size: 30px;
   }
   .devman_tm_counter_section .counter_list ul li {
@@ -3382,7 +3386,7 @@ h6 {
   .devman_tm_main_title span {
     font-size: 20px;
   }
-  .devman_tm_main_title h3 {
+  .devman_tm_main_title h2 {
     font-size: 30px;
   }
   .devman_tm_portfolio ul li .content {
@@ -3736,7 +3740,7 @@ h6 {
     font-size: 18px;
   }
 
-  .devman_tm_main_title h3 {
+  .devman_tm_main_title h2 {
     font-size: 24px;
   }
 

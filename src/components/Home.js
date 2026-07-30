@@ -14,9 +14,9 @@ const Home = () => {
             <div className="left">
               <div className="inner">
                 <h3 className="hello">Hello {`I'm`}</h3>
-                <h3 className="name">
+                <h1 className="name">
                   {homeData.firstName} {homeData.lastName}
-                </h3>
+                </h1>
                 <h3 className="job">
                   {homeData.designation} from {homeData.address}
                 </h3>

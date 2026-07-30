@@ -9,19 +9,21 @@ import Portfolio from "../src/components/Portfolio";
 import Process from "../src/components/Process";
 import Service from "../src/components/Service";
 import Skills from "../src/components/Skills";
-import Head from "next/head";
 import Header from "../src/layouts/Header";
 import Layout from "../src/layouts/Layout";
 import MobileHeader from "../src/layouts/MobileHeader";
 import Mouse from "../src/layouts/Mouse";
 import ScrollTop from "../src/layouts/ScrollTop";
+import Seo from "../src/components/Seo";
 import { siteConfig } from "../src/constants";
 const Index = () => {
   return (
     <Layout>
-      <Head>
-        <title>{siteConfig.pageTitle}</title>
-      </Head>
+      <Seo
+        title={siteConfig.pageTitle}
+        description={siteConfig.description}
+        path="/"
+      />
       <MobileHeader />
       <Header />
       <Home />

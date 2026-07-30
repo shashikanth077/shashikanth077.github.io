@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://shashikanth077.github.io/sitemap.xml

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { assets, navItems } from "../constants";
+import { assets, navItems, siteConfig } from "../constants";
 
 const MobileHeader = () => {
   const [toggle, setToggle] = useState(false);
@@ -9,7 +9,7 @@ const MobileHeader = () => {
         <div className="mobile_in">
           <div className="logo">
             <a href="#">
-              <img src={assets.logoDark} alt="" />
+              <img src={assets.logoDark} alt={siteConfig.shortName} />
             </a>
           </div>
           <div className="trigger">

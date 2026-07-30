@@ -23,7 +23,7 @@ const Portfolio = () => {
           <div className="container">
             <div className="devman_tm_main_title" data-text-align="center">
               <span>{portfolioIntro.eyebrow}</span>
-              <h3>{portfolioIntro.heading}</h3>
+              <h2>{portfolioIntro.heading}</h2>
               <p>{portfolioIntro.description}</p>
             </div>
             <div className="portfolio_list">

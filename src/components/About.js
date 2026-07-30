@@ -1,4 +1,4 @@
-import { aboutData, sectionIds, wowDelay } from "../constants";
+import { aboutData, sectionIds, siteConfig, wowDelay } from "../constants";
 import Image from "next/image";
 
 const About = () => {
@@ -11,7 +11,7 @@ const About = () => {
               <div className="image_wrap">
                 <Image
                   src={aboutData.mainImage}
-                  alt="image"
+                  alt={`${siteConfig.shortName} — ${aboutData.designation}`}
                   width={400}
                   height={400}
                 />
@@ -54,7 +54,7 @@ const About = () => {
                 <span>
                   {`I'm`} a {aboutData.designation}
                 </span>
-                <h3>{aboutData.title}</h3>
+                <h2>{aboutData.title}</h2>
               </div>
               <div className="text">
                 {aboutData.text.map((text, i) => (

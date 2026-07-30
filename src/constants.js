@@ -136,46 +136,6 @@ export const serviceData = [
   },
 ];
 
-// Blog Data
-export const blogData = [
-  {
-    title: "Jim Morisson Says when the musics over turn off the light",
-    category: "Web Development",
-    date: "02 June, 2022",
-    author: "John Smith",
-    img: "/img/news/1.jpg",
-    description: [
-      "Orido is a leading web design agency with an award-winning design team that creates innovative, effective websites that capture your brand, improve your conversion rates, and maximize your revenue to help grow your business and achieve your goals.",
-      "In today's digital world, your website is the first interaction consumers have with your business. That's why almost 95 percent of a user's first impression relates to web design. It's also why web design services can have an immense impact on your company's bottom line.",
-      "That's why more companies are not only reevaluating their website's design but also partnering with Orido, the web design agency that's driven more than $2.4 billion in revenue for its clients. With over 50 web design awards under our belt, we're confident we can design a custom website that drives sales for your unique business.",
-    ],
-  },
-  {
-    title: "Jim Morisson Says when the musics over turn off the light",
-    category: "Web Development",
-    date: "02 June, 2022",
-    author: "John Smith",
-    img: "/img/news/2.jpg",
-    description: [
-      "Orido is a leading web design agency with an award-winning design team that creates innovative, effective websites that capture your brand, improve your conversion rates, and maximize your revenue to help grow your business and achieve your goals.",
-      "In today's digital world, your website is the first interaction consumers have with your business. That's why almost 95 percent of a user's first impression relates to web design. It's also why web design services can have an immense impact on your company's bottom line.",
-      "That's why more companies are not only reevaluating their website's design but also partnering with Orido, the web design agency that's driven more than $2.4 billion in revenue for its clients. With over 50 web design awards under our belt, we're confident we can design a custom website that drives sales for your unique business.",
-    ],
-  },
-  {
-    title: "Jim Morisson Says when the musics over turn off the light",
-    category: "Web Development",
-    date: "02 June, 2022",
-    author: "John Smith",
-    img: "/img/news/3.jpg",
-    description: [
-      "Orido is a leading web design agency with an award-winning design team that creates innovative, effective websites that capture your brand, improve your conversion rates, and maximize your revenue to help grow your business and achieve your goals.",
-      "In today's digital world, your website is the first interaction consumers have with your business. That's why almost 95 percent of a user's first impression relates to web design. It's also why web design services can have an immense impact on your company's bottom line.",
-      "That's why more companies are not only reevaluating their website's design but also partnering with Orido, the web design agency that's driven more than $2.4 billion in revenue for its clients. With over 50 web design awards under our belt, we're confident we can design a custom website that drives sales for your unique business.",
-    ],
-  },
-];
-
 // Accordion Data
 export const accordionData = [
   {
@@ -238,34 +198,6 @@ export const skillsData = [
   { label: "GraphQL / REST APIs", value: 70 },
 ];
 
-// Testimonials Data
-export const testimonialsData = [
-  {
-    name: "Selena Brook",
-    company: "ABC Studio",
-    avatar: "/img/testimonials/1.jpg",
-    text: "Duis aute irure dolor in repre hen derit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-  },
-  {
-    name: "David Parker",
-    company: "Designer",
-    avatar: "/img/testimonials/3.jpg",
-    text: "Duis aute irure dolor in repre hen derit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-  },
-  {
-    name: "Jessica Smith",
-    company: "Vivaco Group",
-    avatar: "/img/testimonials/4.jpg",
-    text: "Duis aute irure dolor in repre hen derit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-  },
-  {
-    name: "Collin Mattew",
-    company: "Photographer",
-    avatar: "/img/testimonials/5.jpg",
-    text: "Duis aute irure dolor in repre hen derit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-  },
-];
-
 // Number of partner logos available at /img/partners/{light|dark}/{1..N}.png
 export const PARTNERS_COUNT = 8;
 
@@ -276,6 +208,15 @@ export const siteConfig = {
   pageTitle:
     "Shashikanth Hosur Ramegowda | Full-Stack Developer | Front-End Developer | React Developer",
   cvFile: "/Shashikanth_Hosur_Ramegowda.pdf",
+  siteUrl: "https://shashikanth077.github.io",
+  description:
+    "Shashikanth Hosur Ramegowda is a Full-Stack & Front-End Developer with 12+ years of experience in React, Node.js, and TypeScript across healthcare, banking, and e-commerce, based in Vilnius, Lithuania.",
+  // Existing hero photo, reused as the social share preview image.
+  // A dedicated 1200x630 banner would render better on social cards, but none exists yet.
+  ogImage: "/img/hero/profile.png",
+  socialLinks: {
+    linkedin: "https://www.linkedin.com/in/shashikanth-hr/",
+  },
 };
 
 // Contact section details. Kept separate from homeData.address on purpose —
@@ -288,15 +229,14 @@ export const contactInfo = {
 };
 
 // Anchor ids shared between the nav menu (navItems below) and each section's
-// own `id` attribute (Home.js, About.js, Portfolio.js, Service.js, Contact.js,
-// Blog.js) — update once here instead of in six different files.
+// own `id` attribute (Home.js, About.js, Portfolio.js, Service.js, Contact.js)
+// — update once here instead of in five different files.
 export const sectionIds = {
   home: "home",
   about: "about",
   portfolio: "portfolio",
   service: "service",
   contact: "contact",
-  blog: "blog",
 };
 
 // Primary navigation — consumed by both Header.js (desktop) and
@@ -312,8 +252,8 @@ export const navItems = [
 
 // Shared brand assets
 export const assets = {
-  logoLight: "/img/logo/logoss.png",
-  logoDark: "/img/logo/dark.png",
+  logoLight: "/img/logo/logo.png",
+  logoDark: "/img/logo/logo.png",
   favicon: "/img/logo/fevicon.png",
 };
 
@@ -369,20 +309,6 @@ export const skillsIntro = {
   heading: "Technologies I Work With — Full Stack Expert",
   description:
     "12+ years of hands-on experience across the full stack — from React frontends to Node.js APIs, PHP backends, cloud infrastructure, and DevOps.",
-};
-
-export const testimonialsIntro = {
-  eyebrow: "Testimonial",
-  heading: "What Clients Say",
-  description:
-    "Dliquip ex ea commo do conse namber onequa ute irure dolor in reprehen derit in voluptate",
-};
-
-export const blogIntro = {
-  eyebrow: "Latest News",
-  heading: "Checkout My Recent Blogs",
-  description:
-    "Dliquip ex ea commo do conse namber onequa ute irure dolor in reprehen derit in voluptate",
 };
 
 export const processIntro = {
