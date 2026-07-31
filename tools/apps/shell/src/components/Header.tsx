@@ -61,7 +61,7 @@ export function Header() {
       </button>
 
       <NavLink to={ROUTER_HOME} className="shell-brand" onClick={() => setOpenMenu(null)}>
-        <span className="shell-brand__mark" aria-hidden="true" />
+        <span className="shell-brand__mark" aria-hidden="true">{brand.productIcon}</span>
         <span className="shell-brand__text">
           <span className="shell-brand__name">{brand.productName}</span>
           <span className="shell-brand__by">by {brand.authorName}</span>

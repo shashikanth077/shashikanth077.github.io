@@ -1,4 +1,4 @@
-# DevTools Studio
+# ToolNest
 
 A micro-frontend developer-tools platform. Every tool runs entirely in the browser — no backend,
 no account, and no file ever leaves the user's machine.

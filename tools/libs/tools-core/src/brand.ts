@@ -9,7 +9,8 @@
 
 export const brand = {
   /** The platform's own name — distinct from "Shashikanth H R", the person. */
-  productName: "DevTools Studio",
+  productName: "ToolNest",
+  productIcon: "🏗️",
   authorName: "Shashikanth Hosur Ramegowda",
   portfolioUrl: "https://shashikanth077.github.io/",
   linkedinUrl: "https://www.linkedin.com/in/shashikanth-hr/",
