@@ -230,6 +230,55 @@ export function looksScanned(pages: ExtractedPage[]): boolean {
 }
 
 /* ------------------------------------------------------------------ */
+/* Password-unlock via rasterisation                                    */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Opens a user-password PDF with the supplied password, rasterises every page
+ * to JPEG, and rebuilds as a new unencrypted PDF.
+ *
+ * The output is lossier than owner-password unlock (text becomes images) because
+ * pdf-lib cannot decrypt user-password content streams — pdfjs renders them to
+ * canvas first, then pdf-lib embeds those canvases.
+ *
+ * Throws a pdfjs PasswordException (name === "PasswordException") if the
+ * password is wrong — callers can detect this with needsPassword().
+ */
+export async function unlockWithPassword(
+  bytes: ArrayBuffer,
+  password: string,
+  onProgress?: (done: number, total: number) => void,
+): Promise<Uint8Array> {
+  const { PDFDocument } = await import("pdf-lib");
+  const { doc, pageCount, close } = await openPdf(bytes, password);
+  const out = await PDFDocument.create();
+  const blobs: Array<{ blob: Blob; width: number; height: number; url: string }> = [];
+
+  try {
+    for (let n = 1; n <= pageCount; n++) {
+      const canvas = await renderPageToCanvas(doc, n, 2);
+      const blob = await canvasToBlob(canvas, "image/jpeg", 0.92);
+      blobs.push({ blob, width: canvas.width, height: canvas.height, url: URL.createObjectURL(blob) });
+      canvas.width = 0;
+      canvas.height = 0;
+      onProgress?.(n, pageCount);
+    }
+
+    for (const { blob, width, height } of blobs) {
+      const jpeg = await blob.arrayBuffer();
+      const embedded = await out.embedJpg(jpeg);
+      const page = out.addPage([width, height]);
+      page.drawImage(embedded, { x: 0, y: 0, width, height });
+    }
+  } finally {
+    await close();
+    blobs.forEach((b) => URL.revokeObjectURL(b.url));
+  }
+
+  return out.save();
+}
+
+/* ------------------------------------------------------------------ */
 /* Lossy compression                                                    */
 /* ------------------------------------------------------------------ */
 

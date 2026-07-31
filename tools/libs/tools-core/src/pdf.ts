@@ -268,6 +268,18 @@ export async function removeRestrictions(bytes: ArrayBuffer): Promise<Uint8Array
  * cannot decrypt user-password PDFs (those that need a password to open),
  * so those will throw on load.
  */
+/**
+ * Thrown when unlockPdf encounters a user-password protected PDF.
+ * The UI catches this specific type to show a password input instead of
+ * a generic error message.
+ */
+export class PdfPasswordRequiredError extends Error {
+  readonly name = "PdfPasswordRequiredError";
+  constructor() {
+    super("This PDF requires a password to open. Enter it below to unlock.");
+  }
+}
+
 export async function unlockPdf(
   bytes: ArrayBuffer,
 ): Promise<{ data: Uint8Array; wasEncrypted: boolean }> {
@@ -279,11 +291,10 @@ export async function unlockPdf(
     const pages = await out.copyPages(doc, doc.getPageIndices());
     pages.forEach((page) => out.addPage(page));
   } catch {
-    throw new Error(
-      "This PDF is protected with an open password and cannot be unlocked here — " +
-        "enter the password in your PDF reader first, then save a copy and try again. " +
-        "This tool removes owner-password restrictions (no-print, no-copy, no-edit) only.",
-    );
+    // copyPages fails when the PDF has a user-password (open password) because
+    // the content streams are encrypted blobs pdf-lib cannot parse.
+    // Signal to the UI to show a password field.
+    throw new PdfPasswordRequiredError();
   }
 
   return { data: await out.save(), wasEncrypted };

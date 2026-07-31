@@ -250,7 +250,8 @@ export const toolRoutes: ToolRoute[] = [
     remote: "pdf",
     icon: "🔓",
     caveat:
-      "Removes owner-password restriction flags only. A PDF that needs a password to open requires the password first.",
+      "Owner-password restrictions (no-print, no-copy, no-edit) are removed without a password. " +
+      "Open-password PDFs can be unlocked by entering the password — the output is rebuilt from page images, so text stops being selectable.",
   },
 
   /* ================ Image Toolkit ================ */
