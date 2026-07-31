@@ -26,6 +26,16 @@ const TOOLS: Record<string, ComponentType> = {
   "js-beautifier": lazy(() => import("../tools/JsBeautifier.js")),
   "diff-checker": lazy(() => import("../tools/DiffChecker.js")),
   "unit-converter": lazy(() => import("../tools/UnitConverter.js")),
+  "bmi-calculator": lazy(() => import("../tools/BmiCalculator.js")),
+  "bmr-calculator": lazy(() => import("../tools/BmrCalculator.js")),
+  "calorie-calculator": lazy(() => import("../tools/CalorieCalculator.js")),
+  "body-fat-calculator": lazy(() => import("../tools/BodyFatCalculator.js")),
+  "lean-body-mass-calculator": lazy(() => import("../tools/LeanBodyMassCalculator.js")),
+  "ideal-weight-calculator": lazy(() => import("../tools/IdealWeightCalculator.js")),
+  "waist-hip-ratio-calculator": lazy(() => import("../tools/WaistHipCalculator.js")),
+  "waist-height-ratio-calculator": lazy(() => import("../tools/WaistHeightCalculator.js")),
+  "healthy-weight-calculator": lazy(() => import("../tools/HealthyWeightCalculator.js")),
+  "body-surface-area-calculator": lazy(() => import("../tools/BodySurfaceAreaCalculator.js")),
 };
 
 /** Lets the shell check ownership before it bothers mounting the remote. */

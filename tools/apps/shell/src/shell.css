@@ -9,10 +9,11 @@
 
 /* ---------- toolkit color utility classes ---------- */
 
-.tk-pdf   { --tk: var(--tk-pdf);   --tk-soft: var(--tk-pdf-soft);   --tk-glow: var(--tk-pdf-glow); }
-.tk-image { --tk: var(--tk-image); --tk-soft: var(--tk-image-soft); --tk-glow: var(--tk-image-glow); }
-.tk-qr    { --tk: var(--tk-qr);   --tk-soft: var(--tk-qr-soft);   --tk-glow: var(--tk-qr-glow); }
-.tk-dev   { --tk: var(--tk-dev);   --tk-soft: var(--tk-dev-soft);   --tk-glow: var(--tk-dev-glow); }
+.tk-pdf    { --tk: var(--tk-pdf);    --tk-soft: var(--tk-pdf-soft);    --tk-glow: var(--tk-pdf-glow); }
+.tk-image  { --tk: var(--tk-image);  --tk-soft: var(--tk-image-soft);  --tk-glow: var(--tk-image-glow); }
+.tk-qr     { --tk: var(--tk-qr);     --tk-soft: var(--tk-qr-soft);     --tk-glow: var(--tk-qr-glow); }
+.tk-dev    { --tk: var(--tk-dev);    --tk-soft: var(--tk-dev-soft);    --tk-glow: var(--tk-dev-glow); }
+.tk-health { --tk: var(--tk-health); --tk-soft: var(--tk-health-soft); --tk-glow: var(--tk-health-glow); }
 
 /* ---------- header ---------- */
 

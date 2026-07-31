@@ -21,9 +21,14 @@ export type RemoteName = "utility" | "image" | "pdf";
  * Tool groupings, shown as the top-level menu items in the header.
  * Each toolkit maps to a distinct color in the design system.
  */
-export type Toolkit = "pdf" | "image" | "qr" | "dev";
+export type Toolkit = "pdf" | "image" | "qr" | "dev" | "health";
 
 export const TOOLKIT_META: Record<Toolkit, { label: string; tagline: string; icon: string }> = {
+  health: {
+    label: "Health Calculators",
+    tagline: "BMI, BMR, body fat, ideal weight and more — all calculated privately in your browser.",
+    icon: "🩺",
+  },
   pdf: {
     label: "PDF Toolkit",
     tagline: "Merge, split, convert, compress and unlock PDF files — everything runs in your browser.",
@@ -57,7 +62,10 @@ export type ToolCategory =
   | "Formatting"
   | "Inspection"
   | "Generators"
-  | "Utilities";
+  | "Utilities"
+  | "Body Metrics"
+  | "Nutrition"
+  | "Weight Management";
 
 export interface ToolRoute {
   /** URL segment under BASE_PATH — also the prerendered directory name. */
@@ -540,6 +548,128 @@ export const toolRoutes: ToolRoute[] = [
     remote: "utility",
     icon: "⇄",
   },
+
+  /* ================ Health Calculators ================ */
+  {
+    slug: "bmi-calculator",
+    name: "BMI Calculator",
+    tagline: "Calculate your Body Mass Index and find out your weight category.",
+    description:
+      "Free online BMI calculator for adults. Enter your height and weight to get your Body Mass Index with a visual gauge showing underweight, normal, overweight and obese ranges. Supports metric and imperial units. Runs entirely in your browser — nothing is uploaded.",
+    keywords: ["bmi calculator", "body mass index", "bmi chart", "healthy weight bmi", "bmi for adults", "calculate bmi online"],
+    toolkit: "health",
+    category: "Body Metrics",
+    remote: "utility",
+    icon: "⚖️",
+  },
+  {
+    slug: "bmr-calculator",
+    name: "BMR Calculator",
+    tagline: "Find your Basal Metabolic Rate — calories burned at complete rest.",
+    description:
+      "Calculate your Basal Metabolic Rate (BMR) using the Mifflin-St Jeor equation, the most accurate formula for most adults. Enter your weight, height, age and biological sex. Metric and imperial supported. Nothing is uploaded.",
+    keywords: ["bmr calculator", "basal metabolic rate", "bmr formula", "resting metabolic rate", "bmr mifflin st jeor"],
+    toolkit: "health",
+    category: "Nutrition",
+    remote: "utility",
+    icon: "🔥",
+  },
+  {
+    slug: "calorie-calculator",
+    name: "Daily Calorie Calculator",
+    tagline: "Estimate how many calories you need each day based on your activity level.",
+    description:
+      "Calculate your Total Daily Energy Expenditure (TDEE) based on BMR and activity level. See calorie targets for weight loss, maintenance and muscle gain. Mifflin-St Jeor formula. Runs in your browser — private by design.",
+    keywords: ["calorie calculator", "tdee calculator", "daily calorie needs", "calorie intake calculator", "how many calories should i eat"],
+    toolkit: "health",
+    category: "Nutrition",
+    remote: "utility",
+    icon: "🥗",
+  },
+  {
+    slug: "body-fat-calculator",
+    name: "Body Fat Percentage Calculator",
+    tagline: "Estimate your body fat percentage using the US Navy method.",
+    description:
+      "Calculate your body fat percentage using the US Navy circumference method. Enter waist, neck (and hip for women) measurements along with height. Includes a visual gauge and fitness category. Metric and imperial supported.",
+    keywords: ["body fat calculator", "body fat percentage", "navy body fat formula", "body fat measurement", "how to calculate body fat"],
+    toolkit: "health",
+    category: "Body Metrics",
+    remote: "utility",
+    icon: "💪",
+  },
+  {
+    slug: "lean-body-mass-calculator",
+    name: "Lean Body Mass Calculator",
+    tagline: "Calculate your lean mass — everything your body except fat.",
+    description:
+      "Calculate lean body mass (LBM) — the weight of your muscles, bones, organs and water, excluding fat. Uses the Boer and James formulas for height/weight estimates, or accepts a direct body fat percentage input. Metric and imperial supported.",
+    keywords: ["lean body mass calculator", "lbm calculator", "lean mass formula", "muscle mass calculator", "fat free mass"],
+    toolkit: "health",
+    category: "Body Metrics",
+    remote: "utility",
+    icon: "🏋️",
+  },
+  {
+    slug: "ideal-weight-calculator",
+    name: "Ideal Body Weight Calculator",
+    tagline: "See your ideal weight range from four established medical formulas.",
+    description:
+      "Calculate ideal body weight using four established medical formulas: Hamwi, Devine, Robinson and Miller. Enter your height and sex to get a comparison across all formulas. Metric and imperial supported. Runs in your browser.",
+    keywords: ["ideal body weight calculator", "ideal weight formula", "hamwi formula", "devine formula", "ideal weight for height"],
+    toolkit: "health",
+    category: "Weight Management",
+    remote: "utility",
+    icon: "🎯",
+  },
+  {
+    slug: "waist-hip-ratio-calculator",
+    name: "Waist-to-Hip Ratio Calculator",
+    tagline: "Assess your cardiovascular risk from your waist and hip measurements.",
+    description:
+      "Calculate your waist-to-hip ratio (WHR) and find out your cardiovascular health risk level. Uses WHO risk classification. Enter waist and hip measurements in cm or inches. Runs entirely in your browser.",
+    keywords: ["waist to hip ratio calculator", "whr calculator", "waist hip ratio health", "cardiovascular risk body shape", "apple pear body shape"],
+    toolkit: "health",
+    category: "Body Metrics",
+    remote: "utility",
+    icon: "📏",
+  },
+  {
+    slug: "waist-height-ratio-calculator",
+    name: "Waist-to-Height Ratio Calculator",
+    tagline: "A single number that predicts metabolic risk better than BMI alone.",
+    description:
+      "Calculate your waist-to-height ratio (WHtR), a simple metric that predicts metabolic and cardiovascular risk across different ethnicities. A ratio below 0.5 is the widely cited healthy target. Metric and imperial supported.",
+    keywords: ["waist to height ratio calculator", "whtr calculator", "waist height ratio", "metabolic risk calculator", "central obesity calculator"],
+    toolkit: "health",
+    category: "Body Metrics",
+    remote: "utility",
+    icon: "📐",
+  },
+  {
+    slug: "healthy-weight-calculator",
+    name: "Healthy Weight Range Calculator",
+    tagline: "Find the weight range that puts you in the healthy BMI zone for your height.",
+    description:
+      "Enter your height to instantly see the weight range that falls within the healthy BMI band (18.5–24.9). Also shows the ranges for underweight, overweight and obese bands. Metric and imperial supported. Nothing is uploaded.",
+    keywords: ["healthy weight calculator", "healthy weight range", "healthy bmi weight", "weight for height chart", "ideal weight range"],
+    toolkit: "health",
+    category: "Weight Management",
+    remote: "utility",
+    icon: "✅",
+  },
+  {
+    slug: "body-surface-area-calculator",
+    name: "Body Surface Area Calculator",
+    tagline: "Calculate BSA using the Mosteller, DuBois and Haycock formulas.",
+    description:
+      "Calculate body surface area (BSA) in square metres using three established formulas: Mosteller, DuBois & DuBois, and Haycock. BSA is used in clinical settings for drug dosing and cardiac output calculations. Metric and imperial supported.",
+    keywords: ["body surface area calculator", "bsa calculator", "mosteller formula", "dubois formula", "haycock bsa", "clinical bsa"],
+    toolkit: "health",
+    category: "Body Metrics",
+    remote: "utility",
+    icon: "🧬",
+  },
 ];
 
 /**
@@ -602,7 +732,7 @@ export function visibleRoutes(): ToolRoute[] {
 
 /** The header menus: toolkit → its categories → its routes. Hidden routes excluded. */
 export function groupByToolkit(): Array<[Toolkit, Array<[ToolCategory, ToolRoute[]]>]> {
-  return (["pdf", "image", "qr", "dev"] as const).map((toolkit) => [
+  return (["health", "pdf", "image", "qr", "dev"] as const).map((toolkit) => [
     toolkit,
     groupByCategory(routesFor(toolkit).filter((r) => !r.hidden)),
   ]);
