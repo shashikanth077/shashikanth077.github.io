@@ -226,6 +226,36 @@ export const toolRoutes: ToolRoute[] = [
       "Flattens pages to images, so text stops being selectable — and a text-only PDF will usually get bigger, not smaller.",
   },
   {
+    slug: "edit-pdf",
+    name: "Edit PDF",
+    tagline: "Add text, draw, and highlight — annotate any PDF right in your browser.",
+    description:
+      "Free browser-based PDF editor. Add text boxes, draw with a pen, highlight important passages, " +
+      "and download the annotated PDF — everything runs locally, no upload. " +
+      "Perfect for filling forms, signing documents, marking up contracts, or leaving notes on any PDF.",
+    keywords: [
+      "edit pdf",
+      "pdf editor",
+      "annotate pdf",
+      "add text to pdf",
+      "highlight pdf",
+      "draw on pdf",
+      "sign pdf",
+      "pdf markup",
+      "pdf editor online free",
+      "edit pdf in browser",
+      "fill pdf form",
+      "pdf annotation tool",
+    ],
+    toolkit: "pdf",
+    category: "Organize",
+    remote: "pdf",
+    icon: "✏️",
+    caveat:
+      "This is a PDF annotator — it adds text, drawings and highlights on top of pages. " +
+      "It does not re-flow or replace the existing text inside a PDF (no browser tool can, because PDF stores positioned glyphs, not editable paragraphs).",
+  },
+  {
     slug: "unlock-pdf",
     name: "Unlock PDF",
     tagline: "Remove print, copy and edit restrictions from a locked PDF — free, no upload.",

@@ -34,6 +34,7 @@ const TOOLS: Record<string, ComponentType> = {
   ),
   "compress-pdf": lazy(() => import("../tools/CompressPdf.js")),
   "unlock-pdf": lazy(() => import("../tools/UnlockPdf.js")),
+  "edit-pdf": lazy(() => import("../tools/EditPdf.js")),
 };
 
 export function ownsSlug(slug: string): boolean {
