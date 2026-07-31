@@ -155,8 +155,12 @@ async function main() {
 
   const routesFile = join(SHELL_DIST, "routes.json");
   if (!existsSync(routesFile)) fail(`${routesFile} missing — the shell's emit-routes plugin did not run.`);
-  const routes = JSON.parse(await readFile(routesFile, "utf8"));
-  if (!Array.isArray(routes) || routes.length === 0) fail("routes.json is empty.");
+  const allRoutes = JSON.parse(await readFile(routesFile, "utf8"));
+  if (!Array.isArray(allRoutes) || allRoutes.length === 0) fail("routes.json is empty.");
+  // Hidden routes get no prerendered page and no sitemap entry — they exist for
+  // dev-only client-side access and never touch production SEO surfaces.
+  const routes = allRoutes.filter((r) => !r.hidden);
+  const hiddenCount = allRoutes.length - routes.length;
 
   console.log("\n  Assembling out/tools …");
 
@@ -179,7 +183,10 @@ async function main() {
     await mkdir(dir, { recursive: true });
     await writeFile(join(dir, "index.html"), buildToolHtml(baseHtml, route), "utf8");
   }
-  console.log(`  · prerendered ${routes.length} tool pages`);
+  console.log(
+    `  · prerendered ${routes.length} tool pages` +
+      (hiddenCount > 0 ? ` (${hiddenCount} hidden route${hiddenCount === 1 ? "" : "s"} skipped)` : ""),
+  );
 
   await mergeSitemap(routes);
 

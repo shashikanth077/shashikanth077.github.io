@@ -1,0 +1,126 @@
+/* ==== Diff Checker ==== */
+
+.diff-empty {
+  padding: var(--space-4);
+  text-align: center;
+  color: var(--success);
+  font-size: 0.875rem;
+  background: var(--success-soft);
+  border: 1px solid color-mix(in srgb, var(--success) 25%, transparent);
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+}
+
+.diff-scroll {
+  overflow: auto;
+  max-height: 34rem;
+  background: var(--bg);
+}
+
+.diff-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  table-layout: fixed;
+}
+
+.diff-table td {
+  padding: 1px 0;
+  vertical-align: top;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* --- line numbers --- */
+
+.diff-num {
+  width: 3rem;
+  min-width: 3rem;
+  padding: 1px 0.5rem !important;
+  text-align: right;
+  color: var(--text-faint);
+  font-size: 0.75rem;
+  user-select: none;
+  background: var(--surface-alt);
+  border-right: 1px solid var(--line);
+}
+
+.diff-num--added,
+.diff-num--removed {
+  color: var(--text-soft);
+  font-weight: 500;
+}
+
+/* --- diff cells --- */
+
+.diff-cell {
+  padding: 1px var(--space-2) !important;
+}
+
+/* Colours use hue overlays over the base bg so text stays readable in both themes. */
+.diff-cell--unchanged {
+  background: transparent;
+  color: var(--text);
+}
+
+.diff-cell--added {
+  background: color-mix(in srgb, var(--success) 12%, transparent);
+  color: var(--text);
+}
+
+.diff-cell--removed {
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
+  color: var(--text);
+}
+
+.diff-num--added { background: color-mix(in srgb, var(--success) 18%, var(--surface-alt)); }
+.diff-num--removed { background: color-mix(in srgb, var(--danger) 18%, var(--surface-alt)); }
+
+/* --- word-level highlights (side-by-side edit rows) --- */
+
+.diff-word {
+  display: inline;
+}
+.diff-word--added {
+  background: color-mix(in srgb, var(--success) 32%, transparent);
+  padding: 0 1px;
+  border-radius: 2px;
+}
+.diff-word--removed {
+  background: color-mix(in srgb, var(--danger) 32%, transparent);
+  padding: 0 1px;
+  border-radius: 2px;
+  text-decoration: line-through;
+  text-decoration-color: color-mix(in srgb, var(--danger) 60%, transparent);
+}
+
+/* --- unified view --- */
+
+.diff-marker {
+  width: 1.25rem;
+  min-width: 1.25rem;
+  padding: 1px 0.35rem !important;
+  color: var(--text-faint);
+  font-weight: 700;
+  text-align: center;
+  user-select: none;
+  background: var(--surface-alt);
+  border-right: 1px solid var(--line);
+}
+.diff-marker--added { color: var(--success); background: color-mix(in srgb, var(--success) 18%, var(--surface-alt)); }
+.diff-marker--removed { color: var(--danger); background: color-mix(in srgb, var(--danger) 18%, var(--surface-alt)); }
+
+.diff-empty-cell {
+  display: block;
+  height: 1.55em;
+}
+
+/* Side-by-side splits the space evenly between the two panes. */
+.diff-table--side td.diff-cell {
+  width: calc(50% - 3rem);
+}
+.diff-table--unified td.diff-cell {
+  width: auto;
+}

@@ -1,20 +1,23 @@
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { TOOLKIT_META, findTool, groupByToolkit, routerPath, toolRoutes } from "@devtools/tools-core";
+import { TOOLKIT_META, findTool, groupByToolkit, routerPath, visibleRoutes } from "@devtools/tools-core";
 import type { RootState } from "../store.js";
 
 const TOOLKIT_SECTIONS = groupByToolkit();
+const VISIBLE_COUNT = visibleRoutes().length;
 
 export default function Home() {
   const recentSlugs = useSelector((s: RootState) => s.preferences.recentSlugs);
-  const recent = recentSlugs.map(findTool).filter((t) => t !== undefined);
+  const recent = recentSlugs
+    .map(findTool)
+    .filter((t): t is NonNullable<typeof t> => t !== undefined && !t.hidden);
 
   return (
     <div className="home">
       <section className="home-hero">
         <h1 className="home-hero__title">Free tools that never upload your data</h1>
         <p className="home-hero__lede">
-          {toolRoutes.length} PDF, image and developer utilities that run entirely in your browser.
+          {VISIBLE_COUNT} PDF, image and developer utilities that run entirely in your browser.
           No account, no server, no file leaves your machine — open the network tab and check.
         </p>
         <div className="home-hero__badges">

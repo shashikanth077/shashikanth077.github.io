@@ -22,6 +22,9 @@ const TOOLS: Record<string, ComponentType> = {
   "markdown-preview": lazy(() => import("../tools/MarkdownPreview.js")),
   "qr-code-generator": lazy(() => import("../tools/QrGenerator.js")),
   "barcode-generator": lazy(() => import("../tools/BarcodeGenerator.js")),
+  "css-beautifier": lazy(() => import("../tools/CssBeautifier.js")),
+  "js-beautifier": lazy(() => import("../tools/JsBeautifier.js")),
+  "diff-checker": lazy(() => import("../tools/DiffChecker.js")),
 };
 
 /** Lets the shell check ownership before it bothers mounting the remote. */

@@ -83,6 +83,13 @@ export interface ToolRoute {
    * should know about before they rely on the output.
    */
   caveat?: string;
+  /**
+   * When true: hidden from every navigation surface (header, sidebar, home
+   * page, prerendered SEO output, sitemap). The route is still resolvable in
+   * the shell's client-side router, so the tool is usable at localhost during
+   * development but invisible in production. Use for work-in-progress tools.
+   */
+  hidden?: boolean;
 }
 
 export const toolRoutes: ToolRoute[] = [
@@ -227,6 +234,7 @@ export const toolRoutes: ToolRoute[] = [
   },
   {
     slug: "edit-pdf",
+    hidden: true,
     name: "Edit PDF",
     tagline: "Add text, draw, and highlight — annotate any PDF right in your browser.",
     description:
@@ -433,6 +441,74 @@ export const toolRoutes: ToolRoute[] = [
     remote: "utility",
     icon: "M↓",
   },
+  {
+    slug: "css-beautifier",
+    name: "CSS Beautifier",
+    tagline: "Format and pretty-print CSS with configurable indentation.",
+    description:
+      "Beautify minified or messy CSS with consistent indentation, one selector per line, and readable spacing. " +
+      "Choose 2 or 4 spaces, tabs, and a preferred selector separator. Runs entirely in your browser — nothing is uploaded.",
+    keywords: [
+      "css beautifier",
+      "css formatter",
+      "pretty print css",
+      "format css",
+      "css prettifier",
+      "beautify css online",
+      "unminify css",
+      "css indentation",
+    ],
+    toolkit: "dev",
+    category: "Formatting",
+    remote: "utility",
+    icon: "🎨",
+  },
+  {
+    slug: "js-beautifier",
+    name: "JavaScript Beautifier",
+    tagline: "Format and pretty-print JavaScript, TypeScript and JSON.",
+    description:
+      "Beautify minified or unreadable JavaScript, TypeScript or JSON with configurable indentation and line width. " +
+      "Handles ES modules, JSX-friendly syntax, and semicolons. Runs in your browser — your code never leaves your machine.",
+    keywords: [
+      "javascript beautifier",
+      "js beautifier",
+      "js formatter",
+      "unminify javascript",
+      "pretty print javascript",
+      "format js",
+      "typescript beautifier",
+      "beautify javascript online",
+      "js prettifier",
+    ],
+    toolkit: "dev",
+    category: "Formatting",
+    remote: "utility",
+    icon: "📝",
+  },
+  {
+    slug: "diff-checker",
+    name: "Diff Checker",
+    tagline: "Compare two blocks of text and see additions, removals and changes.",
+    description:
+      "Compare two texts side-by-side or as a unified diff. Highlights added, removed and unchanged lines. " +
+      "Works on any text — code, configuration, documents or logs. Everything runs locally in your browser.",
+    keywords: [
+      "diff checker",
+      "text diff",
+      "compare text",
+      "code diff",
+      "compare two files",
+      "text comparison tool",
+      "diff online",
+      "compare text online",
+      "side by side diff",
+    ],
+    toolkit: "dev",
+    category: "Inspection",
+    remote: "utility",
+    icon: "⇄",
+  },
 ];
 
 /**
@@ -488,10 +564,15 @@ export function routesFor(toolkit: Toolkit): ToolRoute[] {
   return toolRoutes.filter((r) => r.toolkit === toolkit);
 }
 
-/** The header menus: toolkit → its categories → its routes. */
+/** Public routes only — used by nav, home, sitemap and the prerenderer. */
+export function visibleRoutes(): ToolRoute[] {
+  return toolRoutes.filter((r) => !r.hidden);
+}
+
+/** The header menus: toolkit → its categories → its routes. Hidden routes excluded. */
 export function groupByToolkit(): Array<[Toolkit, Array<[ToolCategory, ToolRoute[]]>]> {
   return (["pdf", "image", "qr", "dev"] as const).map((toolkit) => [
     toolkit,
-    groupByCategory(routesFor(toolkit)),
+    groupByCategory(routesFor(toolkit).filter((r) => !r.hidden)),
   ]);
 }
