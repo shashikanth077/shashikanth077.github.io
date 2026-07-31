@@ -105,7 +105,7 @@ const Contact = () => {
                         <li>
                           <input
                             id="email"
-                            type="text"
+                            type="email"
                             name="email"
                             onChange={(e) => onChange(e)}
                             value={email}
