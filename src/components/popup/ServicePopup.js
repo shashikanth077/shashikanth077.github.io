@@ -15,8 +15,8 @@ const ServicePopup = ({ data, open, close }) => {
           />
           <div
             className="main project-image"
-            data-img-url={data.img}
-            style={{ backgroundImage: `url(${data.img})` }}
+            data-img-url={data.img || undefined}
+            style={data.img ? { backgroundImage: `url(${data.img})` } : undefined}
           />
         </div>
         <div className="main_title">

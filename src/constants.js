@@ -252,7 +252,7 @@ export const navItems = [
   // Named after the platform's own brand (see tools/libs/tools-core/src/brand.ts,
   // productName) rather than the generic "Tools" — it's a self-built product,
   // not a link to a third-party page.
-  { href: "/tools/", label: "DevTools Studio" },
+  { href: "/tools/", label: "ToolNest" },
   { href: siteConfig.cvFile, label: "Download CV", download: true },
 ];
 
