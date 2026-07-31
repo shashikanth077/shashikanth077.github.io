@@ -286,6 +286,30 @@ export function StatRow({ items }: { items: Array<{ label: string; value: string
   );
 }
 
+/* ------------------------------------------------------------------ */
+/* Spinner / page loader                                                */
+/* ------------------------------------------------------------------ */
+
+export function Spinner({ label = "Loading…" }: { label?: string }) {
+  return (
+    <div className="dt-spinner" role="status">
+      <svg className="dt-spinner__ring" viewBox="0 0 50 50" aria-hidden="true">
+        <circle cx="25" cy="25" r="20" fill="none" strokeWidth="4" stroke="var(--line-strong)" />
+        <circle
+          className="dt-spinner__arc"
+          cx="25"
+          cy="25"
+          r="20"
+          fill="none"
+          strokeWidth="4"
+          strokeLinecap="round"
+        />
+      </svg>
+      <span className="dt-spinner__label">{label}</span>
+    </div>
+  );
+}
+
 /**
  * Debounces a value so expensive work (schema compilation, barcode rendering)
  * doesn't run on every keystroke.

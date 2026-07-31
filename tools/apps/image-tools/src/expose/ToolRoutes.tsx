@@ -1,4 +1,5 @@
 import { lazy, Suspense, type ComponentType } from "react";
+import { Spinner } from "@devtools/ui";
 
 /** The image-tools remote's single public export. */
 
@@ -34,7 +35,7 @@ export default function ToolRoutes({ slug }: ToolRoutesProps) {
   }
 
   return (
-    <Suspense fallback={<p className="dt-empty">Loading tool…</p>}>
+    <Suspense fallback={<Spinner />}>
       <Tool />
     </Suspense>
   );

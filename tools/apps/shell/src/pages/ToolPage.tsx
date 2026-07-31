@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { findTool, SITE_ORIGIN, toolPath, type RemoteName } from "@devtools/tools-core";
+import { Spinner } from "@devtools/ui";
 import { ErrorBoundary } from "../components/ErrorBoundary.js";
 import { recordVisit, type AppDispatch } from "../store.js";
 import NotFound from "./NotFound.js";
@@ -74,7 +75,7 @@ export default function ToolPage() {
 
   return (
     <ErrorBoundary label={tool.name} resetKey={slug}>
-      <Suspense fallback={<p className="dt-empty">Loading {tool.name}…</p>}>
+      <Suspense fallback={<Spinner label={`Loading ${tool.name}…`} />}>
         <Remote slug={slug} />
       </Suspense>
     </ErrorBoundary>

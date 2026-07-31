@@ -1,4 +1,5 @@
 import { lazy, Suspense, type ComponentType } from "react";
+import { Spinner } from "@devtools/ui";
 
 /**
  * The remote's single public export — the only thing the shell may import.
@@ -47,7 +48,7 @@ export default function ToolRoutes({ slug }: ToolRoutesProps) {
   }
 
   return (
-    <Suspense fallback={<p className="dt-empty">Loading tool…</p>}>
+    <Suspense fallback={<Spinner />}>
       <Tool />
     </Suspense>
   );
