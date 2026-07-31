@@ -1,16 +1,21 @@
 import { lazy, Suspense, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { findTool, SITE_ORIGIN, toolPath } from "@devtools/tools-core";
+import { findTool, SITE_ORIGIN, toolPath, type RemoteName } from "@devtools/tools-core";
 import { ErrorBoundary } from "../components/ErrorBoundary.js";
 import { recordVisit, type AppDispatch } from "../store.js";
 import NotFound from "./NotFound.js";
 
 /**
- * The federated import. Resolved at runtime from the URL configured in
- * vite.config.ts, so shipping a new version of the remote needs no shell rebuild.
+ * The federated imports, resolved at runtime from the URLs configured in
+ * vite.config.ts — so shipping a new version of any remote needs no shell
+ * rebuild. Only the remote a route actually names is ever fetched.
  */
-const UtilityTools = lazy(() => import("utility_tools/ToolRoutes"));
+const REMOTES: Record<RemoteName, ReturnType<typeof lazy>> = {
+  utility: lazy(() => import("utility_tools/ToolRoutes")),
+  pdf: lazy(() => import("pdf_tools/ToolRoutes")),
+  image: lazy(() => import("image_tools/ToolRoutes")),
+};
 
 /**
  * Keeps the document head in sync on client-side navigation.
@@ -65,10 +70,12 @@ export default function ToolPage() {
 
   if (!tool) return <NotFound />;
 
+  const Remote = REMOTES[tool.remote] as React.ComponentType<{ slug: string }>;
+
   return (
     <ErrorBoundary label={tool.name} resetKey={slug}>
       <Suspense fallback={<p className="dt-empty">Loading {tool.name}…</p>}>
-        <UtilityTools slug={slug} />
+        <Remote slug={slug} />
       </Suspense>
     </ErrorBoundary>
   );

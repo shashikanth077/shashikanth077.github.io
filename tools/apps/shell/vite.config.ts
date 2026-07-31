@@ -31,7 +31,13 @@ function emitRoutesJson(): Plugin {
 }
 
 const SHELL_PORT = 5000;
-const UTILITY_REMOTE_PORT = 5001;
+
+/** Remote name → dev port and production sub-path. Keep in step with each remote's vite.config. */
+const REMOTES = [
+  { name: "utility_tools", dir: "utility-tools", port: 5001 },
+  { name: "pdf_tools", dir: "pdf-tools", port: 5002 },
+  { name: "image_tools", dir: "image-tools", port: 5003 },
+] as const;
 
 export default defineConfig(({ command }) => {
   const isBuild = command === "build";
@@ -47,8 +53,10 @@ export default defineConfig(({ command }) => {
       alias: {
         "@devtools/tools-core": resolve(lib("tools-core"), "index.ts"),
         "@devtools/shell-contract": resolve(lib("shell-contract"), "index.ts"),
-        "@devtools/ui/tokens.css": resolve(lib("ui"), "tokens.css"),
-        "@devtools/ui/components.css": resolve(lib("ui"), "components.css"),
+        // Trailing slash first so any subpath (tokens.css, files.css, …)
+        // resolves generically. Without it the bare "@devtools/ui" prefix wins
+        // and produces paths like ".../index.ts/files.css".
+        "@devtools/ui/": `${lib("ui")}/`,
         "@devtools/ui": resolve(lib("ui"), "index.ts"),
       },
     },
@@ -68,16 +76,19 @@ export default defineConfig(({ command }) => {
         // The remote's shape is declared explicitly in src/remotes.d.ts instead,
         // so a prop change breaks the build loudly at compile time.
         dts: false,
-        remotes: {
-          utility_tools: {
-            type: "module",
-            name: "utility_tools",
-            // Build: same-origin sibling directory. Dev: the remote's own server.
-            entry: isBuild
-              ? "/tools/utility-tools/remoteEntry.js"
-              : `http://localhost:${UTILITY_REMOTE_PORT}/remoteEntry.js`,
-          },
-        },
+        // Build: same-origin sibling directories. Dev: each remote's own server.
+        remotes: Object.fromEntries(
+          REMOTES.map((remote) => [
+            remote.name,
+            {
+              type: "module",
+              name: remote.name,
+              entry: isBuild
+                ? `/tools/${remote.dir}/remoteEntry.js`
+                : `http://localhost:${remote.port}/remoteEntry.js`,
+            },
+          ]),
+        ),
         shared: {
           react: { singleton: true, strictVersion: true, requiredVersion: "^19.0.0" },
           "react-dom": { singleton: true, strictVersion: true, requiredVersion: "^19.0.0" },

@@ -29,11 +29,168 @@ export interface ToolRoute {
   /** Feeds <meta name="keywords"> and the JSON-LD keywords field. */
   keywords: string[];
   /** Grouping in the nav. */
-  category: "Encoding" | "Formatting" | "Generators" | "Inspection";
+  category: "PDF" | "Images" | "Encoding" | "Formatting" | "Generators" | "Inspection";
   remote: RemoteName;
+  /**
+   * Shown as a badge on the tool card and a note in the tool itself.
+   * Used where the browser-only implementation has a real limitation the user
+   * should know about before they rely on the output.
+   */
+  caveat?: string;
 }
 
 export const toolRoutes: ToolRoute[] = [
+  /* ---------------- PDF ---------------- */
+  {
+    slug: "merge-pdf",
+    name: "Merge PDF",
+    tagline: "Combine several PDFs into one, in any order.",
+    description:
+      "Combine multiple PDF files into a single document and reorder them before merging. Runs entirely in your browser — your files are never uploaded.",
+    keywords: ["merge pdf", "combine pdf", "join pdf files", "pdf merger free"],
+    category: "PDF",
+    remote: "pdf",
+  },
+  {
+    slug: "split-pdf",
+    name: "Split PDF",
+    tagline: "Extract page ranges, or burst into single pages.",
+    description:
+      "Split a PDF by page ranges or separate every page into its own file, then download the results individually or as a ZIP. Nothing leaves your device.",
+    keywords: ["split pdf", "extract pdf pages", "separate pdf", "pdf splitter"],
+    category: "PDF",
+    remote: "pdf",
+  },
+  {
+    slug: "remove-pdf-pages",
+    name: "Delete PDF Pages",
+    tagline: "Pick pages to keep or remove, visually.",
+    description:
+      "Remove unwanted pages from a PDF by clicking page thumbnails, or keep only a selection. Page content is preserved exactly — nothing is re-encoded.",
+    keywords: ["delete pdf pages", "remove pages from pdf", "pdf page remover"],
+    category: "PDF",
+    remote: "pdf",
+  },
+  {
+    slug: "rotate-pdf",
+    name: "Rotate PDF",
+    tagline: "Turn some or all pages 90, 180 or 270 degrees.",
+    description:
+      "Fix sideways or upside-down scans by rotating selected pages of a PDF. The rotation is stored as page metadata, so quality is untouched.",
+    keywords: ["rotate pdf", "turn pdf pages", "fix pdf orientation"],
+    category: "PDF",
+    remote: "pdf",
+  },
+  {
+    slug: "images-to-pdf",
+    name: "Images to PDF",
+    tagline: "Turn JPG, PNG or WebP files into one PDF.",
+    description:
+      "Combine photos and scans into a single PDF with a choice of page size and fit. Images are embedded at full quality without re-compression where possible.",
+    keywords: ["jpg to pdf", "png to pdf", "images to pdf", "photo to pdf"],
+    category: "PDF",
+    remote: "pdf",
+  },
+  {
+    slug: "pdf-to-images",
+    name: "PDF to Images",
+    tagline: "Render every page as a PNG or JPEG.",
+    description:
+      "Convert PDF pages into PNG or JPEG images at a resolution you choose, then download them individually or as a ZIP. Rendering happens in your browser.",
+    keywords: ["pdf to jpg", "pdf to png", "pdf to image", "convert pdf to picture"],
+    category: "PDF",
+    remote: "pdf",
+  },
+  {
+    slug: "pdf-to-text",
+    name: "PDF to Text",
+    tagline: "Pull the text content out of a PDF.",
+    description:
+      "Extract selectable text from a PDF, page by page, and copy or download it as a plain text file. Works on text PDFs, not scanned images.",
+    keywords: ["pdf to text", "extract text from pdf", "pdf text extractor"],
+    category: "PDF",
+    remote: "pdf",
+    caveat: "Text PDFs only — a scanned page has no text to extract without OCR.",
+  },
+  {
+    slug: "pdf-to-word",
+    name: "PDF to Word",
+    tagline: "Rebuild a PDF's text as an editable .docx.",
+    description:
+      "Extract the text from a PDF and rebuild it as an editable Word document. Best suited to single-column text documents rather than complex layouts.",
+    keywords: ["pdf to word", "pdf to docx", "convert pdf to word free", "pdf to doc"],
+    category: "PDF",
+    remote: "pdf",
+    caveat:
+      "Text only. PDF stores positioned glyphs rather than paragraphs, so fonts, columns and tables will not survive.",
+  },
+  {
+    slug: "word-to-pdf",
+    name: "Word to PDF",
+    tagline: "Convert a .docx into a PDF you can share.",
+    description:
+      "Convert Word documents to PDF in your browser, with a choice between a one-click download and your browser's own print engine for the best text quality.",
+    keywords: ["word to pdf", "docx to pdf", "convert doc to pdf free"],
+    category: "PDF",
+    remote: "pdf",
+    caveat: "Word's exact pagination cannot be reproduced in a browser — expect layout to shift.",
+  },
+  {
+    slug: "word-to-html",
+    name: "Word to HTML",
+    tagline: "Convert a .docx into clean, semantic HTML.",
+    description:
+      "Turn a Word document into clean HTML, mapping Word's heading and quote styles onto real semantic tags. Output is sanitised before display.",
+    keywords: ["word to html", "docx to html", "convert word to web page"],
+    category: "PDF",
+    remote: "pdf",
+  },
+  {
+    slug: "compress-pdf",
+    name: "Compress PDF",
+    tagline: "Shrink scan-heavy PDFs by flattening pages to images.",
+    description:
+      "Reduce the size of image-heavy or scanned PDFs by re-rendering each page as a compressed image. Best for scans; not suitable for text documents.",
+    keywords: ["compress pdf", "reduce pdf size", "shrink pdf", "make pdf smaller"],
+    category: "PDF",
+    remote: "pdf",
+    caveat:
+      "Flattens pages to images, so text stops being selectable — and a text-only PDF will usually get bigger, not smaller.",
+  },
+
+  /* ---------------- Images ---------------- */
+  {
+    slug: "image-converter",
+    name: "Image Converter",
+    tagline: "Convert between JPG, PNG, WebP and AVIF.",
+    description:
+      "Convert images between JPG, PNG, WebP and AVIF with control over quality. Batch-convert many files at once, entirely inside your browser.",
+    keywords: ["jpg to png", "png to jpg", "webp converter", "image converter free"],
+    category: "Images",
+    remote: "image",
+  },
+  {
+    slug: "image-resize",
+    name: "Image Resizer",
+    tagline: "Resize by pixels or percentage, keeping aspect ratio.",
+    description:
+      "Resize one or many images by width, height or percentage, with aspect ratio locked by default. No upload, no quality loss beyond the resize itself.",
+    keywords: ["resize image", "image resizer", "change image size", "bulk resize photos"],
+    category: "Images",
+    remote: "image",
+  },
+  {
+    slug: "image-compress",
+    name: "Image Compressor",
+    tagline: "Hit a target file size without guessing quality.",
+    description:
+      "Compress JPG and WebP images to a target file size. Quality is found by binary search rather than a fixed guess, so you keep as much detail as fits.",
+    keywords: ["compress image", "reduce image size", "image optimizer", "compress jpeg"],
+    category: "Images",
+    remote: "image",
+  },
+
+  /* ---------------- Utilities ---------------- */
   {
     slug: "jwt-decoder",
     name: "JWT Decoder",
@@ -158,7 +315,14 @@ export function findTool(slug: string): ToolRoute | undefined {
 export function groupByCategory(
   routes: ToolRoute[] = toolRoutes,
 ): Array<[ToolRoute["category"], ToolRoute[]]> {
-  const order: ToolRoute["category"][] = ["Encoding", "Formatting", "Generators", "Inspection"];
+  const order: ToolRoute["category"][] = [
+    "PDF",
+    "Images",
+    "Encoding",
+    "Formatting",
+    "Generators",
+    "Inspection",
+  ];
   return order
     .map((c) => [c, routes.filter((r) => r.category === c)] as [ToolRoute["category"], ToolRoute[]])
     .filter(([, items]) => items.length > 0);
