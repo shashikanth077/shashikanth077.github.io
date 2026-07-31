@@ -275,8 +275,16 @@ export async function unlockPdf(
   const wasEncrypted = doc.isEncrypted;
 
   const out = await PDFDocument.create();
-  const pages = await out.copyPages(doc, doc.getPageIndices());
-  pages.forEach((page) => out.addPage(page));
+  try {
+    const pages = await out.copyPages(doc, doc.getPageIndices());
+    pages.forEach((page) => out.addPage(page));
+  } catch {
+    throw new Error(
+      "This PDF is protected with an open password and cannot be unlocked here — " +
+        "enter the password in your PDF reader first, then save a copy and try again. " +
+        "This tool removes owner-password restrictions (no-print, no-copy, no-edit) only.",
+    );
+  }
 
   return { data: await out.save(), wasEncrypted };
 }

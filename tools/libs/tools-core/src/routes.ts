@@ -228,10 +228,23 @@ export const toolRoutes: ToolRoute[] = [
   {
     slug: "unlock-pdf",
     name: "Unlock PDF",
-    tagline: "Remove restrictions from a permission-locked PDF.",
+    tagline: "Remove print, copy and edit restrictions from a locked PDF — free, no upload.",
     description:
-      "Remove owner-password restrictions (no-print, no-copy flags) from a PDF. The file is rebuilt without encryption so all restrictions are lifted.",
-    keywords: ["unlock pdf", "remove pdf password", "pdf unlocker", "remove pdf restrictions"],
+      "Free online PDF unlocker that removes owner-password restrictions (no-print, no-copy, no-edit flags) entirely in your browser. " +
+      "No file is ever uploaded to a server — your document stays private. " +
+      "Drop a permission-locked PDF, click Unlock, and download an unrestricted copy in seconds.",
+    keywords: [
+      "unlock pdf",
+      "remove pdf password",
+      "pdf unlocker",
+      "remove pdf restrictions",
+      "pdf permission remover",
+      "remove pdf print restriction",
+      "remove pdf copy restriction",
+      "pdf unlock online free",
+      "unlock pdf without password",
+      "pdf restriction remover",
+    ],
     toolkit: "pdf",
     category: "Security",
     remote: "pdf",
