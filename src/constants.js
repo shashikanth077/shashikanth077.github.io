@@ -249,7 +249,10 @@ export const navItems = [
   { href: `#${sectionIds.contact}`, label: "Contact" },
   // Real page, not an in-page anchor. scrollSection() only ever matches
   // "#"-prefixed hrefs, so this entry is simply never marked current.
-  { href: "/tools/", label: "Tools" },
+  // Named after the platform's own brand (see tools/libs/tools-core/src/brand.ts,
+  // productName) rather than the generic "Tools" — it's a self-built product,
+  // not a link to a third-party page.
+  { href: "/tools/", label: "DevTools Studio" },
   { href: siteConfig.cvFile, label: "Download CV", download: true },
 ];
 

@@ -39,17 +39,138 @@
   gap: var(--space-2);
   text-decoration: none;
   color: var(--text);
-  font-weight: 650;
-  font-size: 0.9375rem;
-  letter-spacing: -0.01em;
+  flex-shrink: 0;
 }
 .shell-brand__mark {
-  width: 1.125rem;
-  height: 1.125rem;
-  border-radius: 4px;
+  width: 1.375rem;
+  height: 1.375rem;
+  border-radius: 6px;
   background: var(--accent);
   box-shadow: inset 0 0 0 3px var(--surface), 0 0 0 1px var(--accent);
+  flex-shrink: 0;
 }
+.shell-brand__text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+.shell-brand__name {
+  font-weight: 700;
+  font-size: 0.875rem;
+  letter-spacing: -0.01em;
+}
+.shell-brand__by {
+  font-size: 0.625rem;
+  font-weight: 500;
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+}
+@media (max-width: 26rem) {
+  .shell-brand__by { display: none; }
+}
+
+/* ---------- audience mega-menu (desktop only — mobile uses the sidebar) ---------- */
+
+.shell-megaNav {
+  display: none;
+}
+@media (min-width: 60rem) {
+  .shell-megaNav {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    height: 100%;
+    margin-left: var(--space-3);
+  }
+}
+
+.shell-megaNav__item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.shell-megaNav__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  height: 2.25rem;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-soft);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-family: var(--font-ui);
+  cursor: pointer;
+}
+.shell-megaNav__trigger:hover { background: var(--surface-alt); color: var(--text); }
+.shell-megaNav__trigger--open { background: var(--accent-soft); color: var(--accent); }
+
+.shell-megaNav__chevron { transition: transform 0.15s ease; flex-shrink: 0; }
+.shell-megaNav__trigger--open .shell-megaNav__chevron { transform: rotate(180deg); }
+
+.shell-megaPanel {
+  position: absolute;
+  top: calc(100% + 0.6rem);
+  left: 0;
+  z-index: 30;
+  width: max-content;
+  min-width: 30rem;
+  max-width: 42rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-4);
+}
+
+.shell-megaPanel__tagline {
+  font-size: 0.75rem;
+  color: var(--text-faint);
+  margin: 0 0 var(--space-3);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--line);
+}
+
+.shell-megaPanel__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+  gap: var(--space-4);
+}
+
+.shell-megaPanel__heading {
+  font-size: 0.6875rem;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+  font-weight: 600;
+  margin: 0 0 var(--space-2);
+}
+
+.shell-megaPanel__col ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.shell-megaPanel__link {
+  display: block;
+  padding: 0.3rem 0.4rem;
+  margin: 0 -0.4rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.8125rem;
+  color: var(--text-soft);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.shell-megaPanel__link:hover { background: var(--surface-alt); color: var(--accent); }
 
 .shell-burger {
   display: inline-flex;
@@ -95,7 +216,12 @@
   .shell-sidebar {
     position: sticky;
     top: var(--header-h);
-    height: calc(100vh - var(--header-h));
+    /* max-height + align-self:flex-start, not height: shell-body defaults to
+       align-items:stretch, and a fixed height here would force the sidebar —
+       and so the row — to always be a full viewport tall, shoving the footer
+       off-screen below every short tool page regardless of actual content. */
+    align-self: flex-start;
+    max-height: calc(100vh - var(--header-h));
     transform: none;
     flex: 0 0 var(--sidebar-w);
   }
@@ -111,6 +237,19 @@
 }
 @media (min-width: 60rem) {
   .shell-scrim { display: none; }
+}
+
+.shell-navaudience + .shell-navaudience {
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line);
+}
+
+.shell-navaudience__title {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--text);
+  padding: 0 var(--space-2) var(--space-3);
 }
 
 .shell-navgroup + .shell-navgroup { margin-top: var(--space-4); }
@@ -239,3 +378,61 @@
 
 .home-card__name { font-weight: 650; font-size: 0.9375rem; color: var(--text); }
 .home-card__desc { font-size: 0.8125rem; color: var(--text-soft); line-height: 1.45; }
+
+.home-audience { display: flex; flex-direction: column; gap: var(--space-4); }
+
+.home-audience__head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--line-strong);
+}
+
+.home-audience__title {
+  font-size: 1.1875rem;
+  font-weight: 750;
+  letter-spacing: -0.01em;
+}
+
+.home-audience__tagline { font-size: 0.8125rem; color: var(--text-soft); }
+
+/* ---------- footer ---------- */
+
+.shell-footer {
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+  padding: var(--space-4);
+}
+
+.shell-footer__row {
+  max-width: 74rem;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.shell-footer__credit {
+  font-size: 0.8125rem;
+  color: var(--text-faint);
+  margin: 0;
+}
+.shell-footer__credit a {
+  color: var(--text-soft);
+  text-decoration: none;
+}
+.shell-footer__credit a:hover { color: var(--accent); text-decoration: underline; }
+
+.shell-footer__links {
+  display: flex;
+  gap: var(--space-4);
+}
+.shell-footer__links a {
+  font-size: 0.8125rem;
+  color: var(--text-faint);
+  text-decoration: none;
+}
+.shell-footer__links a:hover { color: var(--accent); }

@@ -9,7 +9,7 @@ const Copyright = () => {
             <div className="left wow fadeInLeft" data-wow-duration="1s">
               <p>
                 Developed by{" "}
-                <a href="#" rel="noreferrer" target="_blank">
+                <a href={siteConfig.socialLinks.linkedin} rel="noreferrer" target="_blank">
                   {siteConfig.fullName}
                 </a>{" "}
                 © {new Date().getFullYear()}
