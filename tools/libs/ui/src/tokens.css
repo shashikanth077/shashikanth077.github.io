@@ -38,14 +38,29 @@
 
   --focus:         #0B6E4F;
 
+  /* Toolkit colors — one per menu group */
+  --tk-pdf:        #E8505B;
+  --tk-pdf-soft:   #FEF0F0;
+  --tk-pdf-glow:   #FECDD3;
+  --tk-image:      #10B981;
+  --tk-image-soft: #ECFDF5;
+  --tk-image-glow: #A7F3D0;
+  --tk-qr:         #8B5CF6;
+  --tk-qr-soft:    #F5F3FF;
+  --tk-qr-glow:    #DDD6FE;
+  --tk-dev:        #3B82F6;
+  --tk-dev-soft:   #EFF6FF;
+  --tk-dev-glow:   #BFDBFE;
+
   --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", "Segoe UI Mono", Consolas, "Liberation Mono", monospace;
 
-  --radius:    6px;
-  --radius-sm: 4px;
+  --radius:    8px;
+  --radius-sm: 6px;
 
   --shadow-sm: 0 1px 2px rgba(20, 24, 26, 0.06);
   --shadow-md: 0 2px 8px rgba(20, 24, 26, 0.08);
+  --shadow-lg: 0 4px 16px rgba(20, 24, 26, 0.10);
 
   --space-1: 0.25rem;
   --space-2: 0.5rem;
@@ -87,8 +102,22 @@
 
     --focus:        #4FBF8F;
 
+    --tk-pdf:        #FB7185;
+    --tk-pdf-soft:   #2A1518;
+    --tk-pdf-glow:   #3D1F25;
+    --tk-image:      #34D399;
+    --tk-image-soft: #0D2818;
+    --tk-image-glow: #143D24;
+    --tk-qr:         #A78BFA;
+    --tk-qr-soft:    #1E1733;
+    --tk-qr-glow:    #2D2347;
+    --tk-dev:        #60A5FA;
+    --tk-dev-soft:   #0F2554;
+    --tk-dev-glow:   #1E3A6F;
+
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
     --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.6);
   }
 }
 
@@ -114,8 +143,21 @@
   --success:      #4FBF8F;
   --success-soft: #14251E;
   --focus:        #4FBF8F;
+  --tk-pdf:        #FB7185;
+  --tk-pdf-soft:   #2A1518;
+  --tk-pdf-glow:   #3D1F25;
+  --tk-image:      #34D399;
+  --tk-image-soft: #0D2818;
+  --tk-image-glow: #143D24;
+  --tk-qr:         #A78BFA;
+  --tk-qr-soft:    #1E1733;
+  --tk-qr-glow:    #2D2347;
+  --tk-dev:        #60A5FA;
+  --tk-dev-soft:   #0F2554;
+  --tk-dev-glow:   #1E3A6F;
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 :root[data-theme="light"] {
@@ -139,8 +181,21 @@
   --success:      #0B6E4F;
   --success-soft: #E3F1EA;
   --focus:        #0B6E4F;
+  --tk-pdf:        #E8505B;
+  --tk-pdf-soft:   #FEF0F0;
+  --tk-pdf-glow:   #FECDD3;
+  --tk-image:      #10B981;
+  --tk-image-soft: #ECFDF5;
+  --tk-image-glow: #A7F3D0;
+  --tk-qr:         #8B5CF6;
+  --tk-qr-soft:    #F5F3FF;
+  --tk-qr-glow:    #DDD6FE;
+  --tk-dev:        #3B82F6;
+  --tk-dev-soft:   #EFF6FF;
+  --tk-dev-glow:   #BFDBFE;
   --shadow-sm: 0 1px 2px rgba(20, 24, 26, 0.06);
   --shadow-md: 0 2px 8px rgba(20, 24, 26, 0.08);
+  --shadow-lg: 0 4px 16px rgba(20, 24, 26, 0.10);
 }
 
 /* ---------- reset ---------- */

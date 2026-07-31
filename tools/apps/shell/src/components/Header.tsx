@@ -2,37 +2,28 @@ import { useEffect, useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  AUDIENCE_META,
+  TOOLKIT_META,
   brand,
-  groupByAudience,
+  groupByToolkit,
   ROUTER_HOME,
   routerPath,
-  type Audience,
+  type Toolkit,
 } from "@devtools/tools-core";
 import { setTheme, toggleSidebar, type AppDispatch, type RootState } from "../store.js";
 
 const THEME_LABEL = { system: "Auto", light: "Light", dark: "Dark" } as const;
 const THEME_ORDER = ["system", "light", "dark"] as const;
 
-const AUDIENCE_MENUS = groupByAudience();
+const TOOLKIT_MENUS = groupByToolkit();
 
-/**
- * The primary header — deliberately not a copy of the portfolio's anchor-nav
- * header. This one carries the platform's own identity (DevTools Studio, not
- * the person) and its own interaction pattern: two audience mega-menus, the
- * way a multi-category tool site like Smallpdf organises "PDF" vs "Sign" vs
- * "Convert" behind top-level dropdowns rather than a flat link list.
- */
 export function Header() {
   const dispatch = useDispatch<AppDispatch>();
   const theme = useSelector((s: RootState) => s.preferences.theme);
   const sidebarOpen = useSelector((s: RootState) => s.preferences.sidebarOpen);
 
-  const [openMenu, setOpenMenu] = useState<Audience | null>(null);
+  const [openMenu, setOpenMenu] = useState<Toolkit | null>(null);
   const navRef = useRef<HTMLDivElement>(null);
 
-  // Close on outside click and on Escape — a mega-menu that only closes by
-  // re-clicking its own trigger reads as broken.
   useEffect(() => {
     if (!openMenu) return;
 
@@ -78,45 +69,62 @@ export function Header() {
       </NavLink>
 
       <nav className="shell-megaNav" aria-label="Tool categories" ref={navRef}>
-        {AUDIENCE_MENUS.map(([audience, categories]) => (
-          <div className="shell-megaNav__item" key={audience}>
+        {TOOLKIT_MENUS.map(([toolkit, categories]) => (
+          <div className={`shell-megaNav__item tk-${toolkit}`} key={toolkit}>
             <button
               type="button"
               className={
-                openMenu === audience ? "shell-megaNav__trigger shell-megaNav__trigger--open" : "shell-megaNav__trigger"
+                openMenu === toolkit ? "shell-megaNav__trigger shell-megaNav__trigger--open" : "shell-megaNav__trigger"
               }
-              aria-expanded={openMenu === audience}
-              onClick={() => setOpenMenu((current) => (current === audience ? null : audience))}
+              aria-expanded={openMenu === toolkit}
+              onClick={() => setOpenMenu((current) => (current === toolkit ? null : toolkit))}
             >
-              {AUDIENCE_META[audience].label}
+              <span className="shell-megaNav__dot" aria-hidden="true" />
+              {TOOLKIT_META[toolkit].label}
               <svg className="shell-megaNav__chevron" width="10" height="6" viewBox="0 0 10 6" aria-hidden="true">
                 <path d="M1 1l4 4 4-4" stroke="currentColor" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
 
-            {openMenu === audience && (
+            {openMenu === toolkit && (
               <div className="shell-megaPanel" role="menu">
-                <p className="shell-megaPanel__tagline">{AUDIENCE_META[audience].tagline}</p>
-                <div className="shell-megaPanel__grid">
-                  {categories.map(([category, routes]) => (
-                    <div className="shell-megaPanel__col" key={category}>
-                      <h3 className="shell-megaPanel__heading">{category}</h3>
-                      <ul>
-                        {routes.map((route) => (
-                          <li key={route.slug}>
-                            <NavLink
-                              to={routerPath(route.slug)}
-                              className="shell-megaPanel__link"
-                              onClick={() => setOpenMenu(null)}
-                            >
-                              {route.name}
-                            </NavLink>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
+                <p className="shell-megaPanel__tagline">{TOOLKIT_META[toolkit].tagline}</p>
+                {categories.length === 1 && categories[0] ? (
+                  <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: "1px" }}>
+                    {categories[0][1].map((route) => (
+                      <li key={route.slug}>
+                        <NavLink
+                          to={routerPath(route.slug)}
+                          className="shell-megaPanel__link"
+                          onClick={() => setOpenMenu(null)}
+                        >
+                          {route.name}
+                        </NavLink>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <div className="shell-megaPanel__grid">
+                    {categories.map(([category, routes]) => (
+                      <div className="shell-megaPanel__col" key={category}>
+                        <h3 className="shell-megaPanel__heading">{category}</h3>
+                        <ul>
+                          {routes.map((route) => (
+                            <li key={route.slug}>
+                              <NavLink
+                                to={routerPath(route.slug)}
+                                className="shell-megaPanel__link"
+                                onClick={() => setOpenMenu(null)}
+                              >
+                                {route.name}
+                              </NavLink>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </div>

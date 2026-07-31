@@ -1,19 +1,18 @@
 import { useEffect, type ReactNode } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { AUDIENCE_META, groupByAudience, routerPath } from "@devtools/tools-core";
+import { TOOLKIT_META, groupByToolkit, routerPath } from "@devtools/tools-core";
 import { toggleSidebar, type AppDispatch, type RootState } from "../store.js";
 import { Header } from "./Header.js";
 import { Footer } from "./Footer.js";
 
-const AUDIENCE_MENUS = groupByAudience();
+const TOOLKIT_MENUS = groupByToolkit();
 
 export function Layout({ children }: { children: ReactNode }) {
   const dispatch = useDispatch<AppDispatch>();
   const sidebarOpen = useSelector((s: RootState) => s.preferences.sidebarOpen);
   const location = useLocation();
 
-  // Close the mobile drawer whenever the route changes.
   useEffect(() => {
     if (sidebarOpen) dispatch(toggleSidebar(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -26,12 +25,17 @@ export function Layout({ children }: { children: ReactNode }) {
       <div className="shell-body">
         <aside className={sidebarOpen ? "shell-sidebar shell-sidebar--open" : "shell-sidebar"}>
           <nav aria-label="Tools">
-            {AUDIENCE_MENUS.map(([audience, categories]) => (
-              <div className="shell-navaudience" key={audience}>
-                <h2 className="shell-navaudience__title">{AUDIENCE_META[audience].label}</h2>
+            {TOOLKIT_MENUS.map(([toolkit, categories]) => (
+              <div className={`shell-navtoolkit tk-${toolkit}`} key={toolkit}>
+                <h2 className="shell-navtoolkit__title">
+                  <span className="shell-navtoolkit__dot" aria-hidden="true" />
+                  {TOOLKIT_META[toolkit].label}
+                </h2>
                 {categories.map(([category, routes]) => (
                   <div className="shell-navgroup" key={category}>
-                    <h3 className="shell-navgroup__title">{category}</h3>
+                    {categories.length > 1 && (
+                      <h3 className="shell-navgroup__title">{category}</h3>
+                    )}
                     <ul>
                       {routes.map((route) => (
                         <li key={route.slug}>

@@ -258,3 +258,25 @@ export async function removeRestrictions(bytes: ArrayBuffer): Promise<Uint8Array
   pages.forEach((page) => out.addPage(page));
   return out.save();
 }
+
+/**
+ * Removes owner-password restrictions from a PDF and rebuilds it without
+ * encryption flags. Returns the unlocked bytes and whether the document
+ * was actually encrypted.
+ *
+ * This handles owner-password PDFs (no-print / no-copy flags). pdf-lib
+ * cannot decrypt user-password PDFs (those that need a password to open),
+ * so those will throw on load.
+ */
+export async function unlockPdf(
+  bytes: ArrayBuffer,
+): Promise<{ data: Uint8Array; wasEncrypted: boolean }> {
+  const doc = await load(bytes);
+  const wasEncrypted = doc.isEncrypted;
+
+  const out = await PDFDocument.create();
+  const pages = await out.copyPages(doc, doc.getPageIndices());
+  pages.forEach((page) => out.addPage(page));
+
+  return { data: await out.save(), wasEncrypted };
+}
