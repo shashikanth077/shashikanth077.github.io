@@ -1,35 +1,76 @@
 /* ==== Shared Health Calculator styles ==== */
 
+/* ---- scoped input/button overrides ----
+   Health calculators need larger form elements than
+   the compact developer-tool defaults in dt-*.         */
+
+.hc-field .dt-input,
+.hc-field .dt-select {
+  font-size: 1rem;
+  padding: 0.625rem 3.25rem 0.625rem 0.85rem;
+  height: 2.75rem;
+  border-radius: var(--radius);
+  border-width: 1.5px;
+}
+
+.hc-field .dt-input:focus,
+.hc-field .dt-select:focus {
+  border-color: var(--tk-health, var(--accent));
+  outline: 2px solid var(--tk-health-glow, var(--accent-soft));
+  outline-offset: 0;
+}
+
+.hc-activity-select {
+  font-size: 0.9375rem !important;
+  padding: 0.625rem 0.85rem !important;
+  height: 2.75rem;
+}
+
+/* CTA button inside a panel body */
+.dt-panel__body > .dt-btn--primary,
+.dt-panel__body > div > .dt-btn--primary {
+  font-size: 1rem;
+  padding: 0.75rem 1.5rem;
+  min-height: 2.75rem;
+  border-radius: var(--radius);
+  letter-spacing: 0.01em;
+}
+
 /* ---- unit system toggle ---- */
 
 .hc-unit-toggle {
   display: inline-flex;
   align-items: center;
   background: var(--surface-alt);
-  border: 1px solid var(--line);
+  border: 1.5px solid var(--line);
   border-radius: 999px;
   padding: 3px;
   gap: 2px;
 }
 
 .hc-unit-toggle__btn {
-  padding: 0.3rem 0.85rem;
+  padding: 0.4rem 1rem;
   border: none;
   border-radius: 999px;
   background: transparent;
   color: var(--text-soft);
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   font-weight: 600;
   font-family: var(--font-ui);
   cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
   white-space: nowrap;
 }
 
-.hc-unit-toggle__btn--active {
-  background: var(--surface);
+.hc-unit-toggle__btn:hover:not(.hc-unit-toggle__btn--active) {
   color: var(--text);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background: var(--surface);
+}
+
+.hc-unit-toggle__btn--active {
+  background: var(--tk-health, var(--accent));
+  color: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
 }
 
 /* ---- form layout ---- */
@@ -45,7 +86,7 @@
 .hc-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: var(--space-3);
+  gap: var(--space-4);
 }
 
 .hc-grid--3 {
@@ -55,11 +96,11 @@
 .hc-field {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.45rem;
 }
 
 .hc-field__label {
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   font-weight: 600;
   color: var(--text-soft);
   letter-spacing: 0.01em;
@@ -78,10 +119,10 @@
 
 .hc-field__unit {
   position: absolute;
-  right: 0.75rem;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: var(--text-faint);
+  right: 0.85rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--tk-health, var(--accent));
   font-family: var(--font-mono);
   pointer-events: none;
   white-space: nowrap;
@@ -91,37 +132,36 @@
 
 .hc-gender {
   display: inline-flex;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius);
   overflow: hidden;
 }
 
 .hc-gender__opt {
   flex: 1;
-  padding: 0.5rem 1.2rem;
+  padding: 0.6rem 1.4rem;
   background: transparent;
   border: none;
   cursor: pointer;
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   font-weight: 600;
   font-family: var(--font-ui);
   color: var(--text-soft);
-  transition: background-color 0.12s ease, color 0.12s ease;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.hc-gender__opt:hover:not(.hc-gender__opt--active) {
+  background: var(--surface-alt);
+  color: var(--text);
 }
 
 .hc-gender__opt + .hc-gender__opt {
-  border-left: 1px solid var(--line);
+  border-left: 1.5px solid var(--line);
 }
 
 .hc-gender__opt--active {
   background: var(--tk-health, #0D9488);
   color: #fff;
-}
-
-/* activity select */
-.hc-activity-select {
-  font-size: 0.875rem !important;
-  padding: 0.55rem 0.75rem !important;
 }
 
 /* ---- result card ---- */
@@ -131,10 +171,11 @@
   border-radius: var(--radius);
   overflow: hidden;
   background: var(--surface);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
 }
 
 .hc-result__header {
-  padding: 0.75rem 1.1rem;
+  padding: 0.875rem 1.25rem;
   background: var(--tk-health-soft, #F0FDFA);
   border-bottom: 1px solid var(--line);
   display: flex;
@@ -143,7 +184,7 @@
 }
 
 .hc-result__title {
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.07em;
@@ -151,17 +192,17 @@
 }
 
 .hc-result__body {
-  padding: 1.25rem 1.25rem 1rem;
+  padding: 1.5rem 1.5rem 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 /* the big primary number */
 .hc-big {
   display: flex;
   align-items: baseline;
-  gap: 0.4rem;
+  gap: 0.5rem;
 }
 
 .hc-big__value {
@@ -184,19 +225,20 @@
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.35rem 0.9rem;
+  padding: 0.4rem 1rem;
   border-radius: 999px;
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   font-weight: 700;
   color: #fff;
   align-self: flex-start;
+  letter-spacing: 0.01em;
 }
 
 /* description under the badge */
 .hc-desc {
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   color: var(--text-soft);
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
 /* ---- horizontal gauge bar ---- */
@@ -204,12 +246,12 @@
 .hc-gauge {
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.35rem;
 }
 
 .hc-gauge__bar {
   position: relative;
-  height: 1.5rem;
+  height: 1.75rem;
   border-radius: 999px;
   overflow: visible;
 }
@@ -218,12 +260,12 @@
   position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 0.9rem;
-  height: 2rem;
+  width: 1rem;
+  height: 2.25rem;
   background: var(--surface);
-  border: 2.5px solid var(--text);
-  border-radius: 4px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  border: 3px solid var(--text);
+  border-radius: 5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   z-index: 2;
   transition: left 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
@@ -234,26 +276,27 @@
 }
 
 .hc-gauge__tick {
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-family: var(--font-mono);
   color: var(--text-faint);
   line-height: 1;
+  font-weight: 500;
 }
 
 .hc-gauge__zones {
   display: flex;
-  gap: 2px;
-  margin-top: 0.25rem;
+  gap: 3px;
+  margin-top: 0.3rem;
 }
 
 .hc-gauge__zone {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.2rem 0.4rem;
-  border-radius: 4px;
-  font-size: 0.6875rem;
-  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-radius: 5px;
+  font-size: 0.75rem;
+  font-weight: 700;
   color: #fff;
   white-space: nowrap;
   overflow: hidden;
@@ -264,37 +307,43 @@
 
 .hc-stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-  gap: var(--space-2);
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-3);
 }
 
 .hc-stat {
-  padding: 0.85rem 1rem;
+  padding: 1rem 1.1rem;
   background: var(--surface-alt);
   border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius);
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
+  gap: 0.25rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.hc-stat:hover {
+  border-color: var(--line-strong);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .hc-stat__label {
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--text-faint);
 }
 
 .hc-stat__value {
-  font-size: 1.1875rem;
+  font-size: 1.25rem;
   font-weight: 700;
   font-family: var(--font-mono);
   color: var(--text);
 }
 
 .hc-stat__sub {
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   color: var(--text-faint);
   font-family: var(--font-mono);
 }
@@ -304,7 +353,7 @@
 .hc-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
 }
 
 .hc-table th {
@@ -314,12 +363,12 @@
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--text-faint);
-  padding: 0.5rem 0.75rem;
+  padding: 0.6rem 0.85rem;
   border-bottom: 2px solid var(--line);
 }
 
 .hc-table td {
-  padding: 0.65rem 0.75rem;
+  padding: 0.75rem 0.85rem;
   border-bottom: 1px solid var(--line);
   vertical-align: middle;
 }
@@ -328,19 +377,21 @@
 .hc-table tr:hover td { background: var(--surface-alt); }
 
 .hc-table__formula {
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text);
 }
 
 .hc-table__note {
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   color: var(--text-faint);
+  margin-top: 0.15rem;
 }
 
 .hc-table__val {
   font-family: var(--font-mono);
   font-weight: 700;
-  color: var(--text);
+  color: var(--tk-health, var(--accent));
+  font-size: 1rem;
 }
 
 /* ---- calorie goal bars ---- */
@@ -348,28 +399,29 @@
 .hc-goals {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--space-3);
 }
 
 .hc-goal {
   display: grid;
-  grid-template-columns: 9rem 1fr 4.5rem;
+  grid-template-columns: 10rem 1fr 5rem;
   align-items: center;
   gap: var(--space-2);
 }
 
 .hc-goal__label {
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   font-weight: 600;
   color: var(--text-soft);
   white-space: nowrap;
 }
 
 .hc-goal__bar-wrap {
-  height: 0.625rem;
+  height: 0.75rem;
   background: var(--surface-alt);
   border-radius: 999px;
   overflow: hidden;
+  border: 1px solid var(--line);
 }
 
 .hc-goal__bar {
@@ -380,7 +432,7 @@
 
 .hc-goal__kcal {
   font-family: var(--font-mono);
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   font-weight: 700;
   text-align: right;
   color: var(--text);
@@ -391,7 +443,7 @@
 .hc-bands {
   display: flex;
   flex-direction: column;
-  border: 1px solid var(--line);
+  border: 1.5px solid var(--line);
   border-radius: var(--radius);
   overflow: hidden;
 }
@@ -401,29 +453,33 @@
   grid-template-columns: 2.5rem 9rem 1fr;
   align-items: center;
   gap: var(--space-3);
-  padding: 0.65rem 1rem;
+  padding: 0.75rem 1.1rem;
   border-bottom: 1px solid var(--line);
+  transition: background-color 0.12s ease;
 }
 .hc-band:last-child { border-bottom: none; }
 .hc-band--highlight { background: var(--tk-health-soft, #F0FDFA); }
+.hc-band:hover:not(.hc-band--highlight) { background: var(--surface-alt); }
 
 .hc-band__dot {
-  width: 0.875rem;
-  height: 0.875rem;
+  width: 1rem;
+  height: 1rem;
   border-radius: 50%;
   flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
 .hc-band__label {
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   font-weight: 600;
   color: var(--text);
 }
 
 .hc-band__range {
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   font-family: var(--font-mono);
   color: var(--text-soft);
+  font-weight: 500;
 }
 
 /* ---- placeholder / empty state ---- */
@@ -433,29 +489,41 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--space-2);
+  gap: var(--space-3);
   padding: var(--space-6) var(--space-4);
   color: var(--text-faint);
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   text-align: center;
 }
 
 .hc-empty__icon {
-  font-size: 2.5rem;
+  font-size: 3rem;
   line-height: 1;
 }
 
 /* ---- reference note ---- */
 
 .hc-note {
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   color: var(--text-faint);
-  line-height: 1.5;
-  padding: var(--space-1) 0;
+  line-height: 1.6;
+  padding: var(--space-2) 0;
+  border-top: 1px solid var(--line);
 }
 
-@media (max-width: 32rem) {
+/* ---- responsive ---- */
+
+@media (max-width: 36rem) {
   .hc-big__value { font-size: 2.5rem; }
   .hc-goal { grid-template-columns: 7rem 1fr 4rem; }
-  .hc-band { grid-template-columns: 2rem 7rem 1fr; }
+  .hc-goal__label { font-size: 0.8125rem; }
+  .hc-band { grid-template-columns: 2rem 7rem 1fr; padding: 0.6rem 0.85rem; }
+  .hc-stats { grid-template-columns: 1fr; }
+  .hc-result__body { padding: 1.25rem 1rem 1rem; }
+}
+
+@media (max-width: 28rem) {
+  .hc-goal { grid-template-columns: 1fr; gap: var(--space-1); }
+  .hc-goal__bar-wrap { order: 2; }
+  .hc-goal__kcal { order: 1; text-align: left; }
 }

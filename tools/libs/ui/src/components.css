@@ -35,7 +35,7 @@
   font-family: var(--font-mono);
   color: var(--success);
   background: var(--success-soft);
-  border: 1px solid color-mix(in srgb, var(--success) 25%, transparent);
+  border: 1px solid var(--success-soft);
   padding: 0.2rem 0.5rem;
   border-radius: 999px;
 }
@@ -204,7 +204,7 @@
 }
 .dt-btn--quiet:hover:not(:disabled) { background: var(--surface-alt); color: var(--text); }
 
-.dt-btn--danger { background: transparent; color: var(--danger); border-color: color-mix(in srgb, var(--danger) 40%, transparent); }
+.dt-btn--danger { background: transparent; color: var(--danger); border-color: var(--danger-soft); }
 .dt-btn--danger:hover:not(:disabled) { background: var(--danger-soft); }
 
 /* ---------- notes ---------- */
@@ -218,9 +218,9 @@
   border: 1px solid transparent;
   line-height: 1.5;
 }
-.dt-note--error   { background: var(--danger-soft);  color: var(--danger);  border-color: color-mix(in srgb, var(--danger) 25%, transparent); }
-.dt-note--warning { background: var(--warning-soft); color: var(--warning); border-color: color-mix(in srgb, var(--warning) 25%, transparent); }
-.dt-note--success { background: var(--success-soft); color: var(--success); border-color: color-mix(in srgb, var(--success) 25%, transparent); }
+.dt-note--error   { background: var(--danger-soft);  color: var(--danger);  border-color: var(--danger-soft); }
+.dt-note--warning { background: var(--warning-soft); color: var(--warning); border-color: var(--warning-soft); }
+.dt-note--success { background: var(--success-soft); color: var(--success); border-color: var(--success-soft); }
 .dt-note--info    { background: var(--surface-alt);  color: var(--text-soft); border-color: var(--line); }
 
 .dt-note__body { min-width: 0; }
