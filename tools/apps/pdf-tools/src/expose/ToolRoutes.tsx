@@ -32,6 +32,7 @@ const TOOLS: Record<string, ComponentType> = {
     import("../tools/WordTools.js").then((m) => ({ default: m.WordToHtml })),
   ),
   "compress-pdf": lazy(() => import("../tools/CompressPdf.js")),
+  "unlock-pdf": lazy(() => import("../tools/UnlockPdf.js")),
 };
 
 export function ownsSlug(slug: string): boolean {
