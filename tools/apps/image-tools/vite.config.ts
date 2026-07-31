@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react";
 import { federation } from "@module-federation/vite";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
+import { mfCssPlugin } from "../../scripts/vite-plugin-mf-css";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const lib = (name: string) => resolve(here, `../../libs/${name}/src`);
@@ -27,6 +28,7 @@ export default defineConfig(({ command }) => ({
 
   plugins: [
     react(),
+    mfCssPlugin("image_tools"),
     federation({
       name: "image_tools",
       filename: "remoteEntry.js",
