@@ -14,8 +14,39 @@ export const BASE_PATH = "/tools";
 
 export const SITE_ORIGIN = "https://shashikanth077.github.io";
 
-/** Which micro-frontend owns a route. Only `utility` ships in slice 1. */
+/** Which micro-frontend owns a route. */
 export type RemoteName = "utility" | "image" | "pdf";
+
+/**
+ * Who a tool is for — the top-level split the header's two menus are built
+ * from. "general" is the SmallPDF-shaped audience: PDF and image work anyone
+ * might need, no jargon. "developer" is JSON/JWT/encoding utilities aimed at
+ * people who already know what a JWT is.
+ */
+export type Audience = "general" | "developer";
+
+export const AUDIENCE_META: Record<Audience, { label: string; tagline: string }> = {
+  general: {
+    label: "General Tools",
+    tagline: "PDF and image tools for everyday files — no account, nothing uploaded.",
+  },
+  developer: {
+    label: "Developer Tools",
+    tagline: "JSON, JWT, encoding and format utilities for people who write code.",
+  },
+};
+
+/** Sub-grouping within an audience's menu — the mega-menu columns and the sidebar sections. */
+export type ToolCategory =
+  | "Organize"
+  | "Convert"
+  | "Optimize"
+  | "Images"
+  | "Generate"
+  | "Encoding"
+  | "Formatting"
+  | "Inspection"
+  | "Utilities";
 
 export interface ToolRoute {
   /** URL segment under BASE_PATH — also the prerendered directory name. */
@@ -28,8 +59,9 @@ export interface ToolRoute {
   description: string;
   /** Feeds <meta name="keywords"> and the JSON-LD keywords field. */
   keywords: string[];
-  /** Grouping in the nav. */
-  category: "PDF" | "Images" | "Encoding" | "Formatting" | "Generators" | "Inspection";
+  audience: Audience;
+  /** Grouping within the audience's menu. */
+  category: ToolCategory;
   remote: RemoteName;
   /**
    * Shown as a badge on the tool card and a note in the tool itself.
@@ -48,7 +80,8 @@ export const toolRoutes: ToolRoute[] = [
     description:
       "Combine multiple PDF files into a single document and reorder them before merging. Runs entirely in your browser — your files are never uploaded.",
     keywords: ["merge pdf", "combine pdf", "join pdf files", "pdf merger free"],
-    category: "PDF",
+    audience: "general",
+    category: "Organize",
     remote: "pdf",
   },
   {
@@ -58,7 +91,8 @@ export const toolRoutes: ToolRoute[] = [
     description:
       "Split a PDF by page ranges or separate every page into its own file, then download the results individually or as a ZIP. Nothing leaves your device.",
     keywords: ["split pdf", "extract pdf pages", "separate pdf", "pdf splitter"],
-    category: "PDF",
+    audience: "general",
+    category: "Organize",
     remote: "pdf",
   },
   {
@@ -68,7 +102,8 @@ export const toolRoutes: ToolRoute[] = [
     description:
       "Remove unwanted pages from a PDF by clicking page thumbnails, or keep only a selection. Page content is preserved exactly — nothing is re-encoded.",
     keywords: ["delete pdf pages", "remove pages from pdf", "pdf page remover"],
-    category: "PDF",
+    audience: "general",
+    category: "Organize",
     remote: "pdf",
   },
   {
@@ -78,7 +113,8 @@ export const toolRoutes: ToolRoute[] = [
     description:
       "Fix sideways or upside-down scans by rotating selected pages of a PDF. The rotation is stored as page metadata, so quality is untouched.",
     keywords: ["rotate pdf", "turn pdf pages", "fix pdf orientation"],
-    category: "PDF",
+    audience: "general",
+    category: "Organize",
     remote: "pdf",
   },
   {
@@ -88,7 +124,8 @@ export const toolRoutes: ToolRoute[] = [
     description:
       "Combine photos and scans into a single PDF with a choice of page size and fit. Images are embedded at full quality without re-compression where possible.",
     keywords: ["jpg to pdf", "png to pdf", "images to pdf", "photo to pdf"],
-    category: "PDF",
+    audience: "general",
+    category: "Convert",
     remote: "pdf",
   },
   {
@@ -98,7 +135,8 @@ export const toolRoutes: ToolRoute[] = [
     description:
       "Convert PDF pages into PNG or JPEG images at a resolution you choose, then download them individually or as a ZIP. Rendering happens in your browser.",
     keywords: ["pdf to jpg", "pdf to png", "pdf to image", "convert pdf to picture"],
-    category: "PDF",
+    audience: "general",
+    category: "Convert",
     remote: "pdf",
   },
   {
@@ -108,7 +146,8 @@ export const toolRoutes: ToolRoute[] = [
     description:
       "Extract selectable text from a PDF, page by page, and copy or download it as a plain text file. Works on text PDFs, not scanned images.",
     keywords: ["pdf to text", "extract text from pdf", "pdf text extractor"],
-    category: "PDF",
+    audience: "general",
+    category: "Convert",
     remote: "pdf",
     caveat: "Text PDFs only — a scanned page has no text to extract without OCR.",
   },
@@ -119,7 +158,8 @@ export const toolRoutes: ToolRoute[] = [
     description:
       "Extract the text from a PDF and rebuild it as an editable Word document. Best suited to single-column text documents rather than complex layouts.",
     keywords: ["pdf to word", "pdf to docx", "convert pdf to word free", "pdf to doc"],
-    category: "PDF",
+    audience: "general",
+    category: "Convert",
     remote: "pdf",
     caveat:
       "Text only. PDF stores positioned glyphs rather than paragraphs, so fonts, columns and tables will not survive.",
@@ -131,7 +171,8 @@ export const toolRoutes: ToolRoute[] = [
     description:
       "Convert Word documents to PDF in your browser, with a choice between a one-click download and your browser's own print engine for the best text quality.",
     keywords: ["word to pdf", "docx to pdf", "convert doc to pdf free"],
-    category: "PDF",
+    audience: "general",
+    category: "Convert",
     remote: "pdf",
     caveat: "Word's exact pagination cannot be reproduced in a browser — expect layout to shift.",
   },
@@ -142,7 +183,8 @@ export const toolRoutes: ToolRoute[] = [
     description:
       "Turn a Word document into clean HTML, mapping Word's heading and quote styles onto real semantic tags. Output is sanitised before display.",
     keywords: ["word to html", "docx to html", "convert word to web page"],
-    category: "PDF",
+    audience: "general",
+    category: "Convert",
     remote: "pdf",
   },
   {
@@ -152,7 +194,8 @@ export const toolRoutes: ToolRoute[] = [
     description:
       "Reduce the size of image-heavy or scanned PDFs by re-rendering each page as a compressed image. Best for scans; not suitable for text documents.",
     keywords: ["compress pdf", "reduce pdf size", "shrink pdf", "make pdf smaller"],
-    category: "PDF",
+    audience: "general",
+    category: "Optimize",
     remote: "pdf",
     caveat:
       "Flattens pages to images, so text stops being selectable — and a text-only PDF will usually get bigger, not smaller.",
@@ -166,6 +209,7 @@ export const toolRoutes: ToolRoute[] = [
     description:
       "Convert images between JPG, PNG, WebP and AVIF with control over quality. Batch-convert many files at once, entirely inside your browser.",
     keywords: ["jpg to png", "png to jpg", "webp converter", "image converter free"],
+    audience: "general",
     category: "Images",
     remote: "image",
   },
@@ -176,6 +220,7 @@ export const toolRoutes: ToolRoute[] = [
     description:
       "Resize one or many images by width, height or percentage, with aspect ratio locked by default. No upload, no quality loss beyond the resize itself.",
     keywords: ["resize image", "image resizer", "change image size", "bulk resize photos"],
+    audience: "general",
     category: "Images",
     remote: "image",
   },
@@ -186,6 +231,7 @@ export const toolRoutes: ToolRoute[] = [
     description:
       "Compress JPG and WebP images to a target file size. Quality is found by binary search rather than a fixed guess, so you keep as much detail as fits.",
     keywords: ["compress image", "reduce image size", "image optimizer", "compress jpeg"],
+    audience: "general",
     category: "Images",
     remote: "image",
   },
@@ -198,6 +244,7 @@ export const toolRoutes: ToolRoute[] = [
     description:
       "Decode a JSON Web Token in your browser. Reads the header, payload, issued-at and expiry. Your token is never uploaded or transmitted anywhere.",
     keywords: ["jwt decoder", "decode jwt online", "json web token", "jwt parser"],
+    audience: "developer",
     category: "Inspection",
     remote: "utility",
   },
@@ -208,7 +255,8 @@ export const toolRoutes: ToolRoute[] = [
     description:
       "Generate RFC 4122 version 4 UUIDs using the browser's crypto API. Create one or thousands at a time, with optional uppercase and braces formatting.",
     keywords: ["uuid generator", "guid generator", "uuid v4", "random uuid"],
-    category: "Generators",
+    audience: "developer",
+    category: "Utilities",
     remote: "utility",
   },
   {
@@ -218,6 +266,7 @@ export const toolRoutes: ToolRoute[] = [
     description:
       "Encode text to Base64 or decode it back, with full Unicode support and URL-safe mode. Runs entirely in your browser — nothing is sent to a server.",
     keywords: ["base64 encode", "base64 decode", "base64 converter", "base64url"],
+    audience: "developer",
     category: "Encoding",
     remote: "utility",
   },
@@ -228,6 +277,7 @@ export const toolRoutes: ToolRoute[] = [
     description:
       "Percent-encode or decode URLs, query parameters and path segments. Supports both full-component and full-URI encoding modes. Works offline in your browser.",
     keywords: ["url encoder", "url decoder", "percent encoding", "uri encode"],
+    audience: "developer",
     category: "Encoding",
     remote: "utility",
   },
@@ -238,6 +288,7 @@ export const toolRoutes: ToolRoute[] = [
     description:
       "Format messy JSON with configurable indentation, minify it, or sort keys alphabetically. Parsing happens locally, so production data never leaves your machine.",
     keywords: ["json formatter", "json beautifier", "json pretty print", "minify json"],
+    audience: "developer",
     category: "Formatting",
     remote: "utility",
   },
@@ -248,6 +299,7 @@ export const toolRoutes: ToolRoute[] = [
     description:
       "Check a JSON document against a JSON Schema (draft 2020-12) and get precise, path-level error messages. Validation runs in your browser using Ajv.",
     keywords: ["json schema validator", "validate json", "ajv", "json schema"],
+    audience: "developer",
     category: "Inspection",
     remote: "utility",
   },
@@ -258,6 +310,7 @@ export const toolRoutes: ToolRoute[] = [
     description:
       "Write Markdown and see the rendered result live, with the HTML source available to copy. Output is sanitised with DOMPurify before it is displayed.",
     keywords: ["markdown preview", "markdown to html", "md renderer", "markdown editor"],
+    audience: "developer",
     category: "Formatting",
     remote: "utility",
   },
@@ -268,7 +321,8 @@ export const toolRoutes: ToolRoute[] = [
     description:
       "Generate a QR code from text, a URL, WiFi credentials or contact details. Adjust size and error-correction level, then download as PNG or SVG.",
     keywords: ["qr code generator", "create qr code", "qr code png", "free qr code"],
-    category: "Generators",
+    audience: "general",
+    category: "Generate",
     remote: "utility",
   },
   {
@@ -278,7 +332,8 @@ export const toolRoutes: ToolRoute[] = [
     description:
       "Generate linear barcodes including Code 128, EAN-13, UPC-A and Code 39. Renders on a canvas in your browser and downloads as a PNG.",
     keywords: ["barcode generator", "code 128", "ean 13 barcode", "upc barcode"],
-    category: "Generators",
+    audience: "general",
+    category: "Generate",
     remote: "utility",
   },
 ];
@@ -311,19 +366,35 @@ export function findTool(slug: string): ToolRoute | undefined {
   return toolRoutes.find((t) => t.slug === slug);
 }
 
-/** Nav grouping — preserves the category order declared above. */
-export function groupByCategory(
-  routes: ToolRoute[] = toolRoutes,
-): Array<[ToolRoute["category"], ToolRoute[]]> {
-  const order: ToolRoute["category"][] = [
-    "PDF",
-    "Images",
-    "Encoding",
-    "Formatting",
-    "Generators",
-    "Inspection",
-  ];
-  return order
-    .map((c) => [c, routes.filter((r) => r.category === c)] as [ToolRoute["category"], ToolRoute[]])
-    .filter(([, items]) => items.length > 0);
+/**
+ * Groups routes by category, preserving each category's first-appearance
+ * order in `routes` rather than a hardcoded list — so declaring a new tool in
+ * its right place in `toolRoutes` is the only thing that's ever needed; there
+ * is no second ordering list to keep in sync.
+ */
+export function groupByCategory(routes: ToolRoute[]): Array<[ToolCategory, ToolRoute[]]> {
+  const order: ToolCategory[] = [];
+  const byCategory = new Map<ToolCategory, ToolRoute[]>();
+
+  for (const route of routes) {
+    if (!byCategory.has(route.category)) {
+      byCategory.set(route.category, []);
+      order.push(route.category);
+    }
+    byCategory.get(route.category)!.push(route);
+  }
+
+  return order.map((category) => [category, byCategory.get(category)!]);
+}
+
+export function routesFor(audience: Audience): ToolRoute[] {
+  return toolRoutes.filter((r) => r.audience === audience);
+}
+
+/** The two header menus: audience → its categories → its routes, general first. */
+export function groupByAudience(): Array<[Audience, Array<[ToolCategory, ToolRoute[]]>]> {
+  return (["general", "developer"] as const).map((audience) => [
+    audience,
+    groupByCategory(routesFor(audience)),
+  ]);
 }

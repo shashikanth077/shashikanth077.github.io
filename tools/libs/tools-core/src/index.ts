@@ -7,6 +7,7 @@
  */
 
 export * from "./routes.js";
+export * from "./brand.js";
 export * from "./encoding.js";
 export * from "./jwt.js";
 export * from "./uuid.js";
