@@ -17,6 +17,7 @@ export default function UnlockPdf() {
   const [password, setPassword] = useState("");
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
   const [wrongPassword, setWrongPassword] = useState(false);
+  const [tryingOwnerUnlock, setTryingOwnerUnlock] = useState(false);
   const passwordRef = useRef<HTMLInputElement>(null);
 
   const file = files[0];
@@ -27,31 +28,41 @@ export default function UnlockPdf() {
     setPassword("");
     setProgress(null);
     setWrongPassword(false);
+    setTryingOwnerUnlock(false);
   }
 
   async function unlock() {
     if (!file) return;
     setWrongPassword(false);
+    setTryingOwnerUnlock(true);
 
-    await run(async () => {
+    try {
       const bytes = await getBytes(file);
       const { data, wasEncrypted } = await unlockPdf(bytes);
 
       if (!wasEncrypted) {
-        throw new Error("This PDF has no restrictions to remove — it is already unlocked.");
+        setTryingOwnerUnlock(false);
+        await run(async () => {
+          throw new Error("This PDF has no restrictions to remove — it is already unlocked.");
+        });
+        return;
       }
 
+      setTryingOwnerUnlock(false);
       const blob = new Blob([data as unknown as BlobPart], { type: "application/pdf" });
       const name = file.file.name.replace(/\.pdf$/i, "-unlocked.pdf");
-      return [{ name, blob }];
-    }).catch((err: unknown) => {
+      await run(async () => [{ name, blob }]);
+    } catch (err) {
+      setTryingOwnerUnlock(false);
       if (err instanceof PdfPasswordRequiredError) {
         setNeedsPwd(true);
         setTimeout(() => passwordRef.current?.focus(), 50);
-        return undefined;
+      } else {
+        await run(async () => {
+          throw err;
+        });
       }
-      throw err;
-    });
+    }
   }
 
   async function unlockWithPwd(e: React.FormEvent) {
@@ -76,9 +87,9 @@ export default function UnlockPdf() {
         setWrongPassword(true);
         setPassword("");
         setTimeout(() => passwordRef.current?.focus(), 50);
-        return undefined;
+      } else {
+        throw err;
       }
-      throw err;
     });
   }
 
@@ -92,10 +103,10 @@ export default function UnlockPdf() {
             Selected: <strong>{file.file.name}</strong>
           </p>
           <div className="dt-row" style={{ gap: "var(--space-2)" }}>
-            <Button variant="primary" disabled={busy} onClick={unlock}>
-              {busy ? "Unlocking…" : "Unlock PDF"}
+            <Button variant="primary" disabled={tryingOwnerUnlock || busy} onClick={unlock}>
+              {tryingOwnerUnlock ? "Checking…" : "Unlock PDF"}
             </Button>
-            <Button variant="ghost" onClick={reset} disabled={busy}>
+            <Button variant="ghost" onClick={reset} disabled={tryingOwnerUnlock || busy}>
               Clear
             </Button>
           </div>
@@ -129,6 +140,7 @@ export default function UnlockPdf() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter password…"
               autoComplete="off"
+              disabled={busy}
               style={{
                 padding: "var(--space-2) var(--space-3)",
                 border: "1px solid var(--border)",
@@ -149,7 +161,7 @@ export default function UnlockPdf() {
           )}
 
           <div className="dt-row" style={{ gap: "var(--space-2)" }}>
-            <Button variant="primary" disabled={busy || !password}>
+            <Button variant="primary" disabled={busy || !password} type="submit">
               {busy ? `Rendering ${progress ? `${progress.done}/${progress.total}` : "…"}` : "Unlock PDF"}
             </Button>
             <Button variant="ghost" onClick={reset} disabled={busy} type="button">
@@ -159,7 +171,7 @@ export default function UnlockPdf() {
         </form>
       )}
 
-      {error ? <Note kind="error">{error}</Note> : null}
+      {error && !needsPwd && <Note kind="error">{error}</Note>}
 
       {results.length > 0 && (() => {
         const result = results[0];
