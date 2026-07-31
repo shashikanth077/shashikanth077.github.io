@@ -16,6 +16,7 @@ export * from "./markdown.js";
 export * from "./files.js";
 export * from "./beautify.js";
 export * from "./diff.js";
+export * from "./units.js";
 
 // Each of the modules below owns a large library (bwip-js, pdf-lib, pdf.js,
 // mammoth/jsPDF). They are kept as separate modules — never merged — so the

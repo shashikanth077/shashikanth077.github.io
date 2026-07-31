@@ -25,6 +25,7 @@ const TOOLS: Record<string, ComponentType> = {
   "css-beautifier": lazy(() => import("../tools/CssBeautifier.js")),
   "js-beautifier": lazy(() => import("../tools/JsBeautifier.js")),
   "diff-checker": lazy(() => import("../tools/DiffChecker.js")),
+  "unit-converter": lazy(() => import("../tools/UnitConverter.js")),
 };
 
 /** Lets the shell check ownership before it bothers mounting the remote. */
