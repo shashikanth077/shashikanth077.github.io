@@ -141,6 +141,8 @@
   width: max-content;
   min-width: 14rem;
   max-width: 42rem;
+  max-height: calc(100vh - var(--header-h) - 1.5rem);
+  overflow-y: auto;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius);
