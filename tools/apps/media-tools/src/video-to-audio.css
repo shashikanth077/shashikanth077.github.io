@@ -1,0 +1,171 @@
+/* Video to Audio Converter — layout for the queue table, video preview,
+   settings grid and per-item progress bars. Uses design-system tokens only. */
+
+.vta-hero {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: linear-gradient(135deg, var(--tk-media-soft), var(--tk-image-soft));
+  border: 1px solid var(--tk-media-glow);
+  border-radius: var(--radius);
+  align-items: center;
+}
+.vta-hero__icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: var(--radius);
+  background: var(--tk-media);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+.vta-hero__body { display: flex; flex-direction: column; gap: 4px; }
+.vta-hero__title { font-weight: 700; font-size: 0.9375rem; color: var(--text); }
+.vta-hero__note { font-size: 0.8125rem; color: var(--text-soft); }
+
+.vta-queue {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.vta-item {
+  display: grid;
+  grid-template-columns: 8rem 1fr auto;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  transition: border-color 0.15s ease;
+}
+.vta-item--running { border-color: var(--tk-media); box-shadow: 0 0 0 3px var(--tk-media-soft); }
+.vta-item--done    { border-color: var(--success); background: var(--success-soft); }
+.vta-item--error   { border-color: var(--danger);  background: var(--danger-soft); }
+
+@media (max-width: 40rem) {
+  .vta-item { grid-template-columns: 1fr; }
+}
+
+.vta-item__video {
+  width: 8rem;
+  height: 5rem;
+  border-radius: var(--radius-sm);
+  background: #000;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-faint);
+  font-size: 1.5rem;
+}
+.vta-item__video video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+@media (max-width: 40rem) {
+  .vta-item__video { width: 100%; height: 10rem; }
+}
+
+.vta-item__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.vta-item__name {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vta-item__meta {
+  font-size: 0.75rem;
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.vta-item__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: 100px;
+  background: var(--surface-alt);
+  color: var(--text-soft);
+}
+.vta-item__status--running { background: var(--tk-media-soft); color: var(--tk-media); }
+.vta-item__status--done    { background: var(--success-soft);  color: var(--success); }
+.vta-item__status--error   { background: var(--danger-soft);   color: var(--danger); }
+
+.vta-item__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  align-items: flex-end;
+}
+@media (max-width: 40rem) {
+  .vta-item__actions { flex-direction: row; justify-content: flex-end; align-items: center; }
+}
+
+.vta-progress {
+  width: 100%;
+  height: 6px;
+  background: var(--surface-alt);
+  border-radius: 100px;
+  overflow: hidden;
+  position: relative;
+}
+.vta-progress__bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--tk-media), var(--tk-image));
+  border-radius: 100px;
+  transition: width 0.2s ease;
+}
+
+.vta-trim {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: var(--space-2);
+  align-items: end;
+  padding: var(--space-2);
+  background: var(--surface-alt);
+  border-radius: var(--radius-sm);
+}
+@media (max-width: 30rem) {
+  .vta-trim { grid-template-columns: 1fr; }
+}
+
+.vta-settings {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: var(--space-3);
+}
+
+.vta-success {
+  animation: vtaPulse 0.6s ease;
+}
+@keyframes vtaPulse {
+  0%   { transform: scale(1);   }
+  50%  { transform: scale(1.02); }
+  100% { transform: scale(1);   }
+}
+
+.vta-audio {
+  width: 100%;
+  min-width: 12rem;
+}

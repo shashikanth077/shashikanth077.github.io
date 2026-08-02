@@ -15,13 +15,13 @@ export const BASE_PATH = "/tools";
 export const SITE_ORIGIN = "https://shashikanth077.github.io";
 
 /** Which micro-frontend owns a route. */
-export type RemoteName = "utility" | "image" | "pdf";
+export type RemoteName = "utility" | "image" | "pdf" | "media";
 
 /**
  * Tool groupings, shown as the top-level menu items in the header.
  * Each toolkit maps to a distinct color in the design system.
  */
-export type Toolkit = "pdf" | "image" | "qr" | "dev" | "health";
+export type Toolkit = "pdf" | "image" | "qr" | "dev" | "health" | "media";
 
 export const TOOLKIT_META: Record<Toolkit, { label: string; tagline: string; icon: string }> = {
   health: {
@@ -49,6 +49,11 @@ export const TOOLKIT_META: Record<Toolkit, { label: string; tagline: string; ico
     tagline: "JSON, JWT, encoding and format utilities for people who write code.",
     icon: "⚡",
   },
+  media: {
+    label: "Media Toolkit",
+    tagline: "Extract audio from video files with ffmpeg running entirely in your browser.",
+    icon: "🎬",
+  },
 };
 
 /** Sub-grouping within a toolkit's menu — the mega-menu columns and sidebar sections. */
@@ -65,7 +70,8 @@ export type ToolCategory =
   | "Utilities"
   | "Body Metrics"
   | "Nutrition"
-  | "Weight Management";
+  | "Weight Management"
+  | "Audio";
 
 export interface ToolRoute {
   /** URL segment under BASE_PATH — also the prerendered directory name. */
@@ -670,6 +676,38 @@ export const toolRoutes: ToolRoute[] = [
     remote: "utility",
     icon: "🧬",
   },
+
+  /* ================ Media Toolkit ================ */
+  {
+    slug: "video-to-audio",
+    name: "Video to Audio Converter",
+    tagline: "Extract MP3, WAV, AAC, M4A, FLAC or OGG audio from any video — batch, trim and privacy-first.",
+    description:
+      "Free browser-based video-to-audio converter. Drag & drop MP4, MOV, AVI, MKV, WEBM, FLV, WMV, MPEG or M4V files and extract audio as MP3, WAV, AAC, M4A, FLAC or OGG with control over bitrate, sample rate and channels. Trim before conversion, queue multiple files, cancel any time. Runs on ffmpeg.wasm — your videos never leave your device.",
+    keywords: [
+      "video to audio converter",
+      "video to mp3",
+      "mp4 to mp3",
+      "mov to mp3",
+      "mkv to mp3",
+      "webm to mp3",
+      "extract audio from video",
+      "convert video to audio online",
+      "ffmpeg browser",
+      "video audio extractor",
+      "video to wav",
+      "video to flac",
+      "video to m4a",
+      "video to aac",
+      "video to ogg",
+    ],
+    toolkit: "media",
+    category: "Audio",
+    remote: "media",
+    icon: "🎬",
+    caveat:
+      "Runs entirely in the browser using ffmpeg.wasm — expect very large files (multiple GB) to be slow or run out of memory in a browser tab.",
+  },
 ];
 
 /**
@@ -732,7 +770,7 @@ export function visibleRoutes(): ToolRoute[] {
 
 /** The header menus: toolkit → its categories → its routes. Hidden routes excluded. */
 export function groupByToolkit(): Array<[Toolkit, Array<[ToolCategory, ToolRoute[]]>]> {
-  return (["health", "pdf", "image", "qr", "dev"] as const).map((toolkit) => [
+  return (["health", "pdf", "image", "media", "qr", "dev"] as const).map((toolkit) => [
     toolkit,
     groupByCategory(routesFor(toolkit).filter((r) => !r.hidden)),
   ]);

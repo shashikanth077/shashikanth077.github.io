@@ -32,6 +32,7 @@ const REMOTES = [
   { dir: "utility-tools", dist: join(toolsRoot, "apps/utility-tools/dist") },
   { dir: "pdf-tools", dist: join(toolsRoot, "apps/pdf-tools/dist") },
   { dir: "image-tools", dist: join(toolsRoot, "apps/image-tools/dist") },
+  { dir: "media-tools", dist: join(toolsRoot, "apps/media-tools/dist") },
 ];
 const OUT_ROOT = join(repoRoot, "out");
 const OUT_TOOLS = join(OUT_ROOT, "tools");

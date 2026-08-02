@@ -14,6 +14,7 @@
 .tk-qr     { --tk: var(--tk-qr);     --tk-soft: var(--tk-qr-soft);     --tk-glow: var(--tk-qr-glow); }
 .tk-dev    { --tk: var(--tk-dev);    --tk-soft: var(--tk-dev-soft);    --tk-glow: var(--tk-dev-glow); }
 .tk-health { --tk: var(--tk-health); --tk-soft: var(--tk-health-soft); --tk-glow: var(--tk-health-glow); }
+.tk-media  { --tk: var(--tk-media);  --tk-soft: var(--tk-media-soft);  --tk-glow: var(--tk-media-glow); }
 
 /* ---------- header ---------- */
 

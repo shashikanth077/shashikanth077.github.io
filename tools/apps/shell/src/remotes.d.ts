@@ -38,3 +38,12 @@ declare module "image_tools/ToolRoutes" {
   const ToolRoutes: ComponentType<ToolRoutesProps>;
   export default ToolRoutes;
 }
+
+declare module "media_tools/ToolRoutes" {
+  import type { ComponentType } from "react";
+  export interface ToolRoutesProps {
+    slug: string;
+  }
+  const ToolRoutes: ComponentType<ToolRoutesProps>;
+  export default ToolRoutes;
+}

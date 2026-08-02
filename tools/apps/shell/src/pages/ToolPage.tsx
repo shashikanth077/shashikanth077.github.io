@@ -16,6 +16,7 @@ const REMOTES: Record<RemoteName, ReturnType<typeof lazy>> = {
   utility: lazy(() => import("utility_tools/ToolRoutes")),
   pdf: lazy(() => import("pdf_tools/ToolRoutes")),
   image: lazy(() => import("image_tools/ToolRoutes")),
+  media: lazy(() => import("media_tools/ToolRoutes")),
 };
 
 /**

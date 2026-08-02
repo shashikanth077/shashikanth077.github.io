@@ -37,6 +37,7 @@ const REMOTES = [
   { name: "utility_tools", dir: "utility-tools", port: 5001 },
   { name: "pdf_tools", dir: "pdf-tools", port: 5002 },
   { name: "image_tools", dir: "image-tools", port: 5003 },
+  { name: "media_tools", dir: "media-tools", port: 5004 },
 ] as const;
 
 export default defineConfig(({ command }) => {
