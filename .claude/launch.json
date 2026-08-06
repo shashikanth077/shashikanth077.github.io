@@ -19,6 +19,12 @@
       "runtimeExecutable": "node",
       "runtimeArgs": ["tools/scripts/serve-static.mjs"],
       "port": 4173
+    },
+    {
+      "name": "pdf-tools-standalone",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "tools/apps/pdf-tools"],
+      "port": 5002
     }
   ]
 }
