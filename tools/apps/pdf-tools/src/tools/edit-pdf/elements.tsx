@@ -234,7 +234,7 @@ function SignatureAnnotationView(props: AnnotationViewProps & { annotation: Sign
 
 /* ------------------------------------------------------------------ */
 /* Markup — strikeout / underline over a dragged region (the box-drag   */
-/* equivalent of Sejda's text-selection markup; see design doc Phase 2) */
+/* equivalent of text-selection markup; see design doc §5, Phase 2)     */
 /* ------------------------------------------------------------------ */
 
 function MarkupAnnotationView(props: AnnotationViewProps & { annotation: MarkupAnnotation }) {

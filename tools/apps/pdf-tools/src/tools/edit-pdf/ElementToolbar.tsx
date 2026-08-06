@@ -14,8 +14,8 @@ const GAP = 6;
 /**
  * Floating per-element toolbar: duplicate/delete, positioned just above the
  * element's screen-space bounding box (below it if there isn't room above).
- * Every box-bounded element type shares this — Sejda's own floating toolbar
- * keeps the same move/duplicate/delete icons across text, image, and shape.
+ * Every box-bounded element type shares this — the same move/duplicate/
+ * delete icons apply across text, image, and shape.
  */
 export function ElementToolbar({
   box,

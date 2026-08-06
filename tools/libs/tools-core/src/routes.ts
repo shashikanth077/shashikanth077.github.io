@@ -248,13 +248,13 @@ export const toolRoutes: ToolRoute[] = [
   },
   {
     slug: "edit-pdf",
-    hidden: true,
     name: "Edit PDF",
-    tagline: "Add text, draw, and highlight — annotate any PDF right in your browser.",
+    tagline: "Add text, images, links, shapes, and signatures — a full PDF editor in your browser.",
     description:
-      "Free browser-based PDF editor. Add text boxes, draw with a pen, highlight important passages, " +
-      "and download the annotated PDF — everything runs locally, no upload. " +
-      "Perfect for filling forms, signing documents, marking up contracts, or leaving notes on any PDF.",
+      "Free browser-based PDF editor. Add and style text, insert images and signatures, draw shapes and " +
+      "links, whiteout sensitive content, highlight/strike out/underline, and download the edited PDF — " +
+      "everything runs locally, no upload. Perfect for filling forms, signing documents, marking up " +
+      "contracts, or leaving notes on any PDF.",
     keywords: [
       "edit pdf",
       "pdf editor",
@@ -268,14 +268,17 @@ export const toolRoutes: ToolRoute[] = [
       "edit pdf in browser",
       "fill pdf form",
       "pdf annotation tool",
+      "add signature to pdf",
+      "add image to pdf",
     ],
     toolkit: "pdf",
     category: "Organize",
     remote: "pdf",
     icon: "✏️",
     caveat:
-      "This is a PDF annotator — it adds text, drawings and highlights on top of pages. " +
-      "It does not re-flow or replace the existing text inside a PDF (no browser tool can, because PDF stores positioned glyphs, not editable paragraphs).",
+      "This edits PDFs by drawing new content on top of pages — it does not re-flow or rewrite the " +
+      "existing text inside a PDF (no browser tool can, because PDF stores positioned glyphs, not " +
+      "editable paragraphs).",
   },
   {
     slug: "unlock-pdf",

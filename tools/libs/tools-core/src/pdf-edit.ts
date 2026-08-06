@@ -92,7 +92,7 @@ export interface ShapeAnnotation extends BoxAnnotation {
   type: "shape";
   kind: ShapeKind;
   strokeColor: string;
-  /** null = no fill (Sejda's default for line/arrow; a real option for rect/ellipse). */
+  /** null = no fill (the default for line/arrow; a real option for rect/ellipse). */
   fillColor: string | null;
   strokeWidth: number;
 }
@@ -113,7 +113,7 @@ export interface SignatureAnnotation extends BoxAnnotation {
   format: "png" | "jpg";
 }
 
-/** Strike-through or underline over a region — the box-drag equivalent of Sejda's text-selection markup (§ design doc Phase 2 note). */
+/** Strike-through or underline over a dragged region — the box-drag equivalent of text-selection markup (see design doc §5, Phase 2 note). */
 export interface MarkupAnnotation extends BoxAnnotation {
   type: "strikeout" | "underline";
   color: string;
@@ -183,10 +183,10 @@ function drawPen(page: PDFPage, ann: PenAnnotation): void {
 }
 
 function drawWhiteout(page: PDFPage, ann: WhiteoutAnnotation): void {
-  // Plain opaque white — matches Sejda's own description of the tool
-  // ("cover part of the page with a white rectangle"), not a background-color
-  // sample. That sampling behavior is reserved for the existing-text
-  // patch-and-re-render pipeline (design doc §3), a different feature.
+  // Plain opaque white — covers part of the page with a white rectangle,
+  // not a background-color sample. That sampling behavior is reserved for
+  // the existing-text patch-and-re-render pipeline (design doc §3), a
+  // different feature.
   page.drawRectangle({
     x: ann.x,
     y: ann.y,

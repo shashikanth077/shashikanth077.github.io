@@ -41,7 +41,7 @@ import {
 
 /* ------------------------------------------------------------------ */
 /* Recent signatures — persisted locally so "Sign" can offer reuse      */
-/* across visits, same as Sejda's own dropdown, without any server.    */
+/* across visits, without any server.                                  */
 /* ------------------------------------------------------------------ */
 
 const RECENT_SIGNATURES_KEY = "edit-pdf:recent-signatures";

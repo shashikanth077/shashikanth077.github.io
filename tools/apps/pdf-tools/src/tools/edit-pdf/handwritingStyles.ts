@@ -1,9 +1,8 @@
 /**
  * "Handwriting style" gallery for the Type-a-signature tab.
  *
- * Sejda's server renders these from ~10 licensed script fonts. Downloading
- * webfonts here would mean a network request every time someone signs a
- * document, which is exactly the kind of thing the platform's "runs
+ * Downloading webfonts here would mean a network request every time someone
+ * signs a document, which is exactly the kind of thing the platform's "runs
  * entirely in your browser" claim promises doesn't happen — so this uses
  * only font stacks already installed on the visitor's OS (with a generic
  * `cursive`/`serif` fallback everywhere they aren't), varying weight, slant
