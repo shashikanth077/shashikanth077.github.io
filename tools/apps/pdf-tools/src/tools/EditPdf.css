@@ -182,8 +182,139 @@
 
 .pdfed__svg--select { cursor: default; }
 .pdfed__svg--text { cursor: text; }
-.pdfed__svg--pen { cursor: crosshair; }
-.pdfed__svg--highlight { cursor: crosshair; }
+.pdfed__svg--crosshair { cursor: crosshair; }
+
+/* ---- resize handles (shared by every box-bounded element) ---- */
+
+.pdfed__handle {
+  fill: var(--surface);
+  stroke: var(--accent);
+  stroke-width: 1.5;
+}
+
+/* ---- dropdown menus (Shapes / Sign / Annotate) ---- */
+
+.pdfed__dropdown-root {
+  position: relative;
+}
+
+.pdfed__dropdown {
+  position: absolute;
+  top: calc(100% + 0.375rem);
+  left: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  min-width: 12rem;
+  padding: var(--space-2);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+}
+
+.pdfed__dropdown-heading {
+  padding: var(--space-2) var(--space-2) var(--space-1);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-faint);
+}
+
+.pdfed__dropdown-sep {
+  margin: var(--space-1) 0;
+  border-top: 1px solid var(--line);
+}
+
+.pdfed__dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: 0.45rem var(--space-2);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text);
+  font-size: 0.8125rem;
+  text-align: left;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.pdfed__dropdown-item:hover { background: var(--surface-alt); }
+.pdfed__dropdown-item--active {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.pdfed__dropdown-item--sig {
+  justify-content: center;
+  padding: var(--space-2);
+}
+.pdfed__dropdown-item--sig img {
+  max-width: 8rem;
+  max-height: 2.5rem;
+  object-fit: contain;
+}
+
+/* ---- floating per-element toolbar (duplicate/delete/link editor) ---- */
+
+.pdfed__element-toolbar {
+  position: absolute;
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+  padding: 0.25rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  transform: translateX(-2px);
+}
+
+.pdfed__element-toolbar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--text-soft);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.pdfed__element-toolbar-btn:hover { background: var(--surface-alt); color: var(--text); }
+.pdfed__element-toolbar-btn--danger:hover { background: var(--danger-soft); color: var(--danger); }
+
+.pdfed__link-input {
+  width: 12rem;
+  margin-right: 0.25rem;
+  padding: 0.3rem 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.8125rem;
+}
+
+.pdfed__hidden-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.pdfed__swatch--none {
+  background:
+    linear-gradient(to top right, transparent calc(50% - 1px), var(--danger), transparent calc(50% + 1px)),
+    var(--surface);
+}
 
 .pdfed__textedit {
   width: 100%;
@@ -207,6 +338,175 @@
   text-decoration: underline;
   font: inherit;
   padding: 0;
+}
+
+/* ---- signature modal ---- */
+
+.pdfed__modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  background: rgba(16, 19, 18, 0.5);
+}
+
+.pdfed__modal {
+  width: 100%;
+  max-width: 32rem;
+  max-height: calc(100vh - 4rem);
+  overflow-y: auto;
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+}
+
+.pdfed__modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-4) 0;
+}
+.pdfed__modal-head h3 {
+  margin: 0;
+  font-size: 1.0625rem;
+}
+
+.pdfed__modal-close {
+  border: none;
+  background: transparent;
+  color: var(--text-faint);
+  font-size: 1rem;
+  line-height: 1;
+  padding: var(--space-2);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+}
+.pdfed__modal-close:hover { background: var(--surface-alt); color: var(--text); }
+
+.pdfed__modal-tabs {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-4) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.pdfed__modal-tab {
+  padding: var(--space-2) var(--space-1) var(--space-3);
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--text-soft);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: -1px;
+}
+.pdfed__modal-tab:hover { color: var(--text); }
+.pdfed__modal-tab--active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.pdfed__modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+}
+
+.pdfed__modal-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  padding: 0 var(--space-4) var(--space-4);
+}
+
+.pdfed__sig-name-input {
+  padding: 0.6rem var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.pdfed__sig-colors {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.pdfed__sig-styles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-2);
+}
+
+.pdfed__sig-style {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  padding: var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  cursor: pointer;
+  overflow: hidden;
+}
+.pdfed__sig-style:hover { border-color: var(--line-strong); }
+.pdfed__sig-style--active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+.pdfed__sig-style span {
+  font-size: 1.5rem;
+  line-height: 1.2;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pdfed__sig-style em {
+  font-style: normal;
+  font-size: 0.6875rem;
+  color: var(--text-faint);
+}
+
+.pdfed__sig-canvas {
+  width: 100%;
+  height: 12rem;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.pdfed__sig-hint {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--text-faint);
+}
+.pdfed__sig-hint--error { color: var(--danger); }
+
+.pdfed__sig-upload-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+}
+.pdfed__sig-upload-preview img {
+  max-width: 100%;
+  max-height: 10rem;
+  object-fit: contain;
 }
 
 /* Responsive: on narrow screens, allow horizontal scrolling of the toolbar. */

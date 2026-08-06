@@ -14,18 +14,21 @@ import {
   type HighlightAnnotation,
   type ImageAnnotation,
   type LinkAnnotation,
+  type MarkupAnnotation,
   type PenAnnotation,
   type ShapeAnnotation,
   type ShapeKind,
+  type SignatureAnnotation,
   type TextAnnotation,
   type WhiteoutAnnotation,
 } from "@devtools/tools-core";
 import { Button, FileDrop, Note, Spinner, useFileList } from "@devtools/ui";
 import { downloadResult, PdfTool, useFileBytes, useProcessor } from "../shared.js";
 import { RENDER_SCALE, pdfToScreen, screenToPdf, type RenderedPage } from "./edit-pdf/geometry.js";
-import { Toolbar, type EditorTool } from "./edit-pdf/Toolbar.js";
+import { Toolbar, type EditorTool, type RecentSignature } from "./edit-pdf/Toolbar.js";
 import { AnnotationView, getAnnotationScreenBox } from "./edit-pdf/elements.js";
 import { ElementToolbar } from "./edit-pdf/ElementToolbar.js";
+import { SignatureModal, type SignatureResult } from "./edit-pdf/SignatureModal.js";
 import {
   COLORS,
   DEFAULT_FONT_SIZE,
@@ -35,6 +38,33 @@ import {
   HIGHLIGHT_OPACITY,
   MIN_DRAG_SIZE,
 } from "./edit-pdf/constants.js";
+
+/* ------------------------------------------------------------------ */
+/* Recent signatures — persisted locally so "Sign" can offer reuse      */
+/* across visits, same as Sejda's own dropdown, without any server.    */
+/* ------------------------------------------------------------------ */
+
+const RECENT_SIGNATURES_KEY = "edit-pdf:recent-signatures";
+const MAX_RECENT_SIGNATURES = 5;
+
+function loadRecentSignatures(): RecentSignature[] {
+  try {
+    const raw = localStorage.getItem(RECENT_SIGNATURES_KEY);
+    if (!raw) return [];
+    const parsed: unknown = JSON.parse(raw);
+    return Array.isArray(parsed) ? (parsed as RecentSignature[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveRecentSignatures(signatures: RecentSignature[]): void {
+  try {
+    localStorage.setItem(RECENT_SIGNATURES_KEY, JSON.stringify(signatures.slice(0, MAX_RECENT_SIGNATURES)));
+  } catch {
+    // Storage full or unavailable (private browsing) — reuse just won't persist. Not worth surfacing.
+  }
+}
 
 /* ------------------------------------------------------------------ */
 /* PDF rendering                                                        */
@@ -164,11 +194,15 @@ export default function EditPdf() {
   const [strokeWidth, setStrokeWidth] = useState<number>(DEFAULT_STROKE_WIDTH);
   const [shapeStrokeColor, setShapeStrokeColor] = useState<string>(COLORS[0]!);
   const [shapeFillColor, setShapeFillColor] = useState<string | null>(null);
+  const [markupColor, setMarkupColor] = useState<string>(COLORS[1]!);
 
   const [history, setHistory] = useState<History>(() => newHistory());
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [editingTextId, setEditingTextId] = useState<string | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
+  const [showAnnotations, setShowAnnotations] = useState(true);
+  const [signatures, setSignatures] = useState<RecentSignature[]>(() => loadRecentSignatures());
+  const [signatureModalOpen, setSignatureModalOpen] = useState(false);
 
   const annotations = history.present;
   const file = files[0];
@@ -182,6 +216,9 @@ export default function EditPdf() {
       setAnnotations((current) => [...current, annotation]);
       setSelectedId(annotation.id);
       if (annotation.type === "text") setEditingTextId(annotation.id);
+      // A tool placed something while annotations were hidden — show it,
+      // otherwise the thing that was just added appears to have done nothing.
+      setShowAnnotations(true);
     },
     [setAnnotations],
   );
@@ -318,6 +355,40 @@ export default function EditPdf() {
     }
   }
 
+  /* -------- signatures -------- */
+
+  function placeSignature(sig: RecentSignature) {
+    const targetPage = pages[0];
+    if (!targetPage) return;
+    const MAX_PT = 180;
+    const scale = Math.min(MAX_PT / sig.width, MAX_PT / sig.height, 1);
+    const w = sig.width * scale;
+    const h = sig.height * scale;
+    const ann: SignatureAnnotation = {
+      id: newAnnotationId(),
+      page: targetPage.pageNumber,
+      type: "signature",
+      x: (targetPage.pdfWidth - w) / 2,
+      y: (targetPage.pdfHeight - h) / 2,
+      width: w,
+      height: h,
+      dataUrl: sig.dataUrl,
+      format: "png",
+    };
+    addAnnotation(ann);
+  }
+
+  function confirmNewSignature(result: SignatureResult) {
+    setSignatureModalOpen(false);
+    const recent: RecentSignature = { id: newAnnotationId(), dataUrl: result.dataUrl, width: result.width, height: result.height };
+    setSignatures((current) => {
+      const next = [recent, ...current].slice(0, MAX_RECENT_SIGNATURES);
+      saveRecentSignatures(next);
+      return next;
+    });
+    placeSignature(recent);
+  }
+
   /* -------- save -------- */
 
   async function save() {
@@ -404,7 +475,14 @@ export default function EditPdf() {
           onShapeStrokeColorChange={setShapeStrokeColor}
           shapeFillColor={shapeFillColor}
           onShapeFillColorChange={setShapeFillColor}
+          markupColor={markupColor}
+          onMarkupColorChange={setMarkupColor}
           onInsertImage={insertImage}
+          signatures={signatures}
+          onPlaceSignature={placeSignature}
+          onNewSignature={() => setSignatureModalOpen(true)}
+          showAnnotations={showAnnotations}
+          onToggleShowAnnotations={() => setShowAnnotations((v) => !v)}
           canUndo={history.past.length > 0}
           canRedo={history.future.length > 0}
           onUndo={() => {
@@ -435,6 +513,8 @@ export default function EditPdf() {
               strokeWidth={strokeWidth}
               shapeStrokeColor={shapeStrokeColor}
               shapeFillColor={shapeFillColor}
+              markupColor={markupColor}
+              showAnnotations={showAnnotations}
               selectedId={selectedId}
               editingTextId={editingTextId}
               onSelect={setSelectedId}
@@ -460,6 +540,8 @@ export default function EditPdf() {
           </Note>
         )}
       </div>
+
+      {signatureModalOpen && <SignatureModal onClose={() => setSignatureModalOpen(false)} onConfirm={confirmNewSignature} />}
     </PdfTool>
   );
 }
@@ -478,6 +560,8 @@ interface PageEditorProps {
   strokeWidth: number;
   shapeStrokeColor: string;
   shapeFillColor: string | null;
+  markupColor: string;
+  showAnnotations: boolean;
   selectedId: string | null;
   editingTextId: string | null;
   onSelect: (id: string | null) => void;
@@ -491,7 +575,15 @@ interface PageEditorProps {
 
 type Drawing =
   | { kind: "pen"; points: Array<{ x: number; y: number }>; color: string; strokeWidth: number }
-  | { kind: "box"; tool: "highlight" | "whiteout" | "link" | "shape"; shapeKind?: ShapeKind; startX: number; startY: number; endX: number; endY: number };
+  | {
+      kind: "box";
+      tool: "highlight" | "whiteout" | "link" | "shape" | "strikeout" | "underline";
+      shapeKind?: ShapeKind;
+      startX: number;
+      startY: number;
+      endX: number;
+      endY: number;
+    };
 
 function PageEditor(props: PageEditorProps) {
   const {
@@ -504,6 +596,8 @@ function PageEditor(props: PageEditorProps) {
     strokeWidth,
     shapeStrokeColor,
     shapeFillColor,
+    markupColor,
+    showAnnotations,
     selectedId,
     editingTextId,
     onSelect,
@@ -560,7 +654,7 @@ function PageEditor(props: PageEditorProps) {
       return;
     }
 
-    if (tool === "highlight" || tool === "whiteout" || tool === "link") {
+    if (tool === "highlight" || tool === "whiteout" || tool === "link" || tool === "strikeout" || tool === "underline") {
       setDrawing({ kind: "box", tool, startX: pos.sx, startY: pos.sy, endX: pos.sx, endY: pos.sy });
       return;
     }
@@ -648,6 +742,9 @@ function PageEditor(props: PageEditorProps) {
           strokeWidth: DEFAULT_SHAPE_STROKE_WIDTH,
         };
         onAdd(ann);
+      } else if (drawing.tool === "strikeout" || drawing.tool === "underline") {
+        const ann: MarkupAnnotation = { id: newAnnotationId(), page: page.pageNumber, type: drawing.tool, ...box, color: markupColor };
+        onAdd(ann);
       }
     }
 
@@ -661,7 +758,7 @@ function PageEditor(props: PageEditorProps) {
         ? "pdfed__svg--text"
         : "pdfed__svg--crosshair";
 
-  const selected = selectedId ? annotations.find((a) => a.id === selectedId) : undefined;
+  const selected = showAnnotations && selectedId ? annotations.find((a) => a.id === selectedId) : undefined;
 
   return (
     <div className="pdfed__page">
@@ -690,20 +787,21 @@ function PageEditor(props: PageEditorProps) {
             if (!target.closest("[data-annotation-id]")) onSelect(null);
           }}
         >
-          {annotations.map((ann) => (
-            <AnnotationView
-              key={ann.id}
-              annotation={ann}
-              page={page}
-              svgRef={svgRef}
-              selected={selectedId === ann.id}
-              editing={editingTextId === ann.id}
-              onSelect={onSelect}
-              onStartEditingText={onStartEditingText}
-              onStopEditingText={onStopEditingText}
-              onUpdate={onUpdate}
-            />
-          ))}
+          {showAnnotations &&
+            annotations.map((ann) => (
+              <AnnotationView
+                key={ann.id}
+                annotation={ann}
+                page={page}
+                svgRef={svgRef}
+                selected={selectedId === ann.id}
+                editing={editingTextId === ann.id}
+                onSelect={onSelect}
+                onStartEditingText={onStartEditingText}
+                onStopEditingText={onStopEditingText}
+                onUpdate={onUpdate}
+              />
+            ))}
 
           {drawing?.kind === "pen" && drawing.points.length > 1 && (
             <PenPathPreview points={drawing.points} page={page} color={drawing.color} strokeWidth={drawing.strokeWidth} />
@@ -721,9 +819,19 @@ function PageEditor(props: PageEditorProps) {
                     ? "#FFFFFF"
                     : drawing.tool === "link"
                       ? "var(--accent-soft)"
-                      : (shapeFillColor ?? "transparent")
+                      : drawing.tool === "strikeout" || drawing.tool === "underline"
+                        ? markupColor
+                        : (shapeFillColor ?? "transparent")
               }
-              fillOpacity={drawing.tool === "highlight" ? HIGHLIGHT_OPACITY : drawing.tool === "shape" ? 1 : 0.5}
+              fillOpacity={
+                drawing.tool === "highlight"
+                  ? HIGHLIGHT_OPACITY
+                  : drawing.tool === "shape"
+                    ? 1
+                    : drawing.tool === "strikeout" || drawing.tool === "underline"
+                      ? 0.15
+                      : 0.5
+              }
               stroke={drawing.tool === "shape" ? shapeStrokeColor : drawing.tool === "link" ? "var(--accent)" : "none"}
               strokeWidth={drawing.tool === "shape" ? DEFAULT_SHAPE_STROKE_WIDTH * RENDER_SCALE : 1.5}
               strokeDasharray={drawing.tool === "link" ? "4 3" : undefined}

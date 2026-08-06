@@ -20,8 +20,11 @@ export type AnnotationTool =
   | "text"
   | "pen"
   | "highlight"
+  | "strikeout"
+  | "underline"
   | "link"
   | "image"
+  | "signature"
   | "whiteout"
   | "shape-ellipse"
   | "shape-rectangle"
@@ -103,6 +106,19 @@ export interface WhiteoutAnnotation extends BoxAnnotation {
   type: "whiteout";
 }
 
+export interface SignatureAnnotation extends BoxAnnotation {
+  type: "signature";
+  /** data: URL — drawn strokes, typed style, or an uploaded image, all flattened to one raster/vector source. */
+  dataUrl: string;
+  format: "png" | "jpg";
+}
+
+/** Strike-through or underline over a region — the box-drag equivalent of Sejda's text-selection markup (§ design doc Phase 2 note). */
+export interface MarkupAnnotation extends BoxAnnotation {
+  type: "strikeout" | "underline";
+  color: string;
+}
+
 export type Annotation =
   | TextAnnotation
   | PenAnnotation
@@ -110,7 +126,9 @@ export type Annotation =
   | ImageAnnotation
   | ShapeAnnotation
   | LinkAnnotation
-  | WhiteoutAnnotation;
+  | WhiteoutAnnotation
+  | SignatureAnnotation
+  | MarkupAnnotation;
 
 /** #RRGGBB -> pdf-lib rgb(). Returns black on malformed input. */
 function hexToRgb(hex: string): ReturnType<typeof rgb> {
@@ -178,11 +196,30 @@ function drawWhiteout(page: PDFPage, ann: WhiteoutAnnotation): void {
   });
 }
 
-async function drawImage(doc: PDFDocument, page: PDFPage, ann: ImageAnnotation): Promise<void> {
+async function drawImage(
+  doc: PDFDocument,
+  page: PDFPage,
+  ann: { x: number; y: number; width: number; height: number; dataUrl: string; format: "png" | "jpg" },
+): Promise<void> {
   const base64 = ann.dataUrl.slice(ann.dataUrl.indexOf(",") + 1);
   const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
   const embedded = ann.format === "png" ? await doc.embedPng(bytes) : await doc.embedJpg(bytes);
   page.drawImage(embedded, { x: ann.x, y: ann.y, width: ann.width, height: ann.height });
+}
+
+function drawMarkup(page: PDFPage, ann: MarkupAnnotation): void {
+  const color = hexToRgb(ann.color);
+  const thickness = Math.max(1, Math.min(3, ann.height * 0.08));
+  // Strikeout sits through the vertical middle of the marked region; underline
+  // sits just above its bottom edge, matching where a real text baseline
+  // and mid-line would fall for the box the user dragged over.
+  const y = ann.type === "strikeout" ? ann.y + ann.height / 2 : ann.y + ann.height * 0.12;
+  page.drawLine({
+    start: { x: ann.x, y },
+    end: { x: ann.x + ann.width, y },
+    thickness,
+    color,
+  });
 }
 
 function drawShape(page: PDFPage, ann: ShapeAnnotation): void {
@@ -281,15 +318,19 @@ export async function flattenAnnotations(
 
   // Draw order: whiteout first (it must cover original content, not later
   // additions), then highlight (translucent, should sit under ink), then
-  // images/shapes, then pen/text on top, links last (position-only, no paint).
+  // images/shapes, then markup/pen/text/signature on top, links last
+  // (position-only, no paint).
   const order: Record<Annotation["type"], number> = {
     whiteout: 0,
     highlight: 1,
     image: 2,
     shape: 3,
-    pen: 4,
-    text: 5,
-    link: 6,
+    strikeout: 4,
+    underline: 4,
+    pen: 5,
+    text: 6,
+    signature: 7,
+    link: 8,
   };
   const sorted = [...annotations].sort((a, b) => order[a.type] - order[b.type]);
 
@@ -303,6 +344,8 @@ export async function flattenAnnotations(
     else if (ann.type === "whiteout") drawWhiteout(page, ann);
     else if (ann.type === "shape") drawShape(page, ann);
     else if (ann.type === "image") await drawImage(doc, page, ann);
+    else if (ann.type === "signature") await drawImage(doc, page, ann);
+    else if (ann.type === "strikeout" || ann.type === "underline") drawMarkup(page, ann);
     else if (ann.type === "link") addLinkAnnotation(doc, page, ann);
   }
 

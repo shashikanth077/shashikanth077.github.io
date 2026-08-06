@@ -3,9 +3,12 @@ import type { AnnotationTool, ShapeKind } from "@devtools/tools-core";
 import { Button } from "@devtools/ui";
 import { COLORS, HIGHLIGHT_COLORS, SHAPE_KINDS } from "./constants.js";
 import {
+  AnnotateIcon,
   ArrowIcon,
   ChevronDownIcon,
   EllipseIcon,
+  EyeIcon,
+  EyeOffIcon,
   HighlightIcon,
   ImageIcon,
   LineIcon,
@@ -15,12 +18,22 @@ import {
   RedoIcon,
   SelectIcon,
   ShapesIcon,
+  SignIcon,
+  StrikeoutIcon,
   TextIcon,
+  UnderlineIcon,
   UndoIcon,
   WhiteoutIcon,
 } from "./icons.js";
 
 export type EditorTool = "select" | AnnotationTool;
+
+export interface RecentSignature {
+  id: string;
+  dataUrl: string;
+  width: number;
+  height: number;
+}
 
 const SHAPE_ICONS: Record<ShapeKind, (p: { size?: number }) => ReactNode> = {
   rectangle: RectangleIcon,
@@ -37,6 +50,8 @@ export interface ToolbarProps {
   onColorChange: (color: string) => void;
   highlightColor: string;
   onHighlightColorChange: (color: string) => void;
+  markupColor: string;
+  onMarkupColorChange: (color: string) => void;
   fontSize: number;
   onFontSizeChange: (size: number) => void;
   strokeWidth: number;
@@ -48,6 +63,13 @@ export interface ToolbarProps {
   onShapeFillColorChange: (color: string | null) => void;
 
   onInsertImage: (file: File) => void;
+
+  signatures: RecentSignature[];
+  onPlaceSignature: (sig: RecentSignature) => void;
+  onNewSignature: () => void;
+
+  showAnnotations: boolean;
+  onToggleShowAnnotations: () => void;
 
   canUndo: boolean;
   canRedo: boolean;
@@ -89,26 +111,111 @@ export function Toolbar(props: ToolbarProps) {
         >
           <ImageIcon />
         </ToolButton>
-        <ToolButton current={props.tool} value="pen" onClick={props.onToolChange} label="Pen">
-          <PenIcon />
-        </ToolButton>
-        <ToolButton
-          current={props.tool}
-          value="highlight"
-          onClick={props.onToolChange}
-          label="Highlight"
-        >
-          <HighlightIcon />
-        </ToolButton>
+
+        <ToolbarDropdown label="Sign" trigger={<SignIcon />} active={props.tool === "signature"}>
+          {(close) => (
+            <>
+              {props.signatures.length > 0 && (
+                <>
+                  <div className="pdfed__dropdown-heading">Use existing</div>
+                  {props.signatures.map((sig) => (
+                    <button
+                      key={sig.id}
+                      type="button"
+                      className="pdfed__dropdown-item pdfed__dropdown-item--sig"
+                      onClick={() => {
+                        props.onPlaceSignature(sig);
+                        close();
+                      }}
+                    >
+                      <img src={sig.dataUrl} alt="" />
+                    </button>
+                  ))}
+                  <div className="pdfed__dropdown-sep" />
+                </>
+              )}
+              <button
+                type="button"
+                className="pdfed__dropdown-item"
+                onClick={() => {
+                  props.onNewSignature();
+                  close();
+                }}
+              >
+                <SignIcon size={16} />
+                New Signature
+              </button>
+            </>
+          )}
+        </ToolbarDropdown>
+
         <ToolButton current={props.tool} value="whiteout" onClick={props.onToolChange} label="Whiteout">
           <WhiteoutIcon />
         </ToolButton>
 
         <ToolbarDropdown
-          label="Shapes"
-          trigger={<ShapesIcon />}
-          active={props.tool.startsWith("shape-")}
+          label="Annotate"
+          trigger={<AnnotateIcon />}
+          active={props.tool === "highlight" || props.tool === "strikeout" || props.tool === "underline" || props.tool === "pen"}
         >
+          {(close) => (
+            <>
+              <button type="button" className="pdfed__dropdown-item" onClick={props.onToggleShowAnnotations}>
+                {props.showAnnotations ? <EyeIcon size={16} /> : <EyeOffIcon size={16} />}
+                {props.showAnnotations ? "Hide annotations" : "Show annotations"}
+              </button>
+              <div className="pdfed__dropdown-sep" />
+              <div className="pdfed__dropdown-heading">Text</div>
+              <button
+                type="button"
+                className={`pdfed__dropdown-item${props.tool === "strikeout" ? " pdfed__dropdown-item--active" : ""}`}
+                onClick={() => {
+                  props.onToolChange("strikeout");
+                  close();
+                }}
+              >
+                <StrikeoutIcon size={16} />
+                Strike out
+              </button>
+              <button
+                type="button"
+                className={`pdfed__dropdown-item${props.tool === "highlight" ? " pdfed__dropdown-item--active" : ""}`}
+                onClick={() => {
+                  props.onToolChange("highlight");
+                  close();
+                }}
+              >
+                <HighlightIcon size={16} />
+                Highlight
+              </button>
+              <button
+                type="button"
+                className={`pdfed__dropdown-item${props.tool === "underline" ? " pdfed__dropdown-item--active" : ""}`}
+                onClick={() => {
+                  props.onToolChange("underline");
+                  close();
+                }}
+              >
+                <UnderlineIcon size={16} />
+                Underline
+              </button>
+              <div className="pdfed__dropdown-heading">Freehand</div>
+              <button
+                type="button"
+                className={`pdfed__dropdown-item${props.tool === "pen" ? " pdfed__dropdown-item--active" : ""}`}
+                onClick={() => {
+                  props.onToolChange("pen");
+                  close();
+                }}
+              >
+                <PenIcon size={16} />
+                Draw
+              </button>
+            </>
+          )}
+        </ToolbarDropdown>
+
+        <ToolbarDropdown label="Shapes" trigger={<ShapesIcon />} active={props.tool.startsWith("shape-")}>
           {(close) =>
             SHAPE_KINDS.map(({ kind, label }) => {
               const Icon = SHAPE_ICONS[kind];
@@ -132,7 +239,24 @@ export function Toolbar(props: ToolbarProps) {
         </ToolbarDropdown>
       </div>
 
-      {(props.tool === "text" || props.tool === "pen") && (
+      {props.tool === "text" && (
+        <div className="pdfed__toolbar-group">
+          <span className="pdfed__toolbar-label">Color</span>
+          {COLORS.map((c) => (
+            <button
+              key={c}
+              type="button"
+              className={`pdfed__swatch${props.color === c ? " pdfed__swatch--active" : ""}`}
+              style={{ background: c }}
+              onClick={() => props.onColorChange(c)}
+              aria-label={`Color ${c}`}
+              aria-pressed={props.color === c}
+            />
+          ))}
+        </div>
+      )}
+
+      {props.tool === "pen" && (
         <div className="pdfed__toolbar-group">
           <span className="pdfed__toolbar-label">Color</span>
           {COLORS.map((c) => (
@@ -161,6 +285,23 @@ export function Toolbar(props: ToolbarProps) {
               onClick={() => props.onHighlightColorChange(c)}
               aria-label={`Highlight ${c}`}
               aria-pressed={props.highlightColor === c}
+            />
+          ))}
+        </div>
+      )}
+
+      {(props.tool === "strikeout" || props.tool === "underline") && (
+        <div className="pdfed__toolbar-group">
+          <span className="pdfed__toolbar-label">Color</span>
+          {COLORS.map((c) => (
+            <button
+              key={c}
+              type="button"
+              className={`pdfed__swatch${props.markupColor === c ? " pdfed__swatch--active" : ""}`}
+              style={{ background: c }}
+              onClick={() => props.onMarkupColorChange(c)}
+              aria-label={`Markup ${c}`}
+              aria-pressed={props.markupColor === c}
             />
           ))}
         </div>

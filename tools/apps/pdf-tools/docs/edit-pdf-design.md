@@ -200,18 +200,22 @@ label already correctly gates) stays as the single commit action.
 Each phase ships independently typechecked, built (`npm run build`), and
 screenshotted in the running dev preview before the next starts.
 
-**Phase 1 — toolbar shell + core placement tools**
+**Phase 1 — toolbar shell + core placement tools — done (2026-08-06)**
 Icon toolbar redesign (Text/Links/Images/Whiteout/Shapes + dropdowns),
 floating per-element toolbar (move/duplicate/delete, replacing the current
 click-to-select-only model), Image insert, Link insert, Shapes (ellipse/
 rectangle/line/arrow), Whiteout. Existing Text/Pen/Highlight tools carry
 over, restyled into the new toolbar.
 
-**Phase 2 — Signatures + Annotate suite**
-Signature modal (Type with handwriting-style gallery + color row, Draw,
-Upload Image), Sign toolbar dropdown with reusable signatures, Annotate
-dropdown (strikeout/highlight/underline over selected text runs using the
-extracted text-run hit-testing, freehand highlight/draw already exist).
+**Phase 2 — Signatures + Annotate suite — done (2026-08-06)**
+Signature modal (Type with a 6-style CSS-font handwriting gallery + 7-color
+row, Draw via an in-modal canvas, Upload Image), Sign toolbar dropdown with
+reusable signatures (persisted to `localStorage`, capped at 5), Annotate
+dropdown (Show/Hide toggle, Strikeout/Highlight/Underline, Draw). Strikeout
+and Underline landed as box-drag markup — the same primitive as Highlight,
+rendering a line instead of a fill — rather than true text-run selection;
+see the note at the top of Phase 2's implementation for why (no text-run
+hit-testing engine exists yet; that's Phase 4's extraction work).
 
 **Phase 3 — Forms + Find & Replace + page panel**
 Form field placement (text/multiline/dropdown/radio/checkbox — visual +

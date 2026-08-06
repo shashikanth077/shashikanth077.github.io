@@ -4,8 +4,10 @@ import type {
   HighlightAnnotation,
   ImageAnnotation,
   LinkAnnotation,
+  MarkupAnnotation,
   PenAnnotation,
   ShapeAnnotation,
+  SignatureAnnotation,
   TextAnnotation,
   WhiteoutAnnotation,
 } from "@devtools/tools-core";
@@ -51,6 +53,11 @@ export function AnnotationView(props: AnnotationViewProps) {
       return <LinkAnnotationView {...props} annotation={annotation} />;
     case "whiteout":
       return <WhiteoutAnnotationView {...props} annotation={annotation} />;
+    case "signature":
+      return <SignatureAnnotationView {...props} annotation={annotation} />;
+    case "strikeout":
+    case "underline":
+      return <MarkupAnnotationView {...props} annotation={annotation} />;
   }
 }
 
@@ -177,6 +184,84 @@ function ImageAnnotationView(props: AnnotationViewProps & { annotation: ImageAnn
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
       />
+      {selected && (
+        <>
+          <SelectionOutline screenBox={screenBox} />
+          <ResizeHandles screenBox={screenBox} onBeginResize={beginResize} />
+        </>
+      )}
+    </g>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Signature — visually an image, kept as its own type (see pdf-edit.ts) */
+/* so the Sign dropdown's "recent signatures" list and flatten draw     */
+/* order can treat it distinctly from a plain inserted image.           */
+/* ------------------------------------------------------------------ */
+
+function SignatureAnnotationView(props: AnnotationViewProps & { annotation: SignatureAnnotation }) {
+  const { annotation, selected, onSelect } = props;
+  const { screenBox, beginMove, beginResize, onPointerMove, onPointerUp } = useBoxAnnotation(props, annotation);
+
+  return (
+    <g data-annotation-id={annotation.id}>
+      <image
+        href={annotation.dataUrl}
+        x={screenBox.sx}
+        y={screenBox.sy}
+        width={screenBox.width}
+        height={screenBox.height}
+        preserveAspectRatio="xMidYMid meet"
+        style={{ cursor: "move" }}
+        onPointerDown={(e) => {
+          onSelect(annotation.id);
+          beginMove(e);
+        }}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+      />
+      {selected && (
+        <>
+          <SelectionOutline screenBox={screenBox} />
+          <ResizeHandles screenBox={screenBox} onBeginResize={beginResize} />
+        </>
+      )}
+    </g>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Markup — strikeout / underline over a dragged region (the box-drag   */
+/* equivalent of Sejda's text-selection markup; see design doc Phase 2) */
+/* ------------------------------------------------------------------ */
+
+function MarkupAnnotationView(props: AnnotationViewProps & { annotation: MarkupAnnotation }) {
+  const { annotation, selected, onSelect } = props;
+  const { screenBox, beginMove, beginResize, onPointerMove, onPointerUp } = useBoxAnnotation(props, annotation);
+
+  const lineY = annotation.type === "strikeout" ? screenBox.sy + screenBox.height / 2 : screenBox.sy + screenBox.height * 0.88;
+
+  return (
+    <g data-annotation-id={annotation.id}>
+      {/* Transparent hit area — the visible line is thin and hard to grab on its own. */}
+      <rect
+        x={screenBox.sx}
+        y={screenBox.sy}
+        width={screenBox.width}
+        height={screenBox.height}
+        fill="transparent"
+        style={{ cursor: "move" }}
+        onPointerDown={(e) => {
+          onSelect(annotation.id);
+          beginMove(e);
+        }}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+      />
+      <line x1={screenBox.sx} y1={lineY} x2={screenBox.sx + screenBox.width} y2={lineY} stroke={annotation.color} strokeWidth={2.5} pointerEvents="none" />
       {selected && (
         <>
           <SelectionOutline screenBox={screenBox} />

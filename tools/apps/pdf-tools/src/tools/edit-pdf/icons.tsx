@@ -164,3 +164,53 @@ export function MoveIcon(p: IconProps) {
     </Svg>
   );
 }
+export function SignIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M3 17s2-1 4-1 3 1.5 5 1.5S16 16 18 16s3 1 3 1" />
+      <path d="M6 13c1-4 3-9 5-9s1 6-1 9 4 1 6-2" />
+    </Svg>
+  );
+}
+export function AnnotateIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M4 19h4l10-10a2.121 2.121 0 00-3-3L5 16v3z" />
+      <path d="M3 21h18" />
+    </Svg>
+  );
+}
+export function StrikeoutIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M6 12h12" />
+      <path d="M8 7c0-1.5 1.5-3 4-3s4 1 4 2.5" />
+      <path d="M8 17c0 1.5 1.5 3 4 3s4-1.5 4-3" />
+    </Svg>
+  );
+}
+export function UnderlineIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M6 4v7a6 6 0 0012 0V4" />
+      <path d="M4 20h16" />
+    </Svg>
+  );
+}
+export function EyeIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z" />
+      <circle cx="12" cy="12" r="3" />
+    </Svg>
+  );
+}
+export function EyeOffIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M3 3l18 18" />
+      <path d="M10.6 5.1A10.4 10.4 0 0112 5c6 0 10 7 10 7a17.5 17.5 0 01-3.2 3.9M6.6 6.6C4 8.3 2 12 2 12s4 7 10 7a9.6 9.6 0 004.9-1.3" />
+      <path d="M9.5 9.5a3 3 0 004.2 4.2" />
+    </Svg>
+  );
+}
