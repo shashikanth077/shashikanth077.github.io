@@ -1,19 +1,26 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState, type ReactNode } from "react";
-import type { AnnotationTool, ShapeKind } from "@devtools/tools-core";
+import type { AnnotationTool, FormFieldKind, ShapeKind } from "@devtools/tools-core";
 import { Button } from "@devtools/ui";
 import { COLORS, HIGHLIGHT_COLORS, SHAPE_KINDS } from "./constants.js";
 import {
   AnnotateIcon,
   ArrowIcon,
+  CheckboxFieldIcon,
   ChevronDownIcon,
+  DropdownFieldIcon,
   EllipseIcon,
   EyeIcon,
   EyeOffIcon,
+  FindIcon,
+  FormsIcon,
+  GridIcon,
   HighlightIcon,
   ImageIcon,
   LineIcon,
   LinkIcon,
+  MultilineFieldIcon,
   PenIcon,
+  RadioFieldIcon,
   RectangleIcon,
   RedoIcon,
   SelectIcon,
@@ -25,6 +32,14 @@ import {
   UndoIcon,
   WhiteoutIcon,
 } from "./icons.js";
+
+const FORM_FIELD_KINDS: Array<{ kind: FormFieldKind; label: string; icon: (p: { size?: number }) => ReactNode }> = [
+  { kind: "text", label: "Text", icon: TextIcon },
+  { kind: "multiline", label: "Text multiline", icon: MultilineFieldIcon },
+  { kind: "dropdown", label: "Drop-down list", icon: DropdownFieldIcon },
+  { kind: "checkbox", label: "Checkbox", icon: CheckboxFieldIcon },
+  { kind: "radio", label: "Radio button", icon: RadioFieldIcon },
+];
 
 export type EditorTool = "select" | AnnotationTool;
 
@@ -71,6 +86,10 @@ export interface ToolbarProps {
   showAnnotations: boolean;
   onToggleShowAnnotations: () => void;
 
+  onOpenFind: () => void;
+  showThumbnails: boolean;
+  onToggleThumbnails: () => void;
+
   canUndo: boolean;
   canRedo: boolean;
   onUndo: () => void;
@@ -103,6 +122,29 @@ export function Toolbar(props: ToolbarProps) {
         <ToolButton current={props.tool} value="link" onClick={props.onToolChange} label="Links">
           <LinkIcon />
         </ToolButton>
+
+        <ToolbarDropdown label="Forms" trigger={<FormsIcon />} active={props.tool.startsWith("form-")}>
+          {(close) =>
+            FORM_FIELD_KINDS.map(({ kind, label, icon: Icon }) => {
+              const value: EditorTool = `form-${kind}`;
+              return (
+                <button
+                  key={kind}
+                  type="button"
+                  className={`pdfed__dropdown-item${props.tool === value ? " pdfed__dropdown-item--active" : ""}`}
+                  onClick={() => {
+                    props.onToolChange(value);
+                    close();
+                  }}
+                >
+                  <Icon size={16} />
+                  {label}
+                </button>
+              );
+            })
+          }
+        </ToolbarDropdown>
+
         <ToolButton
           current={props.tool}
           value="image"
@@ -404,6 +446,19 @@ export function Toolbar(props: ToolbarProps) {
           aria-label="Redo"
         >
           <RedoIcon size={14} />
+        </button>
+        <button type="button" className="pdfed__iconbtn" onClick={props.onOpenFind} title="Find & replace (Ctrl+F)" aria-label="Find & replace">
+          <FindIcon size={14} />
+        </button>
+        <button
+          type="button"
+          className={`pdfed__iconbtn${props.showThumbnails ? " pdfed__iconbtn--active" : ""}`}
+          onClick={props.onToggleThumbnails}
+          title="Page thumbnails"
+          aria-label="Page thumbnails"
+          aria-pressed={props.showThumbnails}
+        >
+          <GridIcon size={14} />
         </button>
       </div>
 

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, type PointerEvent as ReactPointerEvent, type RefObject } from "react";
 import type {
   Annotation,
+  FormFieldAnnotation,
   HighlightAnnotation,
   ImageAnnotation,
   LinkAnnotation,
@@ -58,6 +59,8 @@ export function AnnotationView(props: AnnotationViewProps) {
     case "strikeout":
     case "underline":
       return <MarkupAnnotationView {...props} annotation={annotation} />;
+    case "form-field":
+      return <FormFieldAnnotationView {...props} annotation={annotation} />;
   }
 }
 
@@ -418,6 +421,66 @@ function WhiteoutAnnotationView(props: AnnotationViewProps & { annotation: White
         onPointerCancel={onPointerUp}
       />
       {selected && <ResizeHandles screenBox={screenBox} onBeginResize={beginResize} />}
+    </g>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Form field — a real AcroForm field at flatten time (see pdf-edit.ts), */
+/* rendered here as a labeled placeholder since it isn't interactive    */
+/* until the exported PDF is opened in a real reader.                   */
+/* ------------------------------------------------------------------ */
+
+const FORM_FIELD_LABEL: Record<FormFieldAnnotation["kind"], string> = {
+  text: "Text",
+  multiline: "Text (multiline)",
+  dropdown: "Dropdown ▾",
+  checkbox: "☑",
+  radio: "◉",
+};
+
+function FormFieldAnnotationView(props: AnnotationViewProps & { annotation: FormFieldAnnotation }) {
+  const { annotation, selected, onSelect } = props;
+  const { screenBox, beginMove, beginResize, onPointerMove, onPointerUp } = useBoxAnnotation(props, annotation);
+
+  return (
+    <g data-annotation-id={annotation.id}>
+      <rect
+        x={screenBox.sx}
+        y={screenBox.sy}
+        width={screenBox.width}
+        height={screenBox.height}
+        fill="#EDF0FF"
+        fillOpacity={0.7}
+        stroke="#6B72E6"
+        strokeWidth={1.25}
+        strokeDasharray="3 2"
+        style={{ cursor: "move" }}
+        onPointerDown={(e) => {
+          onSelect(annotation.id);
+          beginMove(e);
+        }}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+      />
+      <text
+        x={screenBox.sx + 4}
+        y={screenBox.sy + screenBox.height / 2 + 4}
+        fontFamily="Helvetica, Arial, sans-serif"
+        fontSize={Math.min(12, screenBox.height * 0.6)}
+        fill="#4448B8"
+        pointerEvents="none"
+        style={{ userSelect: "none" }}
+      >
+        {FORM_FIELD_LABEL[annotation.kind]}
+      </text>
+      {selected && (
+        <>
+          <SelectionOutline screenBox={screenBox} />
+          <ResizeHandles screenBox={screenBox} onBeginResize={beginResize} />
+        </>
+      )}
     </g>
   );
 }

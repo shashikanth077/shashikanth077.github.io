@@ -205,6 +205,68 @@ export function EyeIcon(p: IconProps) {
     </Svg>
   );
 }
+export function FormsIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <rect x="4" y="3" width="16" height="18" rx="2" />
+      <path d="M8 8h8" />
+      <path d="M8 12h8" />
+      <path d="M8 16h5" />
+    </Svg>
+  );
+}
+export function FindIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <circle cx="11" cy="11" r="7" />
+      <path d="M21 21l-4.3-4.3" />
+    </Svg>
+  );
+}
+export function GridIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <rect x="3" y="3" width="7" height="7" rx="1" />
+      <rect x="14" y="3" width="7" height="7" rx="1" />
+      <rect x="3" y="14" width="7" height="7" rx="1" />
+      <rect x="14" y="14" width="7" height="7" rx="1" />
+    </Svg>
+  );
+}
+export function DropdownFieldIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <rect x="3" y="7" width="18" height="10" rx="2" />
+      <path d="M15 12l2 2 2-2" />
+    </Svg>
+  );
+}
+export function CheckboxFieldIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <rect x="4" y="4" width="16" height="16" rx="2" />
+      <path d="M8 12l3 3 6-6" />
+    </Svg>
+  );
+}
+export function RadioFieldIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="12" cy="12" r="3.5" fill="currentColor" stroke="none" />
+    </Svg>
+  );
+}
+export function MultilineFieldIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <rect x="3" y="4" width="18" height="16" rx="2" />
+      <path d="M7 9h10" />
+      <path d="M7 13h10" />
+      <path d="M7 17h6" />
+    </Svg>
+  );
+}
 export function EyeOffIcon(p: IconProps) {
   return (
     <Svg {...p}>

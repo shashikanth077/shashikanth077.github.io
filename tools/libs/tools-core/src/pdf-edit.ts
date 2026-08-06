@@ -14,7 +14,18 @@
  * can never do that.
  */
 
-import { PDFDocument, StandardFonts, rgb, PDFName, PDFString, type PDFFont, type PDFPage } from "pdf-lib";
+import {
+  PDFDocument,
+  StandardFonts,
+  rgb,
+  degrees,
+  PDFName,
+  PDFString,
+  type PDFFont,
+  type PDFForm,
+  type PDFPage,
+  type PDFRadioGroup,
+} from "pdf-lib";
 
 export type AnnotationTool =
   | "text"
@@ -29,7 +40,12 @@ export type AnnotationTool =
   | "shape-ellipse"
   | "shape-rectangle"
   | "shape-line"
-  | "shape-arrow";
+  | "shape-arrow"
+  | "form-text"
+  | "form-multiline"
+  | "form-dropdown"
+  | "form-checkbox"
+  | "form-radio";
 
 interface BaseAnnotation {
   /** Stable id — used for React keys and selection tracking. */
@@ -119,6 +135,25 @@ export interface MarkupAnnotation extends BoxAnnotation {
   color: string;
 }
 
+export type FormFieldKind = "text" | "multiline" | "dropdown" | "checkbox" | "radio";
+
+/**
+ * A real AcroForm field, not a visual placeholder — pdf-lib has first-class
+ * support for creating fillable fields (`doc.getForm().createTextField()`
+ * etc.), so this produces an output PDF with genuinely fillable fields that
+ * open correctly in Acrobat or any other PDF reader, not just an image of one.
+ */
+export interface FormFieldAnnotation extends BoxAnnotation {
+  type: "form-field";
+  kind: FormFieldKind;
+  /** Exported AcroForm field name — must be unique within the document. */
+  name: string;
+  /** Dropdown-only: the option list. */
+  options?: string[];
+  /** Radio-only: which option this specific widget represents; siblings share `name` as the group name. */
+  radioValue?: string;
+}
+
 export type Annotation =
   | TextAnnotation
   | PenAnnotation
@@ -128,7 +163,8 @@ export type Annotation =
   | LinkAnnotation
   | WhiteoutAnnotation
   | SignatureAnnotation
-  | MarkupAnnotation;
+  | MarkupAnnotation
+  | FormFieldAnnotation;
 
 /** #RRGGBB -> pdf-lib rgb(). Returns black on malformed input. */
 function hexToRgb(hex: string): ReturnType<typeof rgb> {
@@ -275,6 +311,67 @@ function drawShape(page: PDFPage, ann: ShapeAnnotation): void {
   }
 }
 
+/** Shared across every form-field annotation in one flatten pass, so groups/duplicate names resolve correctly. */
+interface FormContext {
+  form: PDFForm;
+  font: PDFFont;
+  usedNames: Set<string>;
+  radioGroups: Map<string, PDFRadioGroup>;
+}
+
+/** A field name must be unique per document — pdf-lib throws otherwise. Silently dedupes rather than failing the whole export over a naming collision. */
+function uniqueFieldName(ctx: FormContext, requested: string): string {
+  const base = requested.trim() || "Field";
+  if (!ctx.usedNames.has(base)) {
+    ctx.usedNames.add(base);
+    return base;
+  }
+  let n = 2;
+  while (ctx.usedNames.has(`${base} (${n})`)) n++;
+  const name = `${base} (${n})`;
+  ctx.usedNames.add(name);
+  return name;
+}
+
+function drawFormField(page: PDFPage, ann: FormFieldAnnotation, ctx: FormContext): void {
+  const common = {
+    x: ann.x,
+    y: ann.y,
+    width: ann.width,
+    height: ann.height,
+    font: ctx.font,
+    borderColor: rgb(0.4, 0.45, 0.9),
+    borderWidth: 1,
+    backgroundColor: rgb(0.93, 0.95, 1),
+  };
+
+  if (ann.kind === "radio") {
+    // Every widget sharing `name` belongs to the same group — pdf-lib
+    // throws if the same group name is created twice, so reuse it.
+    let group = ctx.radioGroups.get(ann.name);
+    if (!group) {
+      group = ctx.form.createRadioGroup(uniqueFieldName(ctx, ann.name));
+      ctx.radioGroups.set(ann.name, group);
+    }
+    group.addOptionToPage(ann.radioValue || ann.id, page, common);
+    return;
+  }
+
+  const name = uniqueFieldName(ctx, ann.name);
+
+  if (ann.kind === "checkbox") {
+    ctx.form.createCheckBox(name).addToPage(page, common);
+  } else if (ann.kind === "dropdown") {
+    const dropdown = ctx.form.createDropdown(name);
+    dropdown.setOptions(ann.options && ann.options.length ? ann.options : ["Option 1", "Option 2"]);
+    dropdown.addToPage(page, common);
+  } else {
+    const field = ctx.form.createTextField(name);
+    if (ann.kind === "multiline") field.enableMultiline();
+    field.addToPage(page, common);
+  }
+}
+
 /**
  * Adds a clickable URI-link annotation. pdf-lib has no high-level API for
  * this (only PDFDocument-level page content drawing), so it is built from
@@ -303,23 +400,93 @@ function addLinkAnnotation(doc: PDFDocument, page: PDFPage, ann: LinkAnnotation)
 }
 
 /**
+ * The document's page order/structure as the editor currently has it —
+ * built fresh from the live page list on every save, so delete/rotate/
+ * insert-page edits are just a different view over the same list rather
+ * than a separate change log to replay.
+ */
+export type PageSlot =
+  | { kind: "original"; pageNumber: number; rotationDelta: 0 | 90 | 180 | 270 }
+  | { kind: "blank"; id: number; width: number; height: number };
+
+/**
+ * Applies delete/rotate/insert-blank-page edits directly to `doc` and
+ * returns a map from each `Annotation.page` target (an original page number,
+ * or a blank slot's synthetic `id`) to the resulting `PDFPage` object.
+ *
+ * Page reordering isn't supported by the editor (only delete/insert/rotate),
+ * so surviving original pages are guaranteed to still appear in `pageOrder`
+ * in their original relative order — that's what makes the insertion pass
+ * below safe to do with a single left-to-right running index instead of
+ * recomputing indices after each insert.
+ */
+async function applyPageStructure(doc: PDFDocument, pageOrder: PageSlot[]): Promise<Map<number, PDFPage>> {
+  const targetMap = new Map<number, PDFPage>();
+  const keptNumbers = pageOrder
+    .filter((s): s is Extract<PageSlot, { kind: "original" }> => s.kind === "original")
+    .map((s) => s.pageNumber)
+    .sort((a, b) => a - b);
+  const keptSet = new Set(keptNumbers);
+
+  // Remove pages that no longer appear in pageOrder — highest index first,
+  // so earlier removals don't shift the indices of ones still to come.
+  for (let i = doc.getPageCount() - 1; i >= 0; i--) {
+    if (!keptSet.has(i + 1)) doc.removePage(i);
+  }
+
+  // Remaining originals kept their relative order, so zipping them against
+  // the sorted kept-number list maps pageNumber -> PDFPage with no index math.
+  doc.getPages().forEach((page, i) => {
+    const pageNumber = keptNumbers[i];
+    if (pageNumber !== undefined) targetMap.set(pageNumber, page);
+  });
+
+  for (const slot of pageOrder) {
+    if (slot.kind !== "original" || !slot.rotationDelta) continue;
+    const page = targetMap.get(slot.pageNumber);
+    if (page) page.setRotation(degrees(page.getRotation().angle + slot.rotationDelta));
+  }
+
+  // Insert blanks left-to-right. Each insertPage(i, ...) call shifts every
+  // later page up by one, which is exactly what keeps the *next* iteration's
+  // index correct — see the doc comment above.
+  pageOrder.forEach((slot, i) => {
+    if (slot.kind !== "blank") return;
+    targetMap.set(slot.id, doc.insertPage(i, [slot.width, slot.height]));
+  });
+
+  return targetMap;
+}
+
+/**
  * Flattens all annotations onto the PDF and returns the new bytes.
  * Annotations become part of the page content — they are no longer editable
  * as separate objects after this. That is intentional: the output is a
  * finished PDF for sharing, not an editable working copy.
+ *
+ * `pageOrder`, when given, also applies the editor's delete/rotate/insert
+ * page-structure edits before drawing. Omitting it keeps every original
+ * page as-is (pageNumber `n` -> the document's nth page) — the pre-Phase-3
+ * behavior, and what a caller with no page-structure UI still wants.
  */
 export async function flattenAnnotations(
   bytes: ArrayBuffer,
   annotations: Annotation[],
+  pageOrder?: PageSlot[],
 ): Promise<Uint8Array> {
   const doc = await PDFDocument.load(bytes, { ignoreEncryption: true });
   const font = await doc.embedFont(StandardFonts.Helvetica);
-  const pages = doc.getPages();
+
+  const targetPages = pageOrder
+    ? await applyPageStructure(doc, pageOrder)
+    : new Map(doc.getPages().map((page, i) => [i + 1, page]));
+
+  const formCtx: FormContext = { form: doc.getForm(), font, usedNames: new Set(), radioGroups: new Map() };
 
   // Draw order: whiteout first (it must cover original content, not later
   // additions), then highlight (translucent, should sit under ink), then
-  // images/shapes, then markup/pen/text/signature on top, links last
-  // (position-only, no paint).
+  // images/shapes, then markup/pen/text/signature/form-field on top, links
+  // last (position-only, no paint).
   const order: Record<Annotation["type"], number> = {
     whiteout: 0,
     highlight: 1,
@@ -330,12 +497,13 @@ export async function flattenAnnotations(
     pen: 5,
     text: 6,
     signature: 7,
+    "form-field": 7,
     link: 8,
   };
   const sorted = [...annotations].sort((a, b) => order[a.type] - order[b.type]);
 
   for (const ann of sorted) {
-    const page = pages[ann.page - 1];
+    const page = targetPages.get(ann.page);
     if (!page) continue;
 
     if (ann.type === "text") drawText(page, ann, font);
@@ -346,6 +514,7 @@ export async function flattenAnnotations(
     else if (ann.type === "image") await drawImage(doc, page, ann);
     else if (ann.type === "signature") await drawImage(doc, page, ann);
     else if (ann.type === "strikeout" || ann.type === "underline") drawMarkup(page, ann);
+    else if (ann.type === "form-field") drawFormField(page, ann, formCtx);
     else if (ann.type === "link") addLinkAnnotation(doc, page, ann);
   }
 

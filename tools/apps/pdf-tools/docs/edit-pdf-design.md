@@ -216,11 +216,36 @@ and Underline landed as box-drag markup — the same primitive as Highlight,
 rendering a line instead of a fill — rather than true text-run selection;
 that needs the extraction/hit-testing engine scoped for Phase 4.
 
-**Phase 3 — Forms + Find & Replace + page panel**
-Form field placement (text/multiline/dropdown/radio/checkbox — visual +
-flattening only, no "publish" flow per §2), Find & Replace over extracted
-text, page-thumbnail side panel, per-page toolbar (delete/zoom/rotate/insert
-page).
+**Phase 3 — Forms + Find & Replace + page panel — done (2026-08-06)**
+Form fields turned out better than "visual + flattening only": pdf-lib has
+first-class AcroForm support (`doc.getForm().createTextField()` etc.), so
+Text/Multiline/Dropdown/Checkbox/Radio all export as genuinely fillable
+fields — verified by round-tripping an export back through
+`PDFDocument.load()` and reading `form.getFields()`. Find & Replace searches
+pdf.js's per-page text extraction (matching is per text-run, not across
+runs — a phrase split across two runs by the source PDF's own layout won't
+be found, the same honest limitation `pdfToText` already carries) and
+replaces via the same whiteout+text-overlay primitive Phase 1 already uses
+for Whiteout, so nothing new needed to be added to the "never touches the
+original content stream" safety story in §3. Page-thumbnail side panel and
+per-page toolbar (delete/rotate/insert-blank/zoom) landed together, backed
+by one `PageSlot[]` order list that both the live editor and
+`flattenAnnotations` build from — deleting, inserting, and rotating pages
+was also verified via a `PDFDocument.load()` round-trip (page count, sizes,
+and rotation angles all correct after delete + insert + rotate in the same
+session).
+
+One deliberate scope cut: page rotation only affects the exported PDF (and
+the thumbnail rail's preview) — the live annotation canvas stays unrotated.
+PDF page rotation is a *display* instruction, not a change to the page's own
+coordinate system, so rotating the canvas too would mean threading a
+rotation parameter through every coordinate transform annotations rely on
+(`screenToPdf`/`pdfToScreen` and everything built on them) for no real
+functional gain — annotating a still-sideways scan and letting export fix
+the orientation costs the user nothing extra. Page delete/insert/rotate are
+also not part of the annotation undo/redo stack (Ctrl+Z only covers
+annotations) — a separate, smaller-scoped undo story for page structure
+wasn't worth the added complexity this phase.
 
 **Phase 4 — Best-effort existing-text edit**
 The §3 patch-and-re-render pipeline: run extraction/hit-testing, click-to-edit

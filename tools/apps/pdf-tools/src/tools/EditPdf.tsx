@@ -1,6 +1,7 @@
 import {
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
   type PointerEvent as ReactPointerEvent,
@@ -11,10 +12,13 @@ import {
   newAnnotationId,
   openPdf,
   type Annotation,
+  type FormFieldAnnotation,
+  type FormFieldKind,
   type HighlightAnnotation,
   type ImageAnnotation,
   type LinkAnnotation,
   type MarkupAnnotation,
+  type PageSlot,
   type PenAnnotation,
   type ShapeAnnotation,
   type ShapeKind,
@@ -29,6 +33,10 @@ import { Toolbar, type EditorTool, type RecentSignature } from "./edit-pdf/Toolb
 import { AnnotationView, getAnnotationScreenBox } from "./edit-pdf/elements.js";
 import { ElementToolbar } from "./edit-pdf/ElementToolbar.js";
 import { SignatureModal, type SignatureResult } from "./edit-pdf/SignatureModal.js";
+import { FindReplacePanel } from "./edit-pdf/FindReplacePanel.js";
+import { PageThumbnails, type ThumbnailEntry } from "./edit-pdf/PageThumbnails.js";
+import { PageChrome } from "./edit-pdf/PageChrome.js";
+import { findMatches, type TextMatch, type TextRun } from "./edit-pdf/textSearch.js";
 import {
   COLORS,
   DEFAULT_FONT_SIZE,
@@ -67,12 +75,17 @@ function saveRecentSignatures(signatures: RecentSignature[]): void {
 }
 
 /* ------------------------------------------------------------------ */
-/* PDF rendering                                                        */
+/* PDF rendering + text extraction                                      */
 /* ------------------------------------------------------------------ */
 
-async function renderPagesToImages(bytes: ArrayBuffer): Promise<RenderedPage[]> {
+/** A single blank white pixel, stretched to fill the frame by CSS — see the `<img>` below. */
+const BLANK_PAGE_DATA_URL =
+  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=";
+
+async function renderPagesToImages(bytes: ArrayBuffer): Promise<{ pages: RenderedPage[]; textRuns: TextRun[] }> {
   const { doc, pageCount, close } = await openPdf(bytes);
   const pages: RenderedPage[] = [];
+  const textRuns: TextRun[] = [];
 
   try {
     for (let n = 1; n <= pageCount; n++) {
@@ -99,6 +112,24 @@ async function renderPagesToImages(bytes: ArrayBuffer): Promise<RenderedPage[]> 
         dataUrl,
       });
 
+      // getTextContent() returns coordinates already in PDF user space
+      // (bottom-left origin, unscaled) — the same convention every
+      // annotation here uses, so no conversion is needed. Extracted once
+      // up front for Find & Replace rather than re-parsed per search.
+      const content = await page.getTextContent();
+      for (const item of content.items) {
+        if (!("str" in item) || !item.str.trim()) continue;
+        const height = (item.height as number) || 10;
+        textRuns.push({
+          page: n,
+          str: item.str,
+          x: item.transform[4] as number,
+          y: (item.transform[5] as number) - height * 0.2,
+          width: item.width as number,
+          height,
+        });
+      }
+
       page.cleanup();
       canvas.width = 0;
       canvas.height = 0;
@@ -107,7 +138,7 @@ async function renderPagesToImages(bytes: ArrayBuffer): Promise<RenderedPage[]> 
     await close();
   }
 
-  return pages;
+  return { pages, textRuns };
 }
 
 /** Reads an uploaded image file into a data URL plus its intrinsic pixel size. */
@@ -133,6 +164,22 @@ function shapeKindFromTool(tool: EditorTool): ShapeKind | null {
   if (!tool.startsWith("shape-")) return null;
   return tool.slice("shape-".length) as ShapeKind;
 }
+
+function formFieldKindFromTool(tool: EditorTool): FormFieldKind | null {
+  if (!tool.startsWith("form-")) return null;
+  return tool.slice("form-".length) as FormFieldKind;
+}
+
+const FORM_FIELD_DEFAULT_NAME: Record<FormFieldKind, string> = {
+  text: "Text field",
+  multiline: "Text field",
+  dropdown: "Dropdown",
+  checkbox: "Checkbox",
+  radio: "Radio Group",
+};
+
+/** Checkbox/radio are click-to-place at a fixed size, matching how every real PDF form uses them — not drag-to-size like a text field. */
+const FORM_TOGGLE_SIZE = 16;
 
 /* ------------------------------------------------------------------ */
 /* History                                                              */
@@ -174,6 +221,45 @@ function redo(history: History): History {
 }
 
 /* ------------------------------------------------------------------ */
+/* Editor page list — page order/structure, derived from pageOrder      */
+/* ------------------------------------------------------------------ */
+
+export interface EditorPage {
+  /** The value stored in `Annotation.page` for anything placed on this page — an original page number, or a blank slot's synthetic negative id. */
+  target: number;
+  /** 1-based position for "Page N" labels — independent of `target` so deletes/inserts don't leave gaps in what the user sees. */
+  displayNumber: number;
+  rotation: 0 | 90 | 180 | 270;
+  render: RenderedPage;
+}
+
+function buildEditorPages(pageOrder: PageSlot[], pages: RenderedPage[]): EditorPage[] {
+  const out: EditorPage[] = [];
+  pageOrder.forEach((slot, i) => {
+    if (slot.kind === "original") {
+      const src = pages.find((p) => p.pageNumber === slot.pageNumber);
+      if (!src) return;
+      out.push({ target: slot.pageNumber, displayNumber: i + 1, rotation: slot.rotationDelta, render: src });
+    } else {
+      out.push({
+        target: slot.id,
+        displayNumber: i + 1,
+        rotation: 0,
+        render: {
+          pageNumber: slot.id,
+          screenWidth: slot.width * RENDER_SCALE,
+          screenHeight: slot.height * RENDER_SCALE,
+          pdfWidth: slot.width,
+          pdfHeight: slot.height,
+          dataUrl: BLANK_PAGE_DATA_URL,
+        },
+      });
+    }
+  });
+  return out;
+}
+
+/* ------------------------------------------------------------------ */
 /* Editor                                                               */
 /* ------------------------------------------------------------------ */
 
@@ -184,8 +270,11 @@ export default function EditPdf() {
 
   const [loadingPdf, setLoadingPdf] = useState(false);
   const [pages, setPages] = useState<RenderedPage[]>([]);
+  const [pageOrder, setPageOrder] = useState<PageSlot[]>([]);
+  const [textRuns, setTextRuns] = useState<TextRun[]>([]);
   const [pdfBytes, setPdfBytes] = useState<ArrayBuffer | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const nextBlankId = useRef(-1);
 
   const [tool, setTool] = useState<EditorTool>("select");
   const [color, setColor] = useState<string>(COLORS[1]!);
@@ -195,6 +284,7 @@ export default function EditPdf() {
   const [shapeStrokeColor, setShapeStrokeColor] = useState<string>(COLORS[0]!);
   const [shapeFillColor, setShapeFillColor] = useState<string | null>(null);
   const [markupColor, setMarkupColor] = useState<string>(COLORS[1]!);
+  const [zoom, setZoom] = useState(1);
 
   const [history, setHistory] = useState<History>(() => newHistory());
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -203,9 +293,18 @@ export default function EditPdf() {
   const [showAnnotations, setShowAnnotations] = useState(true);
   const [signatures, setSignatures] = useState<RecentSignature[]>(() => loadRecentSignatures());
   const [signatureModalOpen, setSignatureModalOpen] = useState(false);
+  const [showThumbnails, setShowThumbnails] = useState(false);
+
+  const [findOpen, setFindOpen] = useState(false);
+  const [findQuery, setFindQuery] = useState("");
+  const [replaceText, setReplaceText] = useState("");
+  const [matchIndex, setMatchIndex] = useState(0);
+  const [replacedKeys, setReplacedKeys] = useState<Set<string>>(new Set());
 
   const annotations = history.present;
   const file = files[0];
+
+  const editorPages = useMemo(() => buildEditorPages(pageOrder, pages), [pageOrder, pages]);
 
   const setAnnotations = useCallback((updater: (current: Annotation[]) => Annotation[]) => {
     setHistory((h) => commit(h, updater(h.present)));
@@ -218,6 +317,15 @@ export default function EditPdf() {
       if (annotation.type === "text") setEditingTextId(annotation.id);
       // A tool placed something while annotations were hidden — show it,
       // otherwise the thing that was just added appears to have done nothing.
+      setShowAnnotations(true);
+    },
+    [setAnnotations],
+  );
+
+  const addAnnotations = useCallback(
+    (added: Annotation[]) => {
+      if (added.length === 0) return;
+      setAnnotations((current) => [...current, ...added]);
       setShowAnnotations(true);
     },
     [setAnnotations],
@@ -260,6 +368,8 @@ export default function EditPdf() {
   useEffect(() => {
     if (!file) {
       setPages([]);
+      setPageOrder([]);
+      setTextRuns([]);
       setPdfBytes(null);
       setHistory(newHistory());
       setSelectedId(null);
@@ -283,7 +393,9 @@ export default function EditPdf() {
         const rendered = await renderPagesToImages(bytes);
         if (cancelled) return;
         setPdfBytes(kept);
-        setPages(rendered);
+        setPages(rendered.pages);
+        setTextRuns(rendered.textRuns);
+        setPageOrder(rendered.pages.map((p) => ({ kind: "original", pageNumber: p.pageNumber, rotationDelta: 0 })));
       } catch (err) {
         if (cancelled) return;
         setLoadError(err instanceof Error ? err.message : "Could not open this PDF. It may be corrupted.");
@@ -313,6 +425,9 @@ export default function EditPdf() {
         e.preventDefault();
         setHistory((h) => redo(h));
         setSelectedId(null);
+      } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "f") {
+        e.preventDefault();
+        setFindOpen(true);
       } else if ((e.key === "Delete" || e.key === "Backspace") && selectedId) {
         e.preventDefault();
         deleteAnnotation(selectedId);
@@ -329,7 +444,7 @@ export default function EditPdf() {
   /* -------- image insert -------- */
 
   async function insertImage(imgFile: File) {
-    const targetPage = pages[0];
+    const targetPage = editorPages[0];
     if (!targetPage) return;
     setImageError(null);
     try {
@@ -340,10 +455,10 @@ export default function EditPdf() {
       const h = height * scale;
       const ann: ImageAnnotation = {
         id: newAnnotationId(),
-        page: targetPage.pageNumber,
+        page: targetPage.target,
         type: "image",
-        x: (targetPage.pdfWidth - w) / 2,
-        y: (targetPage.pdfHeight - h) / 2,
+        x: (targetPage.render.pdfWidth - w) / 2,
+        y: (targetPage.render.pdfHeight - h) / 2,
         width: w,
         height: h,
         dataUrl,
@@ -358,7 +473,7 @@ export default function EditPdf() {
   /* -------- signatures -------- */
 
   function placeSignature(sig: RecentSignature) {
-    const targetPage = pages[0];
+    const targetPage = editorPages[0];
     if (!targetPage) return;
     const MAX_PT = 180;
     const scale = Math.min(MAX_PT / sig.width, MAX_PT / sig.height, 1);
@@ -366,10 +481,10 @@ export default function EditPdf() {
     const h = sig.height * scale;
     const ann: SignatureAnnotation = {
       id: newAnnotationId(),
-      page: targetPage.pageNumber,
+      page: targetPage.target,
       type: "signature",
-      x: (targetPage.pdfWidth - w) / 2,
-      y: (targetPage.pdfHeight - h) / 2,
+      x: (targetPage.render.pdfWidth - w) / 2,
+      y: (targetPage.render.pdfHeight - h) / 2,
       width: w,
       height: h,
       dataUrl: sig.dataUrl,
@@ -389,6 +504,98 @@ export default function EditPdf() {
     placeSignature(recent);
   }
 
+  /* -------- page structure: delete / rotate / insert -------- */
+
+  function deletePage(target: number) {
+    setPageOrder((current) => current.filter((s) => (s.kind === "original" ? s.pageNumber : s.id) !== target));
+    setAnnotations((current) => current.filter((a) => a.page !== target));
+    setSelectedId((cur) => {
+      const stillSelected = cur && annotations.find((a) => a.id === cur);
+      return stillSelected && stillSelected.page === target ? null : cur;
+    });
+  }
+
+  function rotatePage(target: number, delta: 90 | -90) {
+    setPageOrder((current) =>
+      current.map((s) => {
+        if (s.kind !== "original" || s.pageNumber !== target) return s;
+        const next = (((s.rotationDelta + delta) % 360) + 360) % 360;
+        return { ...s, rotationDelta: next as 0 | 90 | 180 | 270 };
+      }),
+    );
+  }
+
+  function insertBlankAfter(target: number) {
+    const ref = editorPages.find((p) => p.target === target);
+    const width = ref?.render.pdfWidth ?? 612;
+    const height = ref?.render.pdfHeight ?? 792;
+    const blankId = nextBlankId.current--;
+    setPageOrder((current) => {
+      const index = current.findIndex((s) => (s.kind === "original" ? s.pageNumber : s.id) === target);
+      const next = [...current];
+      next.splice(index + 1, 0, { kind: "blank", id: blankId, width, height });
+      return next;
+    });
+  }
+
+  /* -------- find & replace -------- */
+
+  const allMatches = useMemo(() => findMatches(textRuns, findQuery), [textRuns, findQuery]);
+  const matchKey = (m: TextMatch) => `${m.page}-${m.runIndex}-${m.start}`;
+  const activeMatches = useMemo(() => allMatches.filter((m) => !replacedKeys.has(matchKey(m))), [allMatches, replacedKeys]);
+  const currentMatch = activeMatches[Math.min(matchIndex, activeMatches.length - 1)];
+
+  useEffect(() => {
+    setMatchIndex(0);
+    setReplacedKeys(new Set());
+  }, [findQuery]);
+
+  useEffect(() => {
+    if (!currentMatch) return;
+    const el = document.querySelector(`[data-page-target="${currentMatch.page}"]`);
+    el?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [currentMatch]);
+
+  function replaceMatch(match: TextMatch): Annotation[] {
+    const whiteout: WhiteoutAnnotation = {
+      id: newAnnotationId(),
+      page: match.page,
+      type: "whiteout",
+      x: match.x,
+      y: match.y,
+      width: match.width,
+      height: match.height,
+    };
+    const text: TextAnnotation = {
+      id: newAnnotationId(),
+      page: match.page,
+      type: "text",
+      x: match.x,
+      y: match.y + match.height,
+      text: replaceText,
+      fontSize: Math.max(6, match.height * 0.9),
+      color: "#000000",
+    };
+    return [whiteout, text];
+  }
+
+  function replaceCurrent() {
+    if (!currentMatch) return;
+    addAnnotations(replaceMatch(currentMatch));
+    setReplacedKeys((cur) => new Set(cur).add(matchKey(currentMatch)));
+  }
+
+  function replaceAll() {
+    if (activeMatches.length === 0) return;
+    const added = activeMatches.flatMap(replaceMatch);
+    addAnnotations(added);
+    setReplacedKeys((cur) => {
+      const next = new Set(cur);
+      activeMatches.forEach((m) => next.add(matchKey(m)));
+      return next;
+    });
+  }
+
   /* -------- save -------- */
 
   async function save() {
@@ -397,7 +604,7 @@ export default function EditPdf() {
     setEditingTextId(null);
 
     await run(async () => {
-      const data = await flattenAnnotations(pdfBytes.slice(0), annotations);
+      const data = await flattenAnnotations(pdfBytes.slice(0), annotations, pageOrder);
       const blob = new Blob([data as unknown as BlobPart], { type: "application/pdf" });
       const name = file.file.name.replace(/\.pdf$/i, "-edited.pdf");
       return [{ name, blob }];
@@ -438,6 +645,13 @@ export default function EditPdf() {
   }
 
   /* -------- editor -------- */
+
+  const thumbnailEntries: ThumbnailEntry[] = editorPages.map((p) => ({
+    target: p.target,
+    displayNumber: p.displayNumber,
+    dataUrl: p.render.dataUrl === BLANK_PAGE_DATA_URL ? null : p.render.dataUrl,
+    rotation: p.rotation,
+  }));
 
   return (
     <PdfTool slug="edit-pdf">
@@ -483,6 +697,9 @@ export default function EditPdf() {
           onNewSignature={() => setSignatureModalOpen(true)}
           showAnnotations={showAnnotations}
           onToggleShowAnnotations={() => setShowAnnotations((v) => !v)}
+          onOpenFind={() => setFindOpen(true)}
+          showThumbnails={showThumbnails}
+          onToggleThumbnails={() => setShowThumbnails((v) => !v)}
           canUndo={history.past.length > 0}
           canRedo={history.future.length > 0}
           onUndo={() => {
@@ -500,32 +717,71 @@ export default function EditPdf() {
           annotationCount={annotations.length}
         />
 
-        <div className="pdfed__viewport">
-          {pages.map((page) => (
-            <PageEditor
-              key={page.pageNumber}
-              page={page}
-              annotations={annotations.filter((a) => a.page === page.pageNumber)}
-              tool={tool}
-              color={color}
-              highlightColor={highlightColor}
-              fontSize={fontSize}
-              strokeWidth={strokeWidth}
-              shapeStrokeColor={shapeStrokeColor}
-              shapeFillColor={shapeFillColor}
-              markupColor={markupColor}
-              showAnnotations={showAnnotations}
-              selectedId={selectedId}
-              editingTextId={editingTextId}
-              onSelect={setSelectedId}
-              onStartEditingText={setEditingTextId}
-              onStopEditingText={() => setEditingTextId(null)}
-              onAdd={addAnnotation}
-              onUpdate={updateAnnotation}
-              onDuplicate={duplicateAnnotation}
-              onDelete={deleteAnnotation}
+        {findOpen && (
+          <FindReplacePanel
+            query={findQuery}
+            onQueryChange={setFindQuery}
+            replacement={replaceText}
+            onReplacementChange={setReplaceText}
+            matchCount={activeMatches.length}
+            currentIndex={activeMatches.length ? Math.min(matchIndex, activeMatches.length - 1) : -1}
+            onNext={() => setMatchIndex((i) => (activeMatches.length ? (i + 1) % activeMatches.length : 0))}
+            onPrev={() => setMatchIndex((i) => (activeMatches.length ? (i - 1 + activeMatches.length) % activeMatches.length : 0))}
+            onReplace={replaceCurrent}
+            onReplaceAll={replaceAll}
+            onClose={() => setFindOpen(false)}
+          />
+        )}
+
+        <div className="pdfed__body">
+          {showThumbnails && (
+            <PageThumbnails
+              entries={thumbnailEntries}
+              activeTarget={currentMatch?.page ?? null}
+              onJump={(target) => document.querySelector(`[data-page-target="${target}"]`)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+              onDelete={deletePage}
+              onClose={() => setShowThumbnails(false)}
             />
-          ))}
+          )}
+
+          <div className="pdfed__viewport">
+            {editorPages.map((ep) => (
+              <PageEditor
+                key={ep.target}
+                page={ep.render}
+                displayNumber={ep.displayNumber}
+                rotation={ep.rotation}
+                zoom={zoom}
+                canDeletePage={editorPages.length > 1}
+                onDeletePage={() => deletePage(ep.target)}
+                onRotateLeft={() => rotatePage(ep.target, -90)}
+                onRotateRight={() => rotatePage(ep.target, 90)}
+                onInsertPageAfter={() => insertBlankAfter(ep.target)}
+                onZoomIn={() => setZoom((z) => Math.min(2, +(z + 0.25).toFixed(2)))}
+                onZoomOut={() => setZoom((z) => Math.max(0.5, +(z - 0.25).toFixed(2)))}
+                activeMatch={currentMatch && currentMatch.page === ep.target ? currentMatch : null}
+                annotations={annotations.filter((a) => a.page === ep.target)}
+                tool={tool}
+                color={color}
+                highlightColor={highlightColor}
+                fontSize={fontSize}
+                strokeWidth={strokeWidth}
+                shapeStrokeColor={shapeStrokeColor}
+                shapeFillColor={shapeFillColor}
+                markupColor={markupColor}
+                showAnnotations={showAnnotations}
+                selectedId={selectedId}
+                editingTextId={editingTextId}
+                onSelect={setSelectedId}
+                onStartEditingText={setEditingTextId}
+                onStopEditingText={() => setEditingTextId(null)}
+                onAdd={addAnnotation}
+                onUpdate={updateAnnotation}
+                onDuplicate={duplicateAnnotation}
+                onDelete={deleteAnnotation}
+              />
+            ))}
+          </div>
         </div>
 
         {imageError && <Note kind="error">{imageError}</Note>}
@@ -552,6 +808,17 @@ export default function EditPdf() {
 
 interface PageEditorProps {
   page: RenderedPage;
+  displayNumber: number;
+  rotation: 0 | 90 | 180 | 270;
+  zoom: number;
+  canDeletePage: boolean;
+  onDeletePage: () => void;
+  onRotateLeft: () => void;
+  onRotateRight: () => void;
+  onInsertPageAfter: () => void;
+  onZoomIn: () => void;
+  onZoomOut: () => void;
+  activeMatch: TextMatch | null;
   annotations: Annotation[];
   tool: EditorTool;
   color: string;
@@ -577,8 +844,9 @@ type Drawing =
   | { kind: "pen"; points: Array<{ x: number; y: number }>; color: string; strokeWidth: number }
   | {
       kind: "box";
-      tool: "highlight" | "whiteout" | "link" | "shape" | "strikeout" | "underline";
+      tool: "highlight" | "whiteout" | "link" | "shape" | "strikeout" | "underline" | "form";
       shapeKind?: ShapeKind;
+      formKind?: FormFieldKind;
       startX: number;
       startY: number;
       endX: number;
@@ -588,6 +856,17 @@ type Drawing =
 function PageEditor(props: PageEditorProps) {
   const {
     page,
+    displayNumber,
+    rotation,
+    zoom,
+    canDeletePage,
+    onDeletePage,
+    onRotateLeft,
+    onRotateRight,
+    onInsertPageAfter,
+    onZoomIn,
+    onZoomOut,
+    activeMatch,
     annotations,
     tool,
     color,
@@ -619,6 +898,28 @@ function PageEditor(props: PageEditorProps) {
     const sx = ((e.clientX - rect.left) / rect.width) * page.screenWidth;
     const sy = ((e.clientY - rect.top) / rect.height) * page.screenHeight;
     return { sx, sy };
+  }
+
+  function addFormField(centerSx: number, centerSy: number, kind: FormFieldKind, boxOverride?: { x: number; y: number; width: number; height: number }) {
+    const box =
+      boxOverride ??
+      (() => {
+        const half = FORM_TOGGLE_SIZE / 2;
+        const topLeft = screenToPdf(page, centerSx - half, centerSy - half);
+        return { x: topLeft.x, y: topLeft.y - FORM_TOGGLE_SIZE, width: FORM_TOGGLE_SIZE, height: FORM_TOGGLE_SIZE };
+      })();
+    const id = newAnnotationId();
+    const ann: FormFieldAnnotation = {
+      id,
+      page: page.pageNumber,
+      type: "form-field",
+      ...box,
+      kind,
+      name: FORM_FIELD_DEFAULT_NAME[kind],
+      ...(kind === "dropdown" ? { options: ["Option 1", "Option 2"] } : {}),
+      ...(kind === "radio" ? { radioValue: id } : {}),
+    };
+    onAdd(ann);
   }
 
   function onPointerDown(e: ReactPointerEvent<SVGSVGElement>) {
@@ -662,6 +963,17 @@ function PageEditor(props: PageEditorProps) {
     const shapeKind = shapeKindFromTool(tool);
     if (shapeKind) {
       setDrawing({ kind: "box", tool: "shape", shapeKind, startX: pos.sx, startY: pos.sy, endX: pos.sx, endY: pos.sy });
+      return;
+    }
+
+    const formKind = formFieldKindFromTool(tool);
+    if (formKind === "checkbox" || formKind === "radio") {
+      // Fixed-size, click-to-place — see FORM_TOGGLE_SIZE.
+      addFormField(pos.sx, pos.sy, formKind);
+      return;
+    }
+    if (formKind) {
+      setDrawing({ kind: "box", tool: "form", formKind, startX: pos.sx, startY: pos.sy, endX: pos.sx, endY: pos.sy });
     }
   }
 
@@ -745,6 +1057,8 @@ function PageEditor(props: PageEditorProps) {
       } else if (drawing.tool === "strikeout" || drawing.tool === "underline") {
         const ann: MarkupAnnotation = { id: newAnnotationId(), page: page.pageNumber, type: drawing.tool, ...box, color: markupColor };
         onAdd(ann);
+      } else if (drawing.tool === "form" && drawing.formKind) {
+        addFormField(0, 0, drawing.formKind, box);
       }
     }
 
@@ -759,15 +1073,27 @@ function PageEditor(props: PageEditorProps) {
         : "pdfed__svg--crosshair";
 
   const selected = showAnnotations && selectedId ? annotations.find((a) => a.id === selectedId) : undefined;
+  const activeMatchBox = activeMatch ? pdfToScreen(page, activeMatch.x, activeMatch.y + activeMatch.height) : null;
 
   return (
-    <div className="pdfed__page">
-      <div className="pdfed__pagenum">Page {page.pageNumber}</div>
+    <div className="pdfed__page" data-page-target={page.pageNumber} style={{ width: page.screenWidth * zoom }}>
+      <PageChrome
+        displayNumber={displayNumber}
+        rotation={rotation}
+        canDelete={canDeletePage}
+        zoom={zoom}
+        onDelete={onDeletePage}
+        onRotateLeft={onRotateLeft}
+        onRotateRight={onRotateRight}
+        onInsertAfter={onInsertPageAfter}
+        onZoomIn={onZoomIn}
+        onZoomOut={onZoomOut}
+      />
       <div
         className="pdfed__pageframe"
-        style={{ width: page.screenWidth, aspectRatio: `${page.screenWidth} / ${page.screenHeight}` }}
+        style={{ width: page.screenWidth * zoom, aspectRatio: `${page.screenWidth} / ${page.screenHeight}` }}
       >
-        <img src={page.dataUrl} alt={`Page ${page.pageNumber}`} className="pdfed__pageimg" draggable={false} />
+        <img src={page.dataUrl} alt={`Page ${displayNumber}`} className="pdfed__pageimg" draggable={false} />
         <svg
           ref={svgRef}
           className={`pdfed__svg ${cursorClass}`}
@@ -803,6 +1129,20 @@ function PageEditor(props: PageEditorProps) {
               />
             ))}
 
+          {activeMatchBox && activeMatch && (
+            <rect
+              x={activeMatchBox.sx}
+              y={activeMatchBox.sy}
+              width={activeMatch.width * RENDER_SCALE}
+              height={activeMatch.height * RENDER_SCALE}
+              fill="none"
+              stroke="#F59E0B"
+              strokeWidth={2}
+              pointerEvents="none"
+              className="pdfed__match-ring"
+            />
+          )}
+
           {drawing?.kind === "pen" && drawing.points.length > 1 && (
             <PenPathPreview points={drawing.points} page={page} color={drawing.color} strokeWidth={drawing.strokeWidth} />
           )}
@@ -821,7 +1161,9 @@ function PageEditor(props: PageEditorProps) {
                       ? "var(--accent-soft)"
                       : drawing.tool === "strikeout" || drawing.tool === "underline"
                         ? markupColor
-                        : (shapeFillColor ?? "transparent")
+                        : drawing.tool === "form"
+                          ? "#EDF0FF"
+                          : (shapeFillColor ?? "transparent")
               }
               fillOpacity={
                 drawing.tool === "highlight"
@@ -832,9 +1174,17 @@ function PageEditor(props: PageEditorProps) {
                       ? 0.15
                       : 0.5
               }
-              stroke={drawing.tool === "shape" ? shapeStrokeColor : drawing.tool === "link" ? "var(--accent)" : "none"}
+              stroke={
+                drawing.tool === "shape"
+                  ? shapeStrokeColor
+                  : drawing.tool === "link"
+                    ? "var(--accent)"
+                    : drawing.tool === "form"
+                      ? "#6B72E6"
+                      : "none"
+              }
               strokeWidth={drawing.tool === "shape" ? DEFAULT_SHAPE_STROKE_WIDTH * RENDER_SCALE : 1.5}
-              strokeDasharray={drawing.tool === "link" ? "4 3" : undefined}
+              strokeDasharray={drawing.tool === "link" || drawing.tool === "form" ? "4 3" : undefined}
             />
           )}
         </svg>
@@ -853,6 +1203,17 @@ function PageEditor(props: PageEditorProps) {
                 defaultValue={selected.url}
                 onPointerDown={(e) => e.stopPropagation()}
                 onChange={(e) => onUpdate(selected.id, { url: e.target.value })}
+                onKeyDown={(e) => e.key === "Enter" && e.currentTarget.blur()}
+              />
+            )}
+            {selected.type === "form-field" && (
+              <input
+                type="text"
+                className="pdfed__link-input"
+                placeholder="Field name…"
+                defaultValue={selected.name}
+                onPointerDown={(e) => e.stopPropagation()}
+                onChange={(e) => onUpdate(selected.id, { name: e.target.value })}
                 onKeyDown={(e) => e.key === "Enter" && e.currentTarget.blur()}
               />
             )}
