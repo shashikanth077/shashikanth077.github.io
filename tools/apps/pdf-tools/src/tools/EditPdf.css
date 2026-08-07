@@ -158,8 +158,21 @@
 .pdfed__page {
   display: flex;
   flex-direction: column;
+  /* Centers .pdfed__pageframe (which keeps its own natural/zoomed width)
+     within this now-full-width column — see .pdfed__pagechrome's own
+     width:100% below for why the per-page toolbar isn't affected by this. */
+  align-items: center;
   gap: var(--space-2);
+  /* width:100% (not just max-width) gives this a *definite* containing-block
+     width for .pdfed__pageframe's own max-width:100% to resolve against.
+     Without it, this is a shrink-to-fit flex item (viewport's align-items is
+     center, not stretch) and percentage max-width can't constrain a child's
+     intrinsic/inline pixel width during shrink-to-fit sizing — the zoomed
+     page's width leaked straight through and overflowed the viewport on any
+     screen narrower than the rendered page. */
+  width: 100%;
   max-width: 100%;
+  min-width: 0;
 }
 
 .pdfed__pageframe {
@@ -531,6 +544,11 @@
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-sm);
+  /* .pdfed__page centers its children now (so the pageframe can be capped
+     to a definite width — see that rule's comment); this keeps the toolbar
+     spanning the full page width instead of also shrinking to fit-content. */
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .pdfed__pagechrome-num {
@@ -717,7 +735,16 @@
     flex-shrink: 0;
   }
   .pdfed__toolbar-spacer { display: none; }
-  .pdfed__body { flex-direction: column; }
+  /* .pdfed__body's default align-items:flex-start (set unconditionally
+     above) governs the cross axis — vertical in the normal row layout,
+     which is fine there. Flipping to column here makes the cross axis
+     horizontal instead, so without an override that same flex-start left
+     .pdfed__viewport (and .pdfed__thumbrail) shrink-to-fit their own
+     content's intrinsic width — the zoomed page's inline pixel width —
+     rather than filling this container's actual (narrow) width, which
+     overflowed the viewport. stretch makes them fill it like the page-level
+     width:100% fix above expects. */
+  .pdfed__body { flex-direction: column; align-items: stretch; }
   .pdfed__thumbrail {
     position: static;
     width: 100%;
