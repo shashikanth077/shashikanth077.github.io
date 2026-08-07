@@ -19,6 +19,10 @@ export interface TextRun {
   y: number;
   width: number;
   height: number;
+  /** pdf.js's own font-family guess for this run (e.g. "serif", or a real name it recognized) — see fontMatch.ts. */
+  fontFamilyHint: string;
+  /** True when the run's transform isn't simple axis-aligned horizontal text — see design doc §3 point 5 (click-to-edit skips these, same as a rotated/vertical run always has). */
+  rotated: boolean;
 }
 
 export interface TextMatch {
@@ -31,6 +35,21 @@ export interface TextMatch {
   y: number;
   width: number;
   height: number;
+}
+
+/**
+ * Finds the text run a click landed on, for "click existing text to edit"
+ * (design doc §3 point 2). Skips rotated/vertical runs — those fall back to
+ * the ordinary "place new text" behavior rather than a best-effort patch,
+ * since there's no honest way to make a horizontal overlay look right on
+ * top of them.
+ */
+export function findRunAt(runs: TextRun[], page: number, x: number, y: number): TextRun | null {
+  for (const run of runs) {
+    if (run.page !== page || run.rotated) continue;
+    if (x >= run.x && x <= run.x + run.width && y >= run.y && y <= run.y + run.height) return run;
+  }
+  return null;
 }
 
 export function findMatches(runs: TextRun[], query: string): TextMatch[] {

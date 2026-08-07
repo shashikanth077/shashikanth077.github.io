@@ -15,6 +15,7 @@ import type {
 import { boxToScreen, pdfToScreen, RENDER_SCALE, type RenderedPage } from "./geometry.js";
 import { useBoxDrag, useEndpointDrag, type Box, type Corner } from "./interactions.js";
 import type { ScreenBox } from "./ElementToolbar.js";
+import { isBoldStandardFont, isItalicStandardFont, standardFontCssStack } from "./fontMatch.js";
 
 /* ------------------------------------------------------------------ */
 /* Shared props                                                        */
@@ -590,6 +591,12 @@ function TextAnnotationView(props: AnnotationViewProps & { annotation: TextAnnot
   const measuredWidth = Math.max(60, (annotation.text.length || 8) * displayFontSize * 0.55 + 12);
   const measuredHeight = displayFontSize * 1.4 + 6;
   const screenBox = { sx: screen.sx - 4, sy: screen.sy - 2, width: measuredWidth, height: measuredHeight };
+  // Existing-text patches (design doc §3) carry a matched standard font —
+  // approximate it on screen too, not just in the exported PDF, so what you
+  // see while editing roughly matches what you get.
+  const cssFontFamily = annotation.fontFamily ? standardFontCssStack(annotation.fontFamily) : "Helvetica, Arial, sans-serif";
+  const bold = annotation.bold || (annotation.fontFamily ? isBoldStandardFont(annotation.fontFamily) : false);
+  const italic = annotation.italic || (annotation.fontFamily ? isItalicStandardFont(annotation.fontFamily) : false);
 
   if (editing) {
     return (
@@ -604,7 +611,7 @@ function TextAnnotationView(props: AnnotationViewProps & { annotation: TextAnnot
           ref={inputRef}
           className="pdfed__textedit"
           style={{
-            font: `${annotation.italic ? "italic " : ""}${annotation.bold ? "700 " : ""}${displayFontSize}px Helvetica, Arial, sans-serif`,
+            font: `${italic ? "italic " : ""}${bold ? "700 " : ""}${displayFontSize}px ${cssFontFamily}`,
             color: annotation.color,
             lineHeight: 1.2,
           }}
@@ -632,10 +639,10 @@ function TextAnnotationView(props: AnnotationViewProps & { annotation: TextAnnot
       <text
         x={screen.sx}
         y={screen.sy + displayFontSize}
-        fontFamily="Helvetica, Arial, sans-serif"
+        fontFamily={cssFontFamily}
         fontSize={displayFontSize}
-        fontWeight={annotation.bold ? 700 : 400}
-        fontStyle={annotation.italic ? "italic" : "normal"}
+        fontWeight={bold ? 700 : 400}
+        fontStyle={italic ? "italic" : "normal"}
         fill={annotation.color}
         style={{ cursor: "text", userSelect: "none" }}
         onDoubleClick={(e) => {

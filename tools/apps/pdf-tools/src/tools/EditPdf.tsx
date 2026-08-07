@@ -36,7 +36,9 @@ import { SignatureModal, type SignatureResult } from "./edit-pdf/SignatureModal.
 import { FindReplacePanel } from "./edit-pdf/FindReplacePanel.js";
 import { PageThumbnails, type ThumbnailEntry } from "./edit-pdf/PageThumbnails.js";
 import { PageChrome } from "./edit-pdf/PageChrome.js";
-import { findMatches, type TextMatch, type TextRun } from "./edit-pdf/textSearch.js";
+import { findMatches, findRunAt, type TextMatch, type TextRun } from "./edit-pdf/textSearch.js";
+import { matchStandardFont } from "./edit-pdf/fontMatch.js";
+import { sampleRunColors } from "./edit-pdf/colorSample.js";
 import {
   COLORS,
   DEFAULT_FONT_SIZE,
@@ -114,12 +116,17 @@ async function renderPagesToImages(bytes: ArrayBuffer): Promise<{ pages: Rendere
 
       // getTextContent() returns coordinates already in PDF user space
       // (bottom-left origin, unscaled) — the same convention every
-      // annotation here uses, so no conversion is needed. Extracted once
-      // up front for Find & Replace rather than re-parsed per search.
+      // annotation here uses, so no conversion is needed. Extracted once up
+      // front for both Find & Replace and the existing-text patch pipeline
+      // (design doc §3) rather than re-parsed per search or per click.
       const content = await page.getTextContent();
       for (const item of content.items) {
         if (!("str" in item) || !item.str.trim()) continue;
         const height = (item.height as number) || 10;
+        const transform = item.transform as number[];
+        // Rotated/skewed text has non-zero b/c components; axis-aligned
+        // horizontal text (the overwhelming common case) has b = c ≈ 0.
+        const rotated = Math.abs(transform[1] ?? 0) > 0.01 || Math.abs(transform[2] ?? 0) > 0.01;
         textRuns.push({
           page: n,
           str: item.str,
@@ -127,6 +134,8 @@ async function renderPagesToImages(bytes: ArrayBuffer): Promise<{ pages: Rendere
           y: (item.transform[5] as number) - height * 0.2,
           width: item.width as number,
           height,
+          fontFamilyHint: content.styles[item.fontName]?.fontFamily ?? "",
+          rotated,
         });
       }
 
@@ -326,6 +335,23 @@ export default function EditPdf() {
     (added: Annotation[]) => {
       if (added.length === 0) return;
       setAnnotations((current) => [...current, ...added]);
+      setShowAnnotations(true);
+    },
+    [setAnnotations],
+  );
+
+  /**
+   * The existing-text patch pipeline's commit step (design doc §3 point 3):
+   * a cover annotation plus a text annotation, added as one undo step, with
+   * the text one immediately opened for editing — the same "click, then
+   * type" feel as placing brand new text, just seeded with what was already
+   * there instead of starting blank.
+   */
+  const addTextPatch = useCallback(
+    (cover: WhiteoutAnnotation, text: TextAnnotation) => {
+      setAnnotations((current) => [...current, cover, text]);
+      setSelectedId(text.id);
+      setEditingTextId(text.id);
       setShowAnnotations(true);
     },
     [setAnnotations],
@@ -760,6 +786,8 @@ export default function EditPdf() {
                 onZoomIn={() => setZoom((z) => Math.min(2, +(z + 0.25).toFixed(2)))}
                 onZoomOut={() => setZoom((z) => Math.max(0.5, +(z - 0.25).toFixed(2)))}
                 activeMatch={currentMatch && currentMatch.page === ep.target ? currentMatch : null}
+                textRuns={textRuns.filter((r) => r.page === ep.target)}
+                onAddTextPatch={addTextPatch}
                 annotations={annotations.filter((a) => a.page === ep.target)}
                 tool={tool}
                 color={color}
@@ -819,6 +847,8 @@ interface PageEditorProps {
   onZoomIn: () => void;
   onZoomOut: () => void;
   activeMatch: TextMatch | null;
+  textRuns: TextRun[];
+  onAddTextPatch: (cover: WhiteoutAnnotation, text: TextAnnotation) => void;
   annotations: Annotation[];
   tool: EditorTool;
   color: string;
@@ -867,6 +897,8 @@ function PageEditor(props: PageEditorProps) {
     onZoomIn,
     onZoomOut,
     activeMatch,
+    textRuns,
+    onAddTextPatch,
     annotations,
     tool,
     color,
@@ -889,6 +921,7 @@ function PageEditor(props: PageEditorProps) {
   } = props;
 
   const svgRef = useRef<SVGSVGElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
   const [drawing, setDrawing] = useState<Drawing | null>(null);
 
   function getPointerPos(e: ReactPointerEvent<SVGSVGElement>) {
@@ -935,6 +968,44 @@ function PageEditor(props: PageEditorProps) {
 
     if (tool === "text") {
       const pdf = screenToPdf(page, pos.sx, pos.sy);
+
+      // Clicking on top of text the PDF already has starts the
+      // existing-text patch flow (design doc §3) instead of placing a new,
+      // separate text box — the same "click text, start typing" gesture a
+      // real editor has, best-effort-faked with a cover + a matched-font
+      // overlay since the original glyphs can't safely be rewritten.
+      const run = findRunAt(textRuns, page.pageNumber, pdf.x, pdf.y);
+      if (run) {
+        const standardFont = matchStandardFont(run.fontFamilyHint);
+        const { textColor, backgroundColor } = imgRef.current
+          ? sampleRunColors(imgRef.current, page, run)
+          : { textColor: "#000000", backgroundColor: "#FFFFFF" };
+
+        const cover: WhiteoutAnnotation = {
+          id: newAnnotationId(),
+          page: page.pageNumber,
+          type: "whiteout",
+          x: run.x,
+          y: run.y,
+          width: run.width,
+          height: run.height,
+          color: backgroundColor,
+        };
+        const text: TextAnnotation = {
+          id: newAnnotationId(),
+          page: page.pageNumber,
+          type: "text",
+          x: run.x,
+          y: run.y + run.height,
+          text: run.str,
+          fontSize: Math.max(6, run.height * 0.85),
+          color: textColor,
+          fontFamily: standardFont,
+        };
+        onAddTextPatch(cover, text);
+        return;
+      }
+
       const ann: TextAnnotation = {
         id: newAnnotationId(),
         page: page.pageNumber,
@@ -1093,7 +1164,7 @@ function PageEditor(props: PageEditorProps) {
         className="pdfed__pageframe"
         style={{ width: page.screenWidth * zoom, aspectRatio: `${page.screenWidth} / ${page.screenHeight}` }}
       >
-        <img src={page.dataUrl} alt={`Page ${displayNumber}`} className="pdfed__pageimg" draggable={false} />
+        <img ref={imgRef} src={page.dataUrl} alt={`Page ${displayNumber}`} className="pdfed__pageimg" draggable={false} />
         <svg
           ref={svgRef}
           className={`pdfed__svg ${cursorClass}`}

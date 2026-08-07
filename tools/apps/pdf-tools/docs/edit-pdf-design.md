@@ -247,10 +247,45 @@ also not part of the annotation undo/redo stack (Ctrl+Z only covers
 annotations) — a separate, smaller-scoped undo story for page structure
 wasn't worth the added complexity this phase.
 
-**Phase 4 — Best-effort existing-text edit**
-The §3 patch-and-re-render pipeline: run extraction/hit-testing, click-to-edit
-on existing text, background-color sampling, font-matching heuristic, and the
-approximate-match disclosure UI.
+**Phase 4 — Best-effort existing-text edit — done (2026-08-07)**
+The §3 patch-and-re-render pipeline, built on Phase 3's text extraction:
+clicking with the Text tool now hit-tests the current page's runs
+(`findRunAt` in textSearch.ts) before falling back to placing a blank text
+box. A hit adds the same whiteout-cover + text-overlay pair Find & Replace
+already uses (one undo step, via the new `addTextPatch`), pre-filled with
+the run's own string and immediately opened for editing — same "click,
+start typing" feel as new text, just seeded instead of blank.
 
-This document covers Phases 1–4 end to end; implementation proceeds phase by
-phase.
+Two pieces make the patch look closer to the original than a plain white
+box + black Helvetica would:
+- **Color sampling** (`colorSample.ts`): reads the run's ink color and the
+  page background straight off the already-rendered `<img>` via an offscreen
+  canvas — synchronous, no extra image load, since the img is already
+  decoded and on screen by the time a click can happen. Handles tinted or
+  scanned backgrounds instead of assuming white.
+- **Font matching** (`fontMatch.ts`): maps pdf.js's own font-family guess
+  for the run (`content.styles[item.fontName].fontFamily`) onto the closest
+  of pdf-lib's 14 standard fonts by serif/sans/mono + bold/italic keyword
+  matching. `TextAnnotation.fontFamily` carries this through to both the
+  live editor's on-screen preview (via a matching web-safe CSS stack) and
+  the real embedded font at export.
+
+Rotated/vertical runs (`transform`'s b/c components non-zero) are excluded
+from hit-testing entirely rather than patched — clicking one just places a
+new text box on top, same as clicking any other blank spot, since there's
+no honest way to make a horizontal overlay look right on a rotated run. No
+separate disclosure toast was added for this case: falling back to the
+ordinary "place new text" behavior *is* the disclosure — nothing claims to
+have edited something it didn't.
+
+Verified end to end: clicking real body text opens it pre-filled with a
+correctly matched font in the live preview; after editing and exporting,
+`PDFDocument.load()` round-trips cleanly (no corruption) and
+`page.getTextContent()` on the saved file shows both the original run
+(still present underneath — the cover hides it, doesn't remove it, exactly
+as design doc §3 describes) and the new text.
+
+This document covers Phases 1–4, all now implemented. See §2 for what
+stayed out of scope entirely (publish-for-signature, cloud import, camera
+signature capture) and §3 for why "best-effort" is the honest ceiling for
+existing-text editing on a backend-less stack.

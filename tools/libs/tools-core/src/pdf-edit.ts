@@ -54,6 +54,21 @@ interface BaseAnnotation {
   page: number;
 }
 
+/** One of pdf-lib's 14 base PDF fonts, e.g. "Times-BoldItalic" — see StandardFonts in pdf-lib and edit-pdf/fontMatch.ts. Defaults to Helvetica when absent. */
+export type StandardFontName =
+  | "Helvetica"
+  | "Helvetica-Bold"
+  | "Helvetica-Oblique"
+  | "Helvetica-BoldOblique"
+  | "Times-Roman"
+  | "Times-Bold"
+  | "Times-Italic"
+  | "Times-BoldItalic"
+  | "Courier"
+  | "Courier-Bold"
+  | "Courier-Oblique"
+  | "Courier-BoldOblique";
+
 export interface TextAnnotation extends BaseAnnotation {
   type: "text";
   /** PDF-space coordinates of the text baseline. */
@@ -65,6 +80,8 @@ export interface TextAnnotation extends BaseAnnotation {
   color: string;
   bold?: boolean;
   italic?: boolean;
+  /** Set when this text was placed by the existing-text patch pipeline (design doc §3) — the font matched from the run it replaces, instead of the default Helvetica every other text box uses. */
+  fontFamily?: StandardFontName;
 }
 
 export interface PenAnnotation extends BaseAnnotation {
@@ -120,6 +137,8 @@ export interface LinkAnnotation extends BoxAnnotation {
 
 export interface WhiteoutAnnotation extends BoxAnnotation {
   type: "whiteout";
+  /** Hex color like #E8505B — defaults to opaque white when absent. Set by the existing-text patch pipeline (design doc §3) when it samples an actual page background instead of assuming white. */
+  color?: string;
 }
 
 export interface SignatureAnnotation extends BoxAnnotation {
@@ -219,16 +238,17 @@ function drawPen(page: PDFPage, ann: PenAnnotation): void {
 }
 
 function drawWhiteout(page: PDFPage, ann: WhiteoutAnnotation): void {
-  // Plain opaque white — covers part of the page with a white rectangle,
-  // not a background-color sample. That sampling behavior is reserved for
-  // the existing-text patch-and-re-render pipeline (design doc §3), a
-  // different feature.
+  // Opaque white by default — the plain Whiteout tool's own description
+  // ("cover part of the page with a white rectangle"). The existing-text
+  // patch pipeline (design doc §3) is the one caller that sets `color` to a
+  // sampled page background instead, so a tinted or scanned page doesn't get
+  // an obviously-wrong white patch.
   page.drawRectangle({
     x: ann.x,
     y: ann.y,
     width: ann.width,
     height: ann.height,
-    color: rgb(1, 1, 1),
+    color: ann.color ? hexToRgb(ann.color) : rgb(1, 1, 1),
   });
 }
 
@@ -477,6 +497,20 @@ export async function flattenAnnotations(
   const doc = await PDFDocument.load(bytes, { ignoreEncryption: true });
   const font = await doc.embedFont(StandardFonts.Helvetica);
 
+  // Every text annotation used to be Helvetica unconditionally; the
+  // existing-text patch pipeline (design doc §3) is the first thing that
+  // picks a matched standard font per run, so text drawing now embeds
+  // lazily per distinct font name instead of once up front.
+  const fontCache = new Map<string, PDFFont>([[StandardFonts.Helvetica, font]]);
+  async function getFont(name: StandardFontName | undefined): Promise<PDFFont> {
+    const key = name ?? StandardFonts.Helvetica;
+    const cached = fontCache.get(key);
+    if (cached) return cached;
+    const embedded = await doc.embedFont(key);
+    fontCache.set(key, embedded);
+    return embedded;
+  }
+
   const targetPages = pageOrder
     ? await applyPageStructure(doc, pageOrder)
     : new Map(doc.getPages().map((page, i) => [i + 1, page]));
@@ -506,7 +540,7 @@ export async function flattenAnnotations(
     const page = targetPages.get(ann.page);
     if (!page) continue;
 
-    if (ann.type === "text") drawText(page, ann, font);
+    if (ann.type === "text") drawText(page, ann, await getFont(ann.fontFamily));
     else if (ann.type === "highlight") drawHighlight(page, ann);
     else if (ann.type === "pen") drawPen(page, ann);
     else if (ann.type === "whiteout") drawWhiteout(page, ann);
