@@ -30,11 +30,24 @@ export function matchStandardFont(fontFamilyHint: string): StandardFontName {
   const hint = fontFamilyHint.toLowerCase();
   const bold = /bold|black|heavy|semibold/.test(hint);
   const italic = /italic|oblique/.test(hint);
-  const family: FontFamilyBase = /times|georgia|serif|garamond|minion|cambria|book\s?antiqua/.test(hint)
-    ? "Times"
-    : /courier|mono|consolas|menlo|typewriter/.test(hint)
-      ? "Courier"
-      : "Helvetica";
+
+  // "sans-serif" — pdf.js's own generic fallback for any embedded font it
+  // can't identify more specifically, which is most real-world documents
+  // (anything exported from a resume builder, Google Docs, Word, etc.) —
+  // contains "serif" as a literal substring. Checking sans first is not
+  // an optimization, it's required: without it every one of those very
+  // common documents gets its plain sans-serif body text matched to Times,
+  // which is exactly backwards from "best-effort match the original font".
+  let family: FontFamilyBase;
+  if (/courier|mono|consolas|menlo|typewriter/.test(hint)) {
+    family = "Courier";
+  } else if (/sans|arial|helvetica|calibri|verdana|tahoma|segoe|roboto|opensans|open\s?sans|lato|inter\b/.test(hint)) {
+    family = "Helvetica";
+  } else if (/times|georgia|serif|garamond|minion|cambria|book\s?antiqua/.test(hint)) {
+    family = "Times";
+  } else {
+    family = "Helvetica";
+  }
 
   return composeStandardFont(family, bold, italic);
 }
