@@ -597,7 +597,7 @@ function HighlightAnnotationView(props: AnnotationViewProps & { annotation: High
 function TextAnnotationView(props: AnnotationViewProps & { annotation: TextAnnotation }) {
   const { annotation, page, selected, editing, onStartEditingText, onStopEditingText, onUpdate, onSelect } = props;
   const screen = pdfToScreen(page, annotation.x, annotation.y);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const [hovered, setHovered] = useState(false);
 
   useEffect(() => {
@@ -621,27 +621,41 @@ function TextAnnotationView(props: AnnotationViewProps & { annotation: TextAnnot
   const italic = annotation.italic || (annotation.fontFamily ? isItalicStandardFont(annotation.fontFamily) : false);
 
   if (editing) {
+    // Sejda's text box is a single-line field that grows in width only, as
+    // wide as it needs to be for whatever's typed — never wraps, never
+    // grows taller (confirmed against the live editor: typing a long
+    // sentence widened it with no height change, and Enter did not start a
+    // new line). `screenBox` is already recomputed every render from
+    // `annotation.text` via the same `measureText()` the selection outline
+    // uses, so this foreignObject naturally grows with each keystroke
+    // instead of sitting in a large fixed multi-line box.
+    const caretRoom = displayFontSize * 0.6; // room for the text caret past the last character
     return (
       <foreignObject
         data-annotation-id={annotation.id}
-        x={screen.sx - 4}
-        y={screen.sy - 2}
-        width={Math.max(screenBox.width + 40, 220)}
-        height={Math.max(screenBox.height * 4, 90)}
+        x={screen.sx - TEXT_BOX_PAD}
+        y={screen.sy - TEXT_BOX_PAD}
+        width={screenBox.width + caretRoom}
+        height={screenBox.height}
       >
-        <textarea
+        <input
           ref={inputRef}
+          type="text"
           className="pdfed__textedit"
           style={{
             font: `${italic ? "italic " : ""}${bold ? "700 " : ""}${displayFontSize}px ${cssFontFamily}`,
             color: annotation.color,
-            lineHeight: 1.2,
           }}
           value={annotation.text}
           onChange={(e) => onUpdate(annotation.id, { text: e.target.value })}
           onBlur={onStopEditingText}
           onKeyDown={(e) => {
-            if (e.key === "Escape") e.currentTarget.blur();
+            // Enter has no effect in Sejda's own text tool (it doesn't add a
+            // line — this field is deliberately single-line) — using it to
+            // commit and exit instead is a small, deliberate improvement,
+            // consistent with every other single-line input in this editor
+            // (the link/field-name inputs below already commit on Enter).
+            if (e.key === "Escape" || e.key === "Enter") e.currentTarget.blur();
           }}
           placeholder="Type text…"
         />

@@ -370,18 +370,25 @@
     var(--surface);
 }
 
+/* Single-line, auto-growing-width text input — matches Sejda's own text
+   box (a `contenteditable` div with zero padding and `white-space: pre`,
+   so its outline is exactly its rendered content, one line, no wrap). Our
+   equivalent is a plain <input type="text"> sized every render from the
+   same `measureText()` the selection outline uses (see
+   `textAnnotationScreenBox` in elements.tsx), so the box grows with each
+   keystroke instead of sitting in a large fixed multi-line textarea. */
 .pdfed__textedit {
   width: 100%;
   height: 100%;
-  padding: 2px 4px;
+  padding: 0 1px;
+  margin: 0;
   border: 2px dashed var(--accent);
-  border-radius: 3px;
+  border-radius: 2px;
   background: rgba(255, 255, 255, 0.9);
   outline: none;
-  resize: none;
-  overflow: hidden;
   box-sizing: border-box;
   font-family: Helvetica, Arial, sans-serif;
+  white-space: pre;
 }
 
 .pdfed__download {
