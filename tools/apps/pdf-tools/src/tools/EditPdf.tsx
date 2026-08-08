@@ -28,7 +28,7 @@ import {
 } from "@devtools/tools-core";
 import { Button, FileDrop, Note, Spinner, useFileList } from "@devtools/ui";
 import { downloadResult, PdfTool, useFileBytes, useProcessor } from "../shared.js";
-import { RENDER_SCALE, pdfToScreen, screenToPdf, type RenderedPage } from "./edit-pdf/geometry.js";
+import { RENDER_SCALE, pdfToScreen, scaleScreenBox, screenToPdf, type RenderedPage } from "./edit-pdf/geometry.js";
 import { Toolbar, type EditorTool, type RecentSignature } from "./edit-pdf/Toolbar.js";
 import { AnnotationView, getAnnotationScreenBox } from "./edit-pdf/elements.js";
 import { ElementToolbar } from "./edit-pdf/ElementToolbar.js";
@@ -943,6 +943,36 @@ function PageEditor(props: PageEditorProps) {
   const imgRef = useRef<HTMLImageElement>(null);
   const [drawing, setDrawing] = useState<Drawing | null>(null);
 
+  // getAnnotationScreenBox() (and everything derived from it, like the
+  // floating ElementToolbar's position) works in the SVG's nominal
+  // viewBox units (page.screenWidth/Height) — correct for anything drawn
+  // *inside* the SVG, since the browser's own viewBox transform scales
+  // those to real pixels automatically. ElementToolbar is a plain HTML
+  // <div> outside the SVG, positioned via raw left/top, so it needs that
+  // same nominal-to-real conversion done by hand — get the pointer
+  // handlers above already do this per-event via a fresh
+  // getBoundingClientRect(); this tracks the same ratio in state (via
+  // ResizeObserver, so it stays correct across window resizes and the
+  // page frame's own responsive max-width:100% shrinking — see
+  // .pdfed__pageframe in EditPdf.css) for use during render, where
+  // per-event math isn't available. Without this, the toolbar renders in
+  // the wrong place whenever the frame isn't shown at exactly its nominal
+  // pixel size (confirmed: reported as the toolbar overlapping the text
+  // it belongs to, at any width where the page is scaled down).
+  const [frameScale, setFrameScale] = useState(1);
+  useEffect(() => {
+    const svg = svgRef.current;
+    if (!svg) return;
+    const update = () => {
+      const width = svg.getBoundingClientRect().width;
+      if (width > 0) setFrameScale(width / page.screenWidth);
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(svg);
+    return () => ro.disconnect();
+  }, [page.screenWidth]);
+
   function getPointerPos(e: ReactPointerEvent<SVGSVGElement>) {
     const svg = svgRef.current;
     if (!svg) return null;
@@ -1282,7 +1312,7 @@ function PageEditor(props: PageEditorProps) {
 
         {selected && (
           <ElementToolbar
-            box={getAnnotationScreenBox(page, selected)}
+            box={scaleScreenBox(getAnnotationScreenBox(page, selected), frameScale)}
             onDuplicate={() => onDuplicate(selected.id)}
             onDelete={() => onDelete(selected.id)}
           >

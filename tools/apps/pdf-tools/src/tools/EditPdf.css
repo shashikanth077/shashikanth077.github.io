@@ -291,9 +291,13 @@
   /* Text's controls (family/size/bold/italic/color/background, see
      TextToolbarControls.tsx) are wider than this toolbar was originally
      built for — wrap instead of overflowing off-screen, capped so it stays
-     usable on narrow viewports too. */
+     usable on narrow viewports too. 40rem comfortably fits every text
+     control on one row on typical desktop widths (matching Sejda's own
+     toolbar, which never wraps); ElementToolbar.tsx measures its real
+     rendered height and positions from that, so wrapping is still handled
+     correctly on narrower screens — this cap just makes it rare. */
   flex-wrap: wrap;
-  max-width: min(92vw, 28rem);
+  max-width: min(92vw, 40rem);
   gap: 0.125rem;
   padding: 0.25rem;
   background: var(--surface);

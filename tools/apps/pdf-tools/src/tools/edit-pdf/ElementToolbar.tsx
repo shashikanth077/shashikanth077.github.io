@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { DuplicateIcon, TrashIcon } from "./icons.js";
 
 export interface ScreenBox {
@@ -8,14 +8,23 @@ export interface ScreenBox {
   height: number;
 }
 
-const TOOLBAR_HEIGHT = 34;
+const TOOLBAR_HEIGHT_ESTIMATE = 34;
 const GAP = 6;
 
 /**
- * Floating per-element toolbar: duplicate/delete, positioned just above the
- * element's screen-space bounding box (below it if there isn't room above).
- * Every box-bounded element type shares this — the same move/duplicate/
- * delete icons apply across text, image, and shape.
+ * Floating per-element toolbar: duplicate/delete (plus whatever type-
+ * specific controls are passed as children — see TextToolbarControls),
+ * positioned just above the element's screen-space bounding box (below it
+ * if there isn't room above). Every box-bounded element type shares this.
+ *
+ * Text's controls (family/size/Bold/Italic/color/background) can be wide
+ * enough to wrap onto a second or third row (see `.pdfed__element-toolbar`'s
+ * flex-wrap in EditPdf.css), so a fixed single-row height estimate used to
+ * position it *above* the element would put the toolbar's lower rows right
+ * on top of the text they belong to — confirmed as a real bug (reported:
+ * "toolbar is overlaying on that text"). Measure the toolbar's own actual
+ * rendered height after each render and reposition from that instead of a
+ * constant, so it's correct however many rows it wraps to.
  */
 export function ElementToolbar({
   box,
@@ -28,11 +37,20 @@ export function ElementToolbar({
   onDelete: () => void;
   children?: ReactNode;
 }) {
-  const above = box.sy - TOOLBAR_HEIGHT - GAP;
+  const ref = useRef<HTMLDivElement>(null);
+  const [height, setHeight] = useState(TOOLBAR_HEIGHT_ESTIMATE);
+
+  useLayoutEffect(() => {
+    const measured = ref.current?.getBoundingClientRect().height;
+    if (measured && Math.abs(measured - height) > 0.5) setHeight(measured);
+  });
+
+  const above = box.sy - height - GAP;
   const top = above >= 0 ? above : box.sy + box.height + GAP;
 
   return (
     <div
+      ref={ref}
       className="pdfed__element-toolbar"
       style={{ left: box.sx, top }}
       onPointerDown={(e) => e.stopPropagation()}

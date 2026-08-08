@@ -42,3 +42,19 @@ export function boxToScreen(
   const topLeft = pdfToScreen(page, box.x, box.y + box.height);
   return { sx: topLeft.sx, sy: topLeft.sy, width: box.width * RENDER_SCALE, height: box.height * RENDER_SCALE };
 }
+
+/**
+ * Screen-space coordinates from pdfToScreen()/boxToScreen()/
+ * getAnnotationScreenBox() are all in the SVG's *nominal* viewBox units
+ * (page.screenWidth/Height) — correct for anything drawn inside the SVG,
+ * since the browser's viewBox transform scales those to real pixels for
+ * free. Anything positioned outside the SVG via plain CSS left/top (like
+ * the floating ElementToolbar) needs those nominal units converted to real
+ * ones by hand first, because the page frame can render smaller than its
+ * nominal pixel size (responsive max-width:100% shrinking — see
+ * .pdfed__pageframe in EditPdf.css). `scale` is
+ * `svgElement.getBoundingClientRect().width / page.screenWidth`.
+ */
+export function scaleScreenBox<T extends { sx: number; sy: number; width: number; height: number }>(box: T, scale: number): T {
+  return { ...box, sx: box.sx * scale, sy: box.sy * scale, width: box.width * scale, height: box.height * scale };
+}
