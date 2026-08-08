@@ -30,14 +30,34 @@ export function matchStandardFont(fontFamilyHint: string): StandardFontName {
   const hint = fontFamilyHint.toLowerCase();
   const bold = /bold|black|heavy|semibold/.test(hint);
   const italic = /italic|oblique/.test(hint);
-  const family: "serif" | "mono" | "sans" = /times|georgia|serif|garamond|minion|cambria|book\s?antiqua/.test(hint)
-    ? "serif"
+  const family: FontFamilyBase = /times|georgia|serif|garamond|minion|cambria|book\s?antiqua/.test(hint)
+    ? "Times"
     : /courier|mono|consolas|menlo|typewriter/.test(hint)
-      ? "mono"
-      : "sans";
+      ? "Courier"
+      : "Helvetica";
 
-  if (family === "serif") return bold && italic ? "Times-BoldItalic" : bold ? "Times-Bold" : italic ? "Times-Italic" : "Times-Roman";
-  if (family === "mono") return bold && italic ? "Courier-BoldOblique" : bold ? "Courier-Bold" : italic ? "Courier-Oblique" : "Courier";
+  return composeStandardFont(family, bold, italic);
+}
+
+export type FontFamilyBase = "Helvetica" | "Times" | "Courier";
+
+export const FONT_FAMILY_OPTIONS: Array<{ value: FontFamilyBase; label: string }> = [
+  { value: "Helvetica", label: "Helvetica (sans)" },
+  { value: "Times", label: "Times (serif)" },
+  { value: "Courier", label: "Courier (mono)" },
+];
+
+/** The base family (ignoring weight/style) a standard font name belongs to — the inverse of `composeStandardFont`. Used by the text toolbar's font-family dropdown, which edits family independently from the Bold/Italic toggles. */
+export function baseFontFamily(font: StandardFontName): FontFamilyBase {
+  if (font.startsWith("Times")) return "Times";
+  if (font.startsWith("Courier")) return "Courier";
+  return "Helvetica";
+}
+
+/** Builds the exact pdf-lib standard-font name for a family + weight/style combination — the inverse of `baseFontFamily`/`isBoldStandardFont`/`isItalicStandardFont`. */
+export function composeStandardFont(family: FontFamilyBase, bold: boolean, italic: boolean): StandardFontName {
+  if (family === "Times") return bold && italic ? "Times-BoldItalic" : bold ? "Times-Bold" : italic ? "Times-Italic" : "Times-Roman";
+  if (family === "Courier") return bold && italic ? "Courier-BoldOblique" : bold ? "Courier-Bold" : italic ? "Courier-Oblique" : "Courier";
   return bold && italic ? "Helvetica-BoldOblique" : bold ? "Helvetica-Bold" : italic ? "Helvetica-Oblique" : "Helvetica";
 }
 

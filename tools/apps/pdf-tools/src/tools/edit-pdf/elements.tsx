@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, type PointerEvent as ReactPointerEvent, type RefObject } from "react";
+import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent, type RefObject } from "react";
 import type {
   Annotation,
   FormFieldAnnotation,
@@ -16,6 +16,7 @@ import { boxToScreen, pdfToScreen, RENDER_SCALE, type RenderedPage } from "./geo
 import { useBoxDrag, useEndpointDrag, type Box, type Corner } from "./interactions.js";
 import type { ScreenBox } from "./ElementToolbar.js";
 import { isBoldStandardFont, isItalicStandardFont, standardFontCssStack } from "./fontMatch.js";
+import { measureText } from "./measureText.js";
 
 /* ------------------------------------------------------------------ */
 /* Shared props                                                        */
@@ -65,6 +66,32 @@ export function AnnotationView(props: AnnotationViewProps) {
   }
 }
 
+const TEXT_BOX_PAD = 3;
+
+/**
+ * A text annotation's screen-space box, tight around what actually renders
+ * — real canvas text measurement for width, not the old fixed
+ * `length * fontSize * 0.55` guess that always drew a looser outline than
+ * the glyphs it was supposed to hug (see `measureText.ts`). Shared by the
+ * selection/hover outline in `TextAnnotationView` and the floating
+ * toolbar's position in `getAnnotationScreenBox`, so both agree with each
+ * other and with what's on screen.
+ */
+export function textAnnotationScreenBox(page: RenderedPage, annotation: TextAnnotation): ScreenBox {
+  const screen = pdfToScreen(page, annotation.x, annotation.y);
+  const displayFontSize = annotation.fontSize * RENDER_SCALE;
+  const cssFontFamily = annotation.fontFamily ? standardFontCssStack(annotation.fontFamily) : "Helvetica, Arial, sans-serif";
+  const bold = annotation.bold || (annotation.fontFamily ? isBoldStandardFont(annotation.fontFamily) : false);
+  const italic = annotation.italic || (annotation.fontFamily ? isItalicStandardFont(annotation.fontFamily) : false);
+  const { width } = measureText(annotation.text, displayFontSize, cssFontFamily, bold, italic);
+  return {
+    sx: screen.sx - TEXT_BOX_PAD,
+    sy: screen.sy - TEXT_BOX_PAD,
+    width: width + TEXT_BOX_PAD * 2,
+    height: displayFontSize * 1.2 + TEXT_BOX_PAD * 2,
+  };
+}
+
 /**
  * Screen-space bounding box of any annotation, used by the page orchestrator
  * to position the single floating per-element toolbar (see EditPdf.tsx /
@@ -73,13 +100,8 @@ export function AnnotationView(props: AnnotationViewProps) {
  */
 export function getAnnotationScreenBox(page: RenderedPage, annotation: Annotation): ScreenBox {
   switch (annotation.type) {
-    case "text": {
-      const screen = pdfToScreen(page, annotation.x, annotation.y);
-      const displayFontSize = annotation.fontSize * RENDER_SCALE;
-      const width = Math.max(60, (annotation.text.length || 8) * displayFontSize * 0.55 + 12);
-      const height = displayFontSize * 1.4 + 6;
-      return { sx: screen.sx - 4, sy: screen.sy - 2, width, height };
-    }
+    case "text":
+      return textAnnotationScreenBox(page, annotation);
     case "pen": {
       let minX = Infinity;
       let minY = Infinity;
@@ -133,7 +155,7 @@ function ResizeHandles({
   );
 }
 
-function SelectionOutline({ screenBox }: { screenBox: ScreenBox }) {
+function SelectionOutline({ screenBox, hover = false }: { screenBox: ScreenBox; hover?: boolean }) {
   return (
     <rect
       x={screenBox.sx}
@@ -144,6 +166,7 @@ function SelectionOutline({ screenBox }: { screenBox: ScreenBox }) {
       stroke="var(--accent)"
       strokeWidth={1.5}
       strokeDasharray="4 3"
+      strokeOpacity={hover ? 0.5 : 1}
       pointerEvents="none"
     />
   );
@@ -575,6 +598,7 @@ function TextAnnotationView(props: AnnotationViewProps & { annotation: TextAnnot
   const { annotation, page, selected, editing, onStartEditingText, onStopEditingText, onUpdate, onSelect } = props;
   const screen = pdfToScreen(page, annotation.x, annotation.y);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const [hovered, setHovered] = useState(false);
 
   useEffect(() => {
     if (editing) {
@@ -588,9 +612,7 @@ function TextAnnotationView(props: AnnotationViewProps & { annotation: TextAnnot
   }, [editing]);
 
   const displayFontSize = annotation.fontSize * RENDER_SCALE;
-  const measuredWidth = Math.max(60, (annotation.text.length || 8) * displayFontSize * 0.55 + 12);
-  const measuredHeight = displayFontSize * 1.4 + 6;
-  const screenBox = { sx: screen.sx - 4, sy: screen.sy - 2, width: measuredWidth, height: measuredHeight };
+  const screenBox = textAnnotationScreenBox(page, annotation);
   // Existing-text patches (design doc §3) carry a matched standard font —
   // approximate it on screen too, not just in the exported PDF, so what you
   // see while editing roughly matches what you get.
@@ -604,8 +626,8 @@ function TextAnnotationView(props: AnnotationViewProps & { annotation: TextAnnot
         data-annotation-id={annotation.id}
         x={screen.sx - 4}
         y={screen.sy - 2}
-        width={Math.max(measuredWidth + 40, 220)}
-        height={Math.max(measuredHeight * 4, 90)}
+        width={Math.max(screenBox.width + 40, 220)}
+        height={Math.max(screenBox.height * 4, 90)}
       >
         <textarea
           ref={inputRef}
@@ -634,8 +656,10 @@ function TextAnnotationView(props: AnnotationViewProps & { annotation: TextAnnot
         e.stopPropagation();
         onSelect(annotation.id);
       }}
+      onPointerEnter={() => setHovered(true)}
+      onPointerLeave={() => setHovered(false)}
     >
-      {selected && <SelectionOutline screenBox={screenBox} />}
+      {selected ? <SelectionOutline screenBox={screenBox} /> : hovered && <SelectionOutline screenBox={screenBox} hover />}
       <text
         x={screen.sx}
         y={screen.sy + displayFontSize}

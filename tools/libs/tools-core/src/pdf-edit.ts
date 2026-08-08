@@ -82,6 +82,8 @@ export interface TextAnnotation extends BaseAnnotation {
   italic?: boolean;
   /** Set when this text was placed by the existing-text patch pipeline (design doc §3) — the font matched from the run it replaces, instead of the default Helvetica every other text box uses. */
   fontFamily?: StandardFontName;
+  /** Set when this text was placed by the existing-text patch pipeline — the id of the paired whiteout annotation covering the original glyphs, so the text's own floating toolbar can offer a "background color" control that edits that cover instead of leaving it fixed at whatever color was auto-sampled. */
+  coverId?: string;
 }
 
 export interface PenAnnotation extends BaseAnnotation {

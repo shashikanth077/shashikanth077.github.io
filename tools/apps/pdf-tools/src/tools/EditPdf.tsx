@@ -32,6 +32,7 @@ import { RENDER_SCALE, pdfToScreen, screenToPdf, type RenderedPage } from "./edi
 import { Toolbar, type EditorTool, type RecentSignature } from "./edit-pdf/Toolbar.js";
 import { AnnotationView, getAnnotationScreenBox } from "./edit-pdf/elements.js";
 import { ElementToolbar } from "./edit-pdf/ElementToolbar.js";
+import { TextToolbarControls } from "./edit-pdf/TextToolbarControls.js";
 import { SignatureModal, type SignatureResult } from "./edit-pdf/SignatureModal.js";
 import { FindReplacePanel } from "./edit-pdf/FindReplacePanel.js";
 import { PageThumbnails, type ThumbnailEntry } from "./edit-pdf/PageThumbnails.js";
@@ -277,6 +278,21 @@ export default function EditPdf() {
   const getBytes = useFileBytes();
   const { busy, error, results, run } = useProcessor();
 
+  // Sejda's "Apply changes" flow downloads the finished file as soon as it's
+  // ready, no extra click — ours used to stop at a "PDF saved" note with a
+  // separate Download button. Auto-trigger the download the moment a new
+  // result lands (the live editor canvas underneath already *is* the
+  // preview — it keeps showing exactly what was just applied), while still
+  // leaving the manual Download button as a way to re-save it again.
+  const autoDownloadedRef = useRef<unknown>(null);
+  useEffect(() => {
+    const result = results[0];
+    if (result && autoDownloadedRef.current !== result) {
+      autoDownloadedRef.current = result;
+      downloadResult(result);
+    }
+  }, [results]);
+
   const [loadingPdf, setLoadingPdf] = useState(false);
   const [pages, setPages] = useState<RenderedPage[]>([]);
   const [pageOrder, setPageOrder] = useState<PageSlot[]>([]);
@@ -285,7 +301,10 @@ export default function EditPdf() {
   const [loadError, setLoadError] = useState<string | null>(null);
   const nextBlankId = useRef(-1);
 
-  const [tool, setTool] = useState<EditorTool>("select");
+  // Sejda's editor opens with its "Text" tool active by default (click any
+  // existing text to edit it, click blank space to place new text) — Select
+  // is something you switch to deliberately to move/resize other elements.
+  const [tool, setTool] = useState<EditorTool>("text");
   const [color, setColor] = useState<string>(COLORS[1]!);
   const [highlightColor, setHighlightColor] = useState<string>(HIGHLIGHT_COLORS[0]!);
   const [fontSize, setFontSize] = useState<number>(DEFAULT_FONT_SIZE);
@@ -817,9 +836,9 @@ export default function EditPdf() {
 
         {results.length > 0 && results[0] && (
           <Note kind="success">
-            PDF saved.{" "}
+            PDF saved — {results[0].name} downloaded.{" "}
             <button type="button" onClick={() => downloadResult(results[0]!)} className="pdfed__download">
-              Download {results[0].name}
+              Download again
             </button>
           </Note>
         )}
@@ -1001,6 +1020,7 @@ function PageEditor(props: PageEditorProps) {
           fontSize: Math.max(6, run.height * 0.85),
           color: textColor,
           fontFamily: standardFont,
+          coverId: cover.id,
         };
         onAddTextPatch(cover, text);
         return;
@@ -1286,6 +1306,13 @@ function PageEditor(props: PageEditorProps) {
                 onPointerDown={(e) => e.stopPropagation()}
                 onChange={(e) => onUpdate(selected.id, { name: e.target.value })}
                 onKeyDown={(e) => e.key === "Enter" && e.currentTarget.blur()}
+              />
+            )}
+            {selected.type === "text" && (
+              <TextToolbarControls
+                annotation={selected}
+                cover={selected.coverId ? (annotations.find((a) => a.id === selected.coverId) as WhiteoutAnnotation | undefined) : undefined}
+                onUpdate={onUpdate}
               />
             )}
           </ElementToolbar>
