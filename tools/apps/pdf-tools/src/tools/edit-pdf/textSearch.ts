@@ -43,13 +43,36 @@ export interface TextMatch {
  * the ordinary "place new text" behavior rather than a best-effort patch,
  * since there's no honest way to make a horizontal overlay look right on
  * top of them.
+ *
+ * Hit-tests with a small tolerance around each run's own tight glyph box,
+ * not an exact bounding-box check — pdf.js splits text into a separate run
+ * per style change (bold vs. regular, a color change mid-line, etc.), so
+ * there are often small real gaps *between* runs on the same line, and a
+ * run's vertical box is tight around glyph ink, tighter than the visually
+ * "clickable" line a user aims for. Without tolerance, an ordinary click
+ * regularly lands in one of those gaps, missing every run and falling
+ * through to "place new blank text" instead of patching the text that was
+ * actually clicked — reported twice as stray "(empty)" boxes littering the
+ * page. Where a click's tolerance zone overlaps more than one run, the run
+ * it's *closest* to (or squarely inside, distance 0) wins.
  */
 export function findRunAt(runs: TextRun[], page: number, x: number, y: number): TextRun | null {
+  const H_PAD = 2;
+  let best: TextRun | null = null;
+  let bestDist = Infinity;
   for (const run of runs) {
     if (run.page !== page || run.rotated) continue;
-    if (x >= run.x && x <= run.x + run.width && y >= run.y && y <= run.y + run.height) return run;
+    const vPad = Math.max(2, run.height * 0.3);
+    if (x < run.x - H_PAD || x > run.x + run.width + H_PAD || y < run.y - vPad || y > run.y + run.height + vPad) continue;
+    const dx = Math.max(run.x - x, 0, x - (run.x + run.width));
+    const dy = Math.max(run.y - y, 0, y - (run.y + run.height));
+    const dist = dx + dy;
+    if (dist < bestDist) {
+      bestDist = dist;
+      best = run;
+    }
   }
-  return null;
+  return best;
 }
 
 export function findMatches(runs: TextRun[], query: string): TextMatch[] {

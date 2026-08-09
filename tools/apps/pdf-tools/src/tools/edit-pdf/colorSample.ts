@@ -35,13 +35,23 @@ export function sampleRunColors(
     return fallback; // Shouldn't happen for a same-origin data: URL, but never let a paint failure break editing.
   }
 
+  // A couple of screen pixels of margin around the tight glyph box — pulls
+  // in more genuine background fill relative to ink for the majority vote
+  // below, without straying far enough to cross into a different section.
+  const MARGIN = 2;
   const topLeft = pdfToScreen(page, run.x, run.y + run.height);
-  const w = Math.max(1, Math.round(run.width * RENDER_SCALE));
-  const h = Math.max(1, Math.round(run.height * RENDER_SCALE));
-  const left = Math.max(0, Math.min(canvas.width - 1, Math.round(topLeft.sx)));
-  const top = Math.max(0, Math.min(canvas.height - 1, Math.round(topLeft.sy)));
+  const w = Math.max(1, Math.round(run.width * RENDER_SCALE)) + MARGIN * 2;
+  const h = Math.max(1, Math.round(run.height * RENDER_SCALE)) + MARGIN * 2;
+  const left = Math.max(0, Math.min(canvas.width - 1, Math.round(topLeft.sx) - MARGIN));
+  const top = Math.max(0, Math.min(canvas.height - 1, Math.round(topLeft.sy) - MARGIN));
 
+  // Quantized-color histogram bucket size — merges near-identical shades
+  // that anti-aliasing spreads a solid fill or a glyph edge across, so a
+  // handful of very-slightly-different pinks don't each look like a
+  // one-off color and lose to some other, unrelated bucket.
+  const QUANT = 16;
   let darkest = { r: 255, g: 255, b: 255, sum: 765 };
+  const buckets = new Map<string, { r: number; g: number; b: number; count: number }>();
   try {
     const region = ctx.getImageData(left, top, Math.min(w, canvas.width - left), Math.min(h, canvas.height - top)).data;
     for (let i = 0; i < region.length; i += 4) {
@@ -50,21 +60,39 @@ export function sampleRunColors(
       const b = region[i + 2]!;
       const sum = r + g + b;
       if (sum < darkest.sum) darkest = { r, g, b, sum };
+
+      const key = `${Math.round(r / QUANT)},${Math.round(g / QUANT)},${Math.round(b / QUANT)}`;
+      const bucket = buckets.get(key);
+      if (bucket) {
+        bucket.r += r;
+        bucket.g += g;
+        bucket.b += b;
+        bucket.count++;
+      } else {
+        buckets.set(key, { r, g, b, count: 1 });
+      }
     }
   } catch {
     return fallback;
   }
 
-  // Sample just outside the box's top-left corner for the page background —
-  // a couple of pixels clear of the glyphs themselves.
+  // The background fill — whatever's *behind* the text, colored section or
+  // plain white page alike — is the majority of pixels inside a text run's
+  // own box: normal text has far more inter-glyph/inter-line whitespace
+  // than ink. Taking the largest color bucket from the exact same region
+  // the run lives in (rather than guessing a separate point outside it, the
+  // old approach) can't overshoot into a neighboring white margin or a
+  // different section the way a single fixed-offset pixel could — that was
+  // reported as a colored section's background "vanishing" to white after
+  // an edit. Ties are broken by whichever bucket the loop met first
+  // (top-left to bottom-right), an arbitrary but stable choice.
   let bg = { r: 255, g: 255, b: 255 };
-  try {
-    const bgX = Math.max(0, Math.min(canvas.width - 1, left - 3));
-    const bgY = Math.max(0, Math.min(canvas.height - 1, top - 3));
-    const px = ctx.getImageData(bgX, bgY, 1, 1).data;
-    bg = { r: px[0]!, g: px[1]!, b: px[2]! };
-  } catch {
-    // Keep the white default.
+  let bgCount = 0;
+  for (const bucket of buckets.values()) {
+    if (bucket.count > bgCount) {
+      bgCount = bucket.count;
+      bg = { r: Math.round(bucket.r / bucket.count), g: Math.round(bucket.g / bucket.count), b: Math.round(bucket.b / bucket.count) };
+    }
   }
 
   return {

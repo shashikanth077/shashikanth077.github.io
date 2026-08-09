@@ -431,7 +431,18 @@ function WhiteoutAnnotationView(props: AnnotationViewProps & { annotation: White
         y={screenBox.sy}
         width={screenBox.width}
         height={screenBox.height}
-        fill="#FFFFFF"
+        // The plain Whiteout tool covers with opaque white by design (its
+        // own description: "cover part of the page with a white
+        // rectangle"), but the existing-text patch pipeline (design doc §3)
+        // sets `color` to the page's own sampled background so a tinted or
+        // colored section doesn't get an obviously-wrong white patch —
+        // matches drawWhiteout()'s same annotation.color-or-white fallback
+        // in pdf-edit.ts, which the exported PDF already used correctly.
+        // This was hardcoded to white here, so the *live preview* never
+        // reflected a sampled color even though the sampling itself and the
+        // final download were both already right — reported as a colored
+        // section's background "vanishing" after an edit.
+        fill={annotation.color ?? "#FFFFFF"}
         stroke={selected ? "var(--accent)" : "none"}
         strokeWidth={selected ? 1.5 : 0}
         strokeDasharray={selected ? "4 3" : undefined}
