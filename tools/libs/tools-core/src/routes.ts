@@ -308,6 +308,54 @@ export const toolRoutes: ToolRoute[] = [
       "Owner-password restrictions (no-print, no-copy, no-edit) are removed without a password. " +
       "Open-password PDFs can be unlocked by entering the password — the output is rebuilt from page images, so text stops being selectable.",
   },
+  {
+    slug: "watermark-pdf",
+    name: "Watermark PDF",
+    tagline: "Stamp a text watermark across every page.",
+    description:
+      "Add a text watermark like CONFIDENTIAL, DRAFT or SAMPLE to a PDF, with control over font, color, opacity, rotation and position. Runs entirely in your browser.",
+    keywords: ["watermark pdf", "add watermark to pdf", "stamp pdf", "confidential pdf watermark"],
+    toolkit: "pdf",
+    category: "Transform",
+    remote: "pdf",
+    icon: "💧",
+  },
+  {
+    slug: "page-numbers-pdf",
+    name: "Page Numbers",
+    tagline: "Add page numbers to every page, your way.",
+    description:
+      "Add page numbers to a PDF with a choice of numbering style (1, 2, 3 · I, II, III · 1 of N), position, font and starting number. Nothing is uploaded.",
+    keywords: ["pdf page numbers", "add page numbers to pdf", "number pdf pages"],
+    toolkit: "pdf",
+    category: "Transform",
+    remote: "pdf",
+    icon: "🔢",
+  },
+  {
+    slug: "header-footer-pdf",
+    name: "Header & Footer",
+    tagline: "Add text labels to the top or bottom of every page.",
+    description:
+      "Add custom text to any of six header/footer zones on a PDF — page numbers, dates, titles — with {page} and {pages} tokens. Runs locally in your browser.",
+    keywords: ["pdf header and footer", "add header to pdf", "add footer to pdf", "pdf page labels"],
+    toolkit: "pdf",
+    category: "Transform",
+    remote: "pdf",
+    icon: "📑",
+  },
+  {
+    slug: "bates-numbering-pdf",
+    name: "Bates Numbering",
+    tagline: "Sequential legal-style numbering with a prefix.",
+    description:
+      "Bates-stamp a PDF with a sequential, zero-padded number and an optional prefix/suffix — the standard legal-document numbering format. Nothing leaves your browser.",
+    keywords: ["bates numbering pdf", "bates stamp pdf", "legal document numbering", "bates numbering"],
+    toolkit: "pdf",
+    category: "Transform",
+    remote: "pdf",
+    icon: "⚖️",
+  },
 
   /* ================ Image Toolkit ================ */
   {
