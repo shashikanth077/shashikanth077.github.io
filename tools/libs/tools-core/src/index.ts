@@ -29,5 +29,6 @@ export * from "./pdf.js";
 export * from "./pdf-render.js";
 export * from "./pdf-edit.js";
 export * from "./pdf-stamp.js";
+export * from "./pdf-images.js";
 export * from "./office.js";
 export * from "./image.js";

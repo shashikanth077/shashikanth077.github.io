@@ -7,7 +7,7 @@ import { ColorField, FontFamilyField, FontSizeField, PageRangeField, PositionFie
 const HEADER_FOOTER_POSITIONS = POSITION_OPTIONS.filter((o) => o.value !== "center");
 
 export default function PageNumbersPdf() {
-  const { files, add, clear } = useFileList();
+  const { files, replace, clear } = useFileList();
   const getBytes = useFileBytes();
   const processor = useProcessor();
 
@@ -39,7 +39,7 @@ export default function PageNumbersPdf() {
 
   return (
     <PdfTool slug="page-numbers-pdf">
-      <FileDrop accept={[".pdf"]} multiple={false} onFiles={add} label="Drop a PDF here to add page numbers" disabled={processor.busy} />
+      <FileDrop accept={[".pdf"]} multiple={false} onFiles={replace} label="Drop a PDF here to add page numbers" disabled={processor.busy} />
 
       {file && (
         <Panel title={file.file.name}>

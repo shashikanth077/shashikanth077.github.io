@@ -39,6 +39,13 @@ const TOOLS: Record<string, ComponentType> = {
   "page-numbers-pdf": lazy(() => import("../tools/PageNumbersPdf.js")),
   "header-footer-pdf": lazy(() => import("../tools/HeaderFooterPdf.js")),
   "bates-numbering-pdf": lazy(() => import("../tools/BatesNumberingPdf.js")),
+  "crop-pdf": lazy(() => import("../tools/CropPdf.js")),
+  "resize-pdf": lazy(() => import("../tools/ResizePdf.js")),
+  "flip-pdf": lazy(() => import("../tools/FlipPdf.js")),
+  "grayscale-pdf": lazy(() => import("../tools/GrayscalePdf.js")),
+  "extract-pdf-images": lazy(() => import("../tools/ExtractImagesPdf.js")),
+  "edit-pdf-metadata": lazy(() => import("../tools/EditMetadataPdf.js")),
+  "remove-pdf-annotations": lazy(() => import("../tools/RemoveAnnotationsPdf.js")),
 };
 
 export function ownsSlug(slug: string): boolean {

@@ -328,3 +328,58 @@ export async function compressByRasterising(
     percent: Math.round(((bytes.byteLength - data.byteLength) / bytes.byteLength) * 100),
   };
 }
+
+/**
+ * Rasterises every page to a desaturated JPEG and rebuilds the document
+ * around the images — the same one-way tradeoff as compressByRasterising
+ * (text stops being selectable) for the same reason: there's no browser
+ * equivalent of rewriting a content stream's color operators in place, so
+ * "grayscale the actual vectors and text" isn't achievable client-side. The
+ * luminance weights (0.299/0.587/0.114) are the standard ITU-R BT.601
+ * formula most grayscale conversion tools use, not an arbitrary average.
+ */
+export async function grayscalePdf(
+  bytes: ArrayBuffer,
+  options: { scale?: number; quality?: number } = {},
+  onProgress?: (done: number, total: number) => void,
+): Promise<Uint8Array> {
+  const { scale = 2, quality = 0.85 } = options;
+  const { PDFDocument } = await import("pdf-lib");
+  const { doc, pageCount, close } = await openPdf(bytes);
+  const out = await PDFDocument.create();
+
+  try {
+    for (let n = 1; n <= pageCount; n++) {
+      const canvas = await renderPageToCanvas(doc, n, scale);
+      const ctx = canvas.getContext("2d");
+      if (!ctx) throw new Error("Could not get a 2D canvas context.");
+
+      const frame = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const px = frame.data;
+      for (let i = 0; i < px.length; i += 4) {
+        const r = px[i]!;
+        const g = px[i + 1]!;
+        const b = px[i + 2]!;
+        const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+        px[i] = gray;
+        px[i + 1] = gray;
+        px[i + 2] = gray;
+      }
+      ctx.putImageData(frame, 0, 0);
+
+      const blob = await canvasToBlob(canvas, "image/jpeg", quality);
+      const jpeg = await blob.arrayBuffer();
+      const embedded = await out.embedJpg(jpeg);
+      const pdfPage = out.addPage([embedded.width, embedded.height]);
+      pdfPage.drawImage(embedded, { x: 0, y: 0, width: embedded.width, height: embedded.height });
+
+      onProgress?.(n, pageCount);
+      canvas.width = 0;
+      canvas.height = 0;
+    }
+  } finally {
+    await close();
+  }
+
+  return out.save();
+}

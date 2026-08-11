@@ -5,7 +5,7 @@ import { PdfTool, ProcessorOutput, useFileBytes, useProcessor } from "../shared.
 import { ColorField, FontFamilyField, FontSizeField, PageRangeField, PositionField } from "./stamp-controls.js";
 
 export default function WatermarkPdf() {
-  const { files, add, clear } = useFileList();
+  const { files, replace, clear } = useFileList();
   const getBytes = useFileBytes();
   const processor = useProcessor();
 
@@ -40,7 +40,7 @@ export default function WatermarkPdf() {
 
   return (
     <PdfTool slug="watermark-pdf">
-      <FileDrop accept={[".pdf"]} multiple={false} onFiles={add} label="Drop a PDF here to add a watermark" disabled={processor.busy} />
+      <FileDrop accept={[".pdf"]} multiple={false} onFiles={replace} label="Drop a PDF here to add a watermark" disabled={processor.busy} />
 
       {file && (
         <Panel title={file.file.name}>

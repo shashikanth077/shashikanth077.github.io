@@ -9,7 +9,7 @@ import { Button, FileDrop, Note, useFileList } from "@devtools/ui";
 import { downloadResult, PdfTool, useFileBytes, useProcessor } from "../shared.js";
 
 export default function UnlockPdf() {
-  const { files, add, clear } = useFileList();
+  const { files, replace, clear } = useFileList();
   const getBytes = useFileBytes();
   const { busy, error, results, run } = useProcessor();
 
@@ -95,7 +95,7 @@ export default function UnlockPdf() {
 
   return (
     <PdfTool slug="unlock-pdf">
-      <FileDrop onFiles={add} accept={[".pdf"]} multiple={false} label="Drop a PDF here, or click to choose" />
+      <FileDrop onFiles={replace} accept={[".pdf"]} multiple={false} label="Drop a PDF here, or click to choose" />
 
       {file && !needsPwd && (
         <div className="dt-stack" style={{ gap: "var(--space-3)" }}>

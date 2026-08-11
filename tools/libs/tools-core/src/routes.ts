@@ -356,6 +356,92 @@ export const toolRoutes: ToolRoute[] = [
     remote: "pdf",
     icon: "⚖️",
   },
+  {
+    slug: "crop-pdf",
+    name: "Crop PDF",
+    tagline: "Trim margins from every page, visually.",
+    description:
+      "Crop a PDF's pages by setting margins on each edge, with a live preview of the crop area on the first page. Runs entirely in your browser.",
+    keywords: ["crop pdf", "trim pdf margins", "pdf cropper", "cut pdf margins"],
+    toolkit: "pdf",
+    category: "Transform",
+    remote: "pdf",
+    icon: "✂️",
+  },
+  {
+    slug: "resize-pdf",
+    name: "Resize PDF",
+    tagline: "Change every page to A4, Letter, Legal or a custom size.",
+    description:
+      "Resize a PDF's pages to a standard size or custom dimensions, fitting or stretching the original content. Text and vector content stay sharp — nothing is rasterised.",
+    keywords: ["resize pdf", "change pdf page size", "pdf to a4", "pdf to letter size"],
+    toolkit: "pdf",
+    category: "Transform",
+    remote: "pdf",
+    icon: "📐",
+  },
+  {
+    slug: "flip-pdf",
+    name: "Flip PDF",
+    tagline: "Mirror every page horizontally or vertically.",
+    description:
+      "Flip a PDF's pages left-to-right or top-to-bottom. Content stays vector and selectable — this only changes orientation, not quality. Nothing is uploaded.",
+    keywords: ["flip pdf", "mirror pdf pages", "reverse pdf pages"],
+    toolkit: "pdf",
+    category: "Transform",
+    remote: "pdf",
+    icon: "🔁",
+  },
+  {
+    slug: "grayscale-pdf",
+    name: "Grayscale PDF",
+    tagline: "Convert every page to black and white.",
+    description:
+      "Convert a PDF to grayscale for cheaper printing or a consistent look. Runs entirely in your browser by rasterising and desaturating each page.",
+    keywords: ["grayscale pdf", "black and white pdf", "convert pdf to grayscale", "desaturate pdf"],
+    toolkit: "pdf",
+    category: "Transform",
+    remote: "pdf",
+    icon: "◑",
+    caveat: "Pages are rasterised and desaturated, then rebuilt as a PDF — text stops being selectable, the same tradeoff Compress PDF makes.",
+  },
+  {
+    slug: "extract-pdf-images",
+    name: "Extract Images",
+    tagline: "Pull every embedded picture out of a PDF.",
+    description:
+      "Extract JPEG images embedded in a PDF at their original quality, then download them individually or as a ZIP. Runs entirely in your browser.",
+    keywords: ["extract images from pdf", "pdf image extractor", "get pictures from pdf", "pull images from pdf"],
+    toolkit: "pdf",
+    category: "Utilities",
+    remote: "pdf",
+    icon: "🖼️",
+    caveat: "Only JPEG-encoded images are extracted (the common case for scans and photos) — other encodings like JPEG2000 or raw bitmaps aren't supported yet.",
+  },
+  {
+    slug: "edit-pdf-metadata",
+    name: "Edit Metadata",
+    tagline: "Change a PDF's title, author, subject and keywords.",
+    description:
+      "View and edit a PDF's document properties — title, author, subject, keywords, creator and producer. Runs entirely in your browser, nothing is uploaded.",
+    keywords: ["edit pdf metadata", "pdf properties", "change pdf title", "pdf document properties"],
+    toolkit: "pdf",
+    category: "Utilities",
+    remote: "pdf",
+    icon: "🏷️",
+  },
+  {
+    slug: "remove-pdf-annotations",
+    name: "Remove Annotations",
+    tagline: "Strip comments, highlights and markup from a PDF.",
+    description:
+      "Remove comments, highlights, sticky notes, stamps and ink marks from a PDF, leaving fillable form fields and hyperlinks untouched. Nothing leaves your browser.",
+    keywords: ["remove pdf annotations", "delete pdf comments", "clear pdf highlights", "strip pdf markup"],
+    toolkit: "pdf",
+    category: "Utilities",
+    remote: "pdf",
+    icon: "🧹",
+  },
 
   /* ================ Image Toolkit ================ */
   {
