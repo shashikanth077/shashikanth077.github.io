@@ -61,12 +61,15 @@
   --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", "Segoe UI Mono", Consolas, "Liberation Mono", monospace;
 
-  --radius:    8px;
-  --radius-sm: 6px;
+  --radius:    14px;
+  --radius-sm: 10px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
 
   --shadow-sm: 0 1px 2px rgba(20, 24, 26, 0.06);
   --shadow-md: 0 2px 8px rgba(20, 24, 26, 0.08);
   --shadow-lg: 0 4px 16px rgba(20, 24, 26, 0.10);
+  --shadow-xl: 0 12px 32px rgba(20, 24, 26, 0.14);
 
   --space-1: 0.25rem;
   --space-2: 0.5rem;
@@ -75,6 +78,7 @@
   --space-5: 1.5rem;
   --space-6: 2rem;
   --space-7: 3rem;
+  --space-8: 4rem;
 
   --header-h: 3.5rem;
   --sidebar-w: 15rem;
@@ -130,6 +134,7 @@
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
     --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.5);
     --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.6);
+    --shadow-xl: 0 16px 40px rgba(0, 0, 0, 0.55);
   }
 }
 
@@ -176,6 +181,7 @@
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.5);
   --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.6);
+  --shadow-xl: 0 16px 40px rgba(0, 0, 0, 0.55);
 }
 
 :root[data-theme="light"] {
@@ -220,7 +226,20 @@
   --shadow-sm: 0 1px 2px rgba(20, 24, 26, 0.06);
   --shadow-md: 0 2px 8px rgba(20, 24, 26, 0.08);
   --shadow-lg: 0 4px 16px rgba(20, 24, 26, 0.10);
+  --shadow-xl: 0 16px 40px rgba(20, 24, 26, 0.16);
 }
+
+/* ---------- toolkit color utility classes ----------
+   Applied wherever a component needs to theme itself to a toolkit's color —
+   the shell's nav/home cards, and (via ToolFrame) every tool page itself —
+   so it lives with the tokens rather than in the shell's own stylesheet. */
+
+.tk-pdf    { --tk: var(--tk-pdf);    --tk-soft: var(--tk-pdf-soft);    --tk-glow: var(--tk-pdf-glow); }
+.tk-image  { --tk: var(--tk-image);  --tk-soft: var(--tk-image-soft);  --tk-glow: var(--tk-image-glow); }
+.tk-qr     { --tk: var(--tk-qr);     --tk-soft: var(--tk-qr-soft);     --tk-glow: var(--tk-qr-glow); }
+.tk-dev    { --tk: var(--tk-dev);    --tk-soft: var(--tk-dev-soft);    --tk-glow: var(--tk-dev-glow); }
+.tk-health { --tk: var(--tk-health); --tk-soft: var(--tk-health-soft); --tk-glow: var(--tk-health-glow); }
+.tk-media  { --tk: var(--tk-media);  --tk-soft: var(--tk-media-soft);  --tk-glow: var(--tk-media-glow); }
 
 /* ---------- reset ---------- */
 

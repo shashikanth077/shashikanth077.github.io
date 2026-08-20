@@ -1,10 +1,18 @@
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { TOOLKIT_META, findTool, groupByToolkit, routerPath, visibleRoutes } from "@devtools/tools-core";
+import { ToolSearch } from "../components/ToolSearch.js";
 import type { RootState } from "../store.js";
 
 const TOOLKIT_SECTIONS = groupByToolkit();
 const VISIBLE_COUNT = visibleRoutes().length;
+
+const TRUST_ITEMS = [
+  { label: "No upload", detail: "Files never leave your device" },
+  { label: "No signup", detail: "Nothing to create or remember" },
+  { label: "Works offline", detail: "After the page has loaded once" },
+  { label: "Free", detail: "Every tool, no limits" },
+];
 
 export default function Home() {
   const recentSlugs = useSelector((s: RootState) => s.preferences.recentSlugs);
@@ -20,14 +28,29 @@ export default function Home() {
           {VISIBLE_COUNT} PDF, image and developer utilities that run entirely in your browser.
           No account, no server, no file leaves your machine — open the network tab and check.
         </p>
-        <div className="home-hero__badges">
-          {(["pdf", "image", "qr", "dev"] as const).map((tk) => (
-            <span key={tk} className={`home-hero__badge tk-${tk}`}>
-              <span className="home-hero__badge-dot" />
-              {TOOLKIT_META[tk].label}
-            </span>
+
+        <ToolSearch
+          variant="hero"
+          placeholder={`Search ${VISIBLE_COUNT} tools — try "merge pdf" or "bmi"`}
+        />
+
+        <ul className="home-hero__trust">
+          {TRUST_ITEMS.map((item) => (
+            <li key={item.label} title={item.detail}>
+              <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M20 6 9 17l-5-5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              {item.label}
+            </li>
           ))}
-        </div>
+        </ul>
       </section>
 
       {recent.length > 0 && (
@@ -50,7 +73,7 @@ export default function Home() {
       )}
 
       {TOOLKIT_SECTIONS.map(([toolkit, categories]) => (
-        <section className={`home-toolkit tk-${toolkit}`} key={toolkit}>
+        <section className={`home-toolkit tk-${toolkit}`} key={toolkit} id={`tk-${toolkit}`}>
           <header className="home-toolkit__head">
             <span className="home-toolkit__icon" aria-hidden="true">
               {TOOLKIT_META[toolkit].icon}

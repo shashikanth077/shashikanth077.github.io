@@ -912,3 +912,43 @@ export function groupByToolkit(): Array<[Toolkit, Array<[ToolCategory, ToolRoute
     groupByCategory(routesFor(toolkit).filter((r) => !r.hidden)),
   ]);
 }
+
+/**
+ * Case-insensitive match over name, tagline and keywords — powers both the
+ * home hero search and the header quick-search. Ranks name-prefix matches
+ * first so typing "pdf" surfaces "PDF to Word" before a tagline mention.
+ */
+export function searchTools(query: string, limit = 8): ToolRoute[] {
+  const q = query.trim().toLowerCase();
+  if (!q) return [];
+
+  const scored = visibleRoutes()
+    .map((route) => {
+      const name = route.name.toLowerCase();
+      let score = -1;
+      if (name.startsWith(q)) score = 3;
+      else if (name.includes(q)) score = 2;
+      else if (route.tagline.toLowerCase().includes(q)) score = 1;
+      else if (route.keywords.some((k) => k.toLowerCase().includes(q))) score = 1;
+      return { route, score };
+    })
+    .filter((r) => r.score >= 0)
+    .sort((a, b) => b.score - a.score);
+
+  return scored.slice(0, limit).map((r) => r.route);
+}
+
+/**
+ * Cross-sell for the bottom of a tool page: other tools in the same toolkit,
+ * same category first, current tool excluded.
+ */
+export function relatedTools(slug: string, limit = 4): ToolRoute[] {
+  const current = findTool(slug);
+  if (!current) return [];
+
+  const siblings = routesFor(current.toolkit).filter((r) => !r.hidden && r.slug !== slug);
+  const sameCategory = siblings.filter((r) => r.category === current.category);
+  const rest = siblings.filter((r) => r.category !== current.category);
+
+  return [...sameCategory, ...rest].slice(0, limit);
+}

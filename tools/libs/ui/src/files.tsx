@@ -97,20 +97,22 @@ export function FileDrop({
             e.target.value = "";
           }}
         />
-        <svg className="dt-drop__icon" viewBox="0 0 24 24" aria-hidden="true">
-          <path
-            d="M12 16V4m0 0L8 8m4-4 4 4M4 17v1a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-1"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+        <span className="dt-drop__icon-ring" aria-hidden="true">
+          <svg className="dt-drop__icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M12 16V4m0 0L8 8m4-4 4 4M4 17v1a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-1"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </span>
         <label className="dt-drop__label" htmlFor={inputId}>
           {label ?? (multiple ? "Drop files here" : "Drop a file here")}
-          <span className="dt-drop__browse"> or browse</span>
         </label>
+        <span className="dt-drop__browse">Choose {multiple ? "files" : "a file"}</span>
         <span className="dt-drop__hint">{hint ?? `Accepts ${accepted}`}</span>
       </div>
 

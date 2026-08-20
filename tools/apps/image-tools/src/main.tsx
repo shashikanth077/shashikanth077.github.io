@@ -23,7 +23,7 @@ function StandaloneHarness() {
           padding: "0.6rem 0.85rem",
           background: "var(--warning-soft)",
           color: "var(--warning)",
-          border: "1px solid color-mix(in srgb, var(--warning) 25%, transparent)",
+          border: "1px solid var(--warning-soft)",
           borderRadius: "var(--radius-sm)",
           fontSize: "0.8125rem",
         }}

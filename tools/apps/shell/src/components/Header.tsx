@@ -10,6 +10,7 @@ import {
   type Toolkit,
 } from "@devtools/tools-core";
 import { setTheme, toggleSidebar, type AppDispatch, type RootState } from "../store.js";
+import { ToolSearch } from "./ToolSearch.js";
 
 const THEME_LABEL = { system: "Auto", light: "Light", dark: "Dark" } as const;
 const THEME_ORDER = ["system", "light", "dark"] as const;
@@ -88,26 +89,13 @@ export function Header() {
 
             {openMenu === toolkit && (
               <div className="shell-megaPanel" role="menu">
-                <p className="shell-megaPanel__tagline">{TOOLKIT_META[toolkit].tagline}</p>
-                {categories.length === 1 && categories[0] ? (
-                  <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: "1px" }}>
-                    {categories[0][1].map((route) => (
-                      <li key={route.slug}>
-                        <NavLink
-                          to={routerPath(route.slug)}
-                          className="shell-megaPanel__link"
-                          onClick={() => setOpenMenu(null)}
-                        >
-                          {route.name}
-                        </NavLink>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
+                <div className="shell-megaPanel__inner">
                   <div className="shell-megaPanel__grid">
                     {categories.map(([category, routes]) => (
                       <div className="shell-megaPanel__col" key={category}>
-                        <h3 className="shell-megaPanel__heading">{category}</h3>
+                        {categories.length > 1 && (
+                          <h3 className="shell-megaPanel__heading">{category}</h3>
+                        )}
                         <ul>
                           {routes.map((route) => (
                             <li key={route.slug}>
@@ -116,6 +104,9 @@ export function Header() {
                                 className="shell-megaPanel__link"
                                 onClick={() => setOpenMenu(null)}
                               >
+                                <span className="shell-megaPanel__linkIcon" aria-hidden="true">
+                                  {route.icon}
+                                </span>
                                 {route.name}
                               </NavLink>
                             </li>
@@ -124,12 +115,16 @@ export function Header() {
                       </div>
                     ))}
                   </div>
-                )}
+                </div>
               </div>
             )}
           </div>
         ))}
       </nav>
+
+      <div className="shell-header__search">
+        <ToolSearch variant="header" placeholder="Search tools…" />
+      </div>
 
       <div className="shell-header__spacer" />
 

@@ -10,11 +10,25 @@ import {
   type SelectHTMLAttributes,
   type TextareaHTMLAttributes,
 } from "react";
+import { Link, useParams } from "react-router-dom";
+import { ROUTER_HOME, TOOLKIT_META, findTool, relatedTools, routerPath } from "@devtools/tools-core";
 
 /* ------------------------------------------------------------------ */
 /* Tool frame                                                           */
 /* ------------------------------------------------------------------ */
 
+const TRUST_BADGES = ["No upload", "No signup", "Free"] as const;
+
+/**
+ * `useParams()` degrades to `{}` (not a throw) when there's no ancestor
+ * <Router> — see react-router's RouteContext default. That's exactly the case
+ * for a remote's standalone dev harness (apps/*-tools/src/main.tsx), which
+ * renders a tool with no Router at all. So resolving the slug this way, then
+ * skipping the breadcrumb/related-tools sections entirely when no route is
+ * found, needs no special-casing: production (always routed under
+ * "/:slug" in apps/shell/src/App.tsx) gets the full treatment, standalone
+ * mode just quietly renders the plain frame it always has.
+ */
 export function ToolFrame({
   title,
   tagline,
@@ -24,16 +38,62 @@ export function ToolFrame({
   tagline: string;
   children: ReactNode;
 }) {
+  const { slug } = useParams();
+  const route = slug ? findTool(slug) : undefined;
+  const related = route ? relatedTools(route.slug) : [];
+
   return (
-    <div className="dt-tool">
+    <div className={route ? `dt-tool tk-${route.toolkit}` : "dt-tool"}>
       <header className="dt-tool__head">
+        {route && (
+          <nav className="dt-tool__crumbs" aria-label="Breadcrumb">
+            <Link to={ROUTER_HOME}>Home</Link>
+            <span aria-hidden="true">/</span>
+            <Link to={`${ROUTER_HOME}#tk-${route.toolkit}`}>{TOOLKIT_META[route.toolkit].label}</Link>
+            <span aria-hidden="true">/</span>
+            <span aria-current="page">{route.name}</span>
+          </nav>
+        )}
         <h1 className="dt-tool__title">{title}</h1>
         <p className="dt-tool__tagline">{tagline}</p>
-        <span className="dt-tool__privacy" title="This tool runs entirely in your browser.">
-          Runs locally — nothing is uploaded
-        </span>
+        <div className="dt-tool__trust">
+          {TRUST_BADGES.map((label) => (
+            <span className="dt-tool__badge" key={label}>
+              <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M20 6 9 17l-5-5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              {label}
+            </span>
+          ))}
+        </div>
       </header>
+
       {children}
+
+      {related.length > 0 && (
+        <section className="dt-related" aria-label="Related tools">
+          <h2 className="dt-related__title">You might also need</h2>
+          <ul className="dt-related__grid">
+            {related.map((tool) => (
+              <li key={tool.slug}>
+                <Link to={routerPath(tool.slug)} className="dt-related__card">
+                  <span className="dt-related__icon" aria-hidden="true">
+                    {tool.icon}
+                  </span>
+                  <span className="dt-related__name">{tool.name}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </div>
   );
 }
