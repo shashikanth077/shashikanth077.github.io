@@ -1,9 +1,9 @@
-/* ==== PDF editor ==== */
+/* ==== PDF editor — premium, Sejda-quality styling ==== */
 
 .pdfed {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: 0;
   min-width: 0;
 }
 
@@ -16,19 +16,19 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-2) var(--space-3);
+  gap: 0.375rem;
+  padding: 0.5rem 0.75rem;
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius) var(--radius) 0 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .pdfed__toolbar-group {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
-  padding: 0 var(--space-2);
+  gap: 0.25rem;
+  padding: 0 0.5rem;
   border-right: 1px solid var(--line);
 }
 .pdfed__toolbar-group:last-child { border-right: none; }
@@ -36,17 +36,18 @@
 .pdfed__toolbar-spacer { flex: 1; }
 
 .pdfed__toolbar-label {
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   color: var(--text-faint);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  font-weight: 600;
+  font-weight: 700;
+  margin-right: 0.125rem;
 }
 
 .pdfed__filename {
   font-size: 0.8125rem;
-  color: var(--text-soft);
-  font-family: var(--font-mono);
+  color: var(--text);
+  font-weight: 600;
   max-width: 14rem;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -54,56 +55,98 @@
 }
 
 .pdfed__count {
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   color: var(--text-faint);
   font-family: var(--font-mono);
+  background: var(--surface-alt);
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--radius-pill, 9999px);
+  font-weight: 600;
 }
+
+/* ---- tool buttons ---- */
 
 .pdfed__toolbtn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
+  gap: 0.125rem;
+  min-width: 2rem;
   height: 2rem;
-  padding: 0;
+  padding: 0 0.25rem;
   border: 1px solid transparent;
   background: transparent;
   color: var(--text-soft);
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: background-color 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+  transition: all 0.15s ease;
+  font-size: 0.625rem;
+  font-weight: 600;
+  font-family: var(--font-ui, system-ui, sans-serif);
+  letter-spacing: 0.01em;
+  position: relative;
 }
-.pdfed__toolbtn:hover { background: var(--surface-alt); color: var(--text); }
+.pdfed__toolbtn:hover {
+  background: var(--surface-alt);
+  color: var(--text);
+  border-color: var(--line);
+}
 .pdfed__toolbtn--active {
-  background: var(--accent);
-  color: var(--accent-text);
-  border-color: var(--accent);
+  background: var(--tk-pdf, var(--accent));
+  color: #fff;
+  border-color: var(--tk-pdf, var(--accent));
+  box-shadow: 0 1px 4px rgba(232, 80, 91, 0.3);
 }
 .pdfed__toolbtn--active:hover {
-  background: var(--accent);
-  color: var(--accent-text);
+  background: var(--tk-pdf, var(--accent));
+  color: #fff;
+  filter: brightness(1.08);
 }
+
+.pdfed__toolbtn-label {
+  display: none;
+}
+
+/* Show labels on wider screens for a Sejda-like labeled toolbar */
+@media (min-width: 64rem) {
+  .pdfed__toolbtn-label {
+    display: inline;
+  }
+  .pdfed__toolbtn {
+    padding: 0 0.5rem;
+    gap: 0.25rem;
+  }
+}
+
+/* ---- icon-only action buttons (undo, redo, find, etc.) ---- */
 
 .pdfed__iconbtn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.75rem;
-  height: 1.75rem;
+  width: 1.875rem;
+  height: 1.875rem;
   padding: 0;
   border: 1px solid var(--line);
-  background: transparent;
+  background: var(--surface);
   color: var(--text-soft);
   border-radius: var(--radius-sm);
   cursor: pointer;
+  transition: all 0.15s ease;
 }
-.pdfed__iconbtn:hover:not(:disabled) { background: var(--surface-alt); color: var(--text); }
-.pdfed__iconbtn:disabled { opacity: 0.35; cursor: not-allowed; }
+.pdfed__iconbtn:hover:not(:disabled) {
+  background: var(--surface-alt);
+  color: var(--text);
+  border-color: var(--line-strong, var(--line));
+}
+.pdfed__iconbtn:disabled { opacity: 0.3; cursor: not-allowed; }
 .pdfed__iconbtn--active {
   background: var(--accent-soft);
   color: var(--accent);
   border-color: var(--accent);
 }
+
+/* ---- color swatches ---- */
 
 .pdfed__swatch {
   width: 1.25rem;
@@ -112,31 +155,36 @@
   border-radius: 50%;
   padding: 0;
   cursor: pointer;
-  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  flex-shrink: 0;
 }
-.pdfed__swatch:hover { transform: scale(1.1); }
+.pdfed__swatch:hover { transform: scale(1.15); }
 .pdfed__swatch--active {
   box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent);
   border-color: var(--surface);
+  transform: scale(1.05);
 }
 
 .pdfed__select {
-  font-family: var(--font-mono);
+  font-family: var(--font-ui, system-ui, sans-serif);
   font-size: 0.8125rem;
   padding: 0.3rem 0.5rem;
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
-  background: var(--bg);
+  background: var(--surface);
   color: var(--text);
   cursor: pointer;
+  font-weight: 500;
+  transition: border-color 0.15s;
 }
+.pdfed__select:focus { border-color: var(--accent); outline: none; }
 
 /* ---- body layout: optional thumbnail rail + viewport ---- */
 
 .pdfed__body {
   display: flex;
   align-items: flex-start;
-  gap: var(--space-3);
+  gap: 0;
   min-width: 0;
 }
 
@@ -148,28 +196,24 @@
   min-width: 0;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-4);
-  padding: var(--space-4);
-  background: var(--bg-sunken);
-  border-radius: var(--radius);
-  min-height: 20rem;
+  gap: var(--space-5, 2rem);
+  padding: var(--space-5, 2rem) var(--space-4);
+  /* Subtle canvas pattern like professional editors */
+  background:
+    repeating-conic-gradient(var(--bg-sunken) 0% 25%, transparent 0% 50%)
+    50% / 24px 24px;
+  background-color: var(--bg-sunken);
+  border: 1px solid var(--line);
+  border-top: none;
+  border-radius: 0 0 var(--radius) var(--radius);
+  min-height: 28rem;
 }
 
 .pdfed__page {
   display: flex;
   flex-direction: column;
-  /* Centers .pdfed__pageframe (which keeps its own natural/zoomed width)
-     within this now-full-width column — see .pdfed__pagechrome's own
-     width:100% below for why the per-page toolbar isn't affected by this. */
   align-items: center;
   gap: var(--space-2);
-  /* width:100% (not just max-width) gives this a *definite* containing-block
-     width for .pdfed__pageframe's own max-width:100% to resolve against.
-     Without it, this is a shrink-to-fit flex item (viewport's align-items is
-     center, not stretch) and percentage max-width can't constrain a child's
-     intrinsic/inline pixel width during shrink-to-fit sizing — the zoomed
-     page's width leaked straight through and overflowed the viewport on any
-     screen narrower than the rendered page. */
   width: 100%;
   max-width: 100%;
   min-width: 0;
@@ -179,17 +223,18 @@
   position: relative;
   max-width: 100%;
   background: white;
-  box-shadow: var(--shadow-md);
-  border-radius: 2px;
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    0 8px 24px rgba(0, 0, 0, 0.06),
+    0 0 0 1px rgba(0, 0, 0, 0.04);
+  border-radius: 3px;
   overflow: hidden;
+  transition: box-shadow 0.2s ease;
 }
 
 .pdfed__pageimg {
   display: block;
   width: 100%;
-  /* height:100% (not auto) so a synthetic 1x1 blank-page image stretches to
-     fill the frame correctly — a real rendered page's own aspect ratio
-     already matches the frame's, so this changes nothing for it. */
   height: 100%;
   user-select: none;
   pointer-events: none;
@@ -212,10 +257,12 @@
 .pdfed__handle {
   fill: var(--surface);
   stroke: var(--accent);
-  stroke-width: 1.5;
+  stroke-width: 2;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.15));
+  cursor: pointer;
 }
 
-/* ---- dropdown menus (Shapes / Sign / Annotate) ---- */
+/* ---- dropdown menus (Shapes / Sign / Annotate / Forms) ---- */
 
 .pdfed__dropdown-root {
   position: relative;
@@ -228,52 +275,63 @@
   z-index: 20;
   display: flex;
   flex-direction: column;
-  min-width: 12rem;
-  padding: var(--space-2);
+  min-width: 13rem;
+  padding: 0.375rem;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  box-shadow: var(--shadow-lg);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.1),
+    0 1px 4px rgba(0, 0, 0, 0.06);
+  animation: pdfed-dropdown-in 0.12s ease-out;
+}
+
+@keyframes pdfed-dropdown-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .pdfed__dropdown-heading {
-  padding: var(--space-2) var(--space-2) var(--space-1);
-  font-size: 0.6875rem;
+  padding: 0.5rem 0.5rem 0.25rem;
+  font-size: 0.625rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   color: var(--text-faint);
 }
 
 .pdfed__dropdown-sep {
-  margin: var(--space-1) 0;
+  margin: 0.25rem 0;
   border-top: 1px solid var(--line);
 }
 
 .pdfed__dropdown-item {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: 0.5rem;
   width: 100%;
-  padding: 0.45rem var(--space-2);
+  padding: 0.5rem 0.625rem;
   border: none;
   border-radius: var(--radius-sm);
   background: transparent;
   color: var(--text);
   font-size: 0.8125rem;
+  font-weight: 500;
   text-align: left;
   cursor: pointer;
   white-space: nowrap;
+  transition: background 0.1s;
 }
 .pdfed__dropdown-item:hover { background: var(--surface-alt); }
 .pdfed__dropdown-item--active {
-  background: var(--accent-soft);
-  color: var(--accent);
+  background: var(--tk-pdf-soft, var(--accent-soft));
+  color: var(--tk-pdf, var(--accent));
+  font-weight: 600;
 }
 
 .pdfed__dropdown-item--sig {
   justify-content: center;
-  padding: var(--space-2);
+  padding: 0.5rem;
 }
 .pdfed__dropdown-item--sig img {
   max-width: 8rem;
@@ -288,23 +346,23 @@
   z-index: 15;
   display: flex;
   align-items: center;
-  /* Text's controls (family/size/bold/italic/color/background, see
-     TextToolbarControls.tsx) are wider than this toolbar was originally
-     built for — wrap instead of overflowing off-screen, capped so it stays
-     usable on narrow viewports too. 40rem comfortably fits every text
-     control on one row on typical desktop widths (matching Sejda's own
-     toolbar, which never wraps); ElementToolbar.tsx measures its real
-     rendered height and positions from that, so wrapping is still handled
-     correctly on narrower screens — this cap just makes it rare. */
   flex-wrap: wrap;
   max-width: min(92vw, 40rem);
   gap: 0.125rem;
-  padding: 0.25rem;
+  padding: 0.3rem 0.375rem;
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-md);
+  border-radius: var(--radius);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.1),
+    0 1px 3px rgba(0, 0, 0, 0.06);
   transform: translateX(-2px);
+  animation: pdfed-toolbar-pop 0.15s ease-out;
+}
+
+@keyframes pdfed-toolbar-pop {
+  from { opacity: 0; transform: translateX(-2px) translateY(4px) scale(0.97); }
+  to   { opacity: 1; transform: translateX(-2px) translateY(0) scale(1); }
 }
 
 .pdfed__element-toolbar-btn {
@@ -319,6 +377,7 @@
   color: var(--text-soft);
   border-radius: var(--radius-sm);
   cursor: pointer;
+  transition: all 0.12s;
 }
 .pdfed__element-toolbar-btn:hover { background: var(--surface-alt); color: var(--text); }
 .pdfed__element-toolbar-btn--danger:hover { background: var(--danger-soft); color: var(--danger); }
@@ -336,8 +395,9 @@
   display: inline-flex;
   align-items: center;
   gap: 0.2rem;
-  padding: 0 0.2rem;
+  padding: 0 0.375rem;
   border-left: 1px solid var(--line);
+  margin-left: 0.125rem;
 }
 
 .pdfed__swatch--xs {
@@ -357,7 +417,9 @@
   background: var(--bg);
   color: var(--text);
   font-size: 0.8125rem;
+  transition: border-color 0.15s;
 }
+.pdfed__link-input:focus { border-color: var(--accent); outline: none; }
 
 .pdfed__hidden-input {
   position: absolute;
@@ -374,25 +436,21 @@
     var(--surface);
 }
 
-/* Single-line, auto-growing-width text input — matches Sejda's own text
-   box (a `contenteditable` div with zero padding and `white-space: pre`,
-   so its outline is exactly its rendered content, one line, no wrap). Our
-   equivalent is a plain <input type="text"> sized every render from the
-   same `measureText()` the selection outline uses (see
-   `textAnnotationScreenBox` in elements.tsx), so the box grows with each
-   keystroke instead of sitting in a large fixed multi-line textarea. */
+/* ---- text editing input ---- */
+
 .pdfed__textedit {
   width: 100%;
   height: 100%;
-  padding: 0 1px;
+  padding: 0 2px;
   margin: 0;
-  border: 2px dashed var(--accent);
+  border: 2px solid var(--accent);
   border-radius: 2px;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95);
   outline: none;
   box-sizing: border-box;
   font-family: Helvetica, Arial, sans-serif;
   white-space: pre;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
 .pdfed__download {
@@ -404,6 +462,7 @@
   font: inherit;
   padding: 0;
 }
+.pdfed__download:hover { text-decoration: none; }
 
 /* ---- signature modal ---- */
 
@@ -415,7 +474,13 @@
   align-items: center;
   justify-content: center;
   padding: var(--space-4);
-  background: rgba(16, 19, 18, 0.5);
+  background: rgba(0, 0, 0, 0.45);
+  animation: pdfed-fade-in 0.15s ease-out;
+}
+
+@keyframes pdfed-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 .pdfed__modal {
@@ -425,7 +490,15 @@
   overflow-y: auto;
   background: var(--surface);
   border-radius: var(--radius);
-  box-shadow: var(--shadow-lg);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.2),
+    0 4px 16px rgba(0, 0, 0, 0.1);
+  animation: pdfed-modal-in 0.2s ease-out;
+}
+
+@keyframes pdfed-modal-in {
+  from { opacity: 0; transform: scale(0.96) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 .pdfed__modal-head {
@@ -437,6 +510,7 @@
 .pdfed__modal-head h3 {
   margin: 0;
   font-size: 1.0625rem;
+  font-weight: 700;
 }
 
 .pdfed__modal-close {
@@ -448,6 +522,7 @@
   padding: var(--space-2);
   cursor: pointer;
   border-radius: var(--radius-sm);
+  transition: all 0.12s;
 }
 .pdfed__modal-close:hover { background: var(--surface-alt); color: var(--text); }
 
@@ -468,6 +543,7 @@
   font-weight: 600;
   cursor: pointer;
   margin-bottom: -1px;
+  transition: color 0.12s;
 }
 .pdfed__modal-tab:hover { color: var(--text); }
 .pdfed__modal-tab--active {
@@ -496,7 +572,9 @@
   background: var(--bg);
   color: var(--text);
   font-size: 1rem;
+  transition: border-color 0.15s;
 }
+.pdfed__sig-name-input:focus { border-color: var(--accent); outline: none; }
 
 .pdfed__sig-colors {
   display: flex;
@@ -517,16 +595,17 @@
   align-items: flex-start;
   gap: 0.25rem;
   padding: var(--space-3);
-  border: 1px solid var(--line);
+  border: 1.5px solid var(--line);
   border-radius: var(--radius-sm);
   background: var(--bg);
   cursor: pointer;
   overflow: hidden;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
-.pdfed__sig-style:hover { border-color: var(--line-strong); }
+.pdfed__sig-style:hover { border-color: var(--line-strong, var(--text-faint)); }
 .pdfed__sig-style--active {
   border-color: var(--accent);
-  box-shadow: 0 0 0 1px var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-soft);
 }
 .pdfed__sig-style span {
   font-size: 1.5rem;
@@ -545,7 +624,7 @@
 .pdfed__sig-canvas {
   width: 100%;
   height: 12rem;
-  border: 1px dashed var(--line-strong);
+  border: 1.5px dashed var(--line-strong, var(--line));
   border-radius: var(--radius-sm);
   background: var(--bg);
   touch-action: none;
@@ -564,7 +643,7 @@
   align-items: center;
   justify-content: center;
   padding: var(--space-4);
-  border: 1px dashed var(--line-strong);
+  border: 1.5px dashed var(--line-strong, var(--line));
   border-radius: var(--radius-sm);
   background: var(--bg);
 }
@@ -580,54 +659,63 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-1) var(--space-2);
+  gap: 0.375rem;
+  padding: 0.375rem 0.625rem;
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-sm);
-  /* .pdfed__page centers its children now (so the pageframe can be capped
-     to a definite width — see that rule's comment); this keeps the toolbar
-     spanning the full page width instead of also shrinking to fit-content. */
+  border-radius: var(--radius);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   width: 100%;
   box-sizing: border-box;
 }
 
 .pdfed__pagechrome-num {
-  font-size: 0.75rem;
-  font-family: var(--font-mono);
-  color: var(--text-faint);
+  font-size: 0.6875rem;
+  font-family: var(--font-ui, system-ui, sans-serif);
+  color: var(--text-soft);
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-right: var(--space-1);
+  letter-spacing: 0.04em;
+  margin-right: 0.25rem;
+  background: var(--surface-alt);
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--radius-sm);
 }
 
 .pdfed__pagechrome-zoom {
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-family: var(--font-mono);
   color: var(--text-soft);
   min-width: 2.75rem;
   text-align: center;
+  font-weight: 600;
 }
 
 .pdfed__pagechrome-rotation {
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   color: var(--accent);
   font-family: var(--font-mono);
+  font-weight: 600;
 }
 
 .pdfed__pagechrome-insert {
   margin-left: auto;
-  padding: 0.3rem 0.6rem;
-  border: 1px dashed var(--line-strong);
+  padding: 0.3rem 0.75rem;
+  border: 1px dashed var(--line-strong, var(--line));
   border-radius: var(--radius-sm);
   background: transparent;
   color: var(--text-soft);
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
+  transition: all 0.15s;
 }
-.pdfed__pagechrome-insert:hover { border-color: var(--accent); color: var(--accent); }
+.pdfed__pagechrome-insert:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
 
 /* ---- page thumbnail rail ---- */
 
@@ -644,17 +732,21 @@
   padding: var(--space-2);
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-sm);
+  border-top: none;
+  border-radius: 0 0 var(--radius) var(--radius);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .pdfed__thumbrail-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   color: var(--text-faint);
-  padding: 0 var(--space-1);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.25rem 0.25rem 0;
 }
 
 .pdfed__thumbrail-list {
@@ -675,14 +767,18 @@
   align-items: center;
   gap: 0.25rem;
   width: 100%;
-  padding: var(--space-1);
+  padding: 0.25rem;
   border: 2px solid transparent;
   border-radius: var(--radius-sm);
   background: transparent;
   cursor: pointer;
+  transition: all 0.12s;
 }
 .pdfed__thumb:hover { background: var(--surface-alt); }
-.pdfed__thumb--active { border-color: var(--accent); }
+.pdfed__thumb--active {
+  border-color: var(--tk-pdf, var(--accent));
+  background: var(--tk-pdf-soft, var(--accent-soft));
+}
 
 .pdfed__thumb img,
 .pdfed__thumb-blank {
@@ -691,13 +787,15 @@
   object-fit: cover;
   background: white;
   border: 1px solid var(--line);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  border-radius: 2px;
 }
 
 .pdfed__thumb-num {
-  font-size: 0.6875rem;
+  font-size: 0.625rem;
   font-family: var(--font-mono);
   color: var(--text-faint);
+  font-weight: 600;
 }
 
 .pdfed__thumb-delete {
@@ -710,10 +808,14 @@
   border-radius: 50%;
   background: var(--surface);
   color: var(--danger);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   font-size: 0.6875rem;
   line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.12s;
 }
 .pdfed__thumb-delete:hover { background: var(--danger-soft); }
 
@@ -723,29 +825,38 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-sm);
+  border-top: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  animation: pdfed-slide-down 0.15s ease-out;
+}
+
+@keyframes pdfed-slide-down {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .pdfed__findbar-input {
-  padding: 0.4rem var(--space-2);
-  border: 1px solid var(--line);
+  padding: 0.4rem 0.625rem;
+  border: 1.5px solid var(--line);
   border-radius: var(--radius-sm);
   background: var(--bg);
   color: var(--text);
   font-size: 0.8125rem;
   min-width: 12rem;
+  transition: border-color 0.15s;
 }
+.pdfed__findbar-input:focus { border-color: var(--accent); outline: none; }
 
 .pdfed__findbar-count {
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   color: var(--text-faint);
   font-family: var(--font-mono);
   min-width: 5.5rem;
+  font-weight: 600;
 }
 
 .pdfed__findbar-close {
@@ -754,8 +865,9 @@
   background: transparent;
   color: var(--text-faint);
   cursor: pointer;
-  padding: var(--space-1) var(--space-2);
+  padding: 0.25rem 0.5rem;
   border-radius: var(--radius-sm);
+  transition: all 0.12s;
 }
 .pdfed__findbar-close:hover { background: var(--surface-alt); color: var(--text); }
 
@@ -767,26 +879,23 @@
   50% { opacity: 0.4; }
 }
 
-/* Responsive: on narrow screens, allow horizontal scrolling of the toolbar. */
+/* ---- Responsive ---- */
+
 @media (max-width: 48rem) {
   .pdfed__toolbar {
     overflow-x: auto;
     flex-wrap: nowrap;
+    border-radius: var(--radius);
   }
   .pdfed__toolbar-group {
     flex-shrink: 0;
   }
   .pdfed__toolbar-spacer { display: none; }
-  /* .pdfed__body's default align-items:flex-start (set unconditionally
-     above) governs the cross axis — vertical in the normal row layout,
-     which is fine there. Flipping to column here makes the cross axis
-     horizontal instead, so without an override that same flex-start left
-     .pdfed__viewport (and .pdfed__thumbrail) shrink-to-fit their own
-     content's intrinsic width — the zoomed page's inline pixel width —
-     rather than filling this container's actual (narrow) width, which
-     overflowed the viewport. stretch makes them fill it like the page-level
-     width:100% fix above expects. */
   .pdfed__body { flex-direction: column; align-items: stretch; }
+  .pdfed__viewport {
+    border-radius: var(--radius);
+    border-top: 1px solid var(--line);
+  }
   .pdfed__thumbrail {
     position: static;
     width: 100%;
@@ -794,6 +903,8 @@
     flex-direction: row;
     overflow-x: auto;
     overflow-y: hidden;
+    border-top: 1px solid var(--line);
+    border-radius: var(--radius);
   }
   .pdfed__thumbrail-list { flex-direction: row; }
   .pdfed__thumb { width: 5rem; flex-shrink: 0; }

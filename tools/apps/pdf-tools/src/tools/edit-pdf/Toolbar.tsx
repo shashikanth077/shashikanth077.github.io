@@ -499,6 +499,8 @@ function ToolButton({
   children: ReactNode;
 }) {
   const active = current === value;
+  // Extract short label for display (strip anything after " — ")
+  const shortLabel = label.split(" — ")[0]!;
   return (
     <button
       type="button"
@@ -509,6 +511,7 @@ function ToolButton({
       aria-pressed={active}
     >
       {children}
+      <span className="pdfed__toolbtn-label">{shortLabel}</span>
     </button>
   );
 }
@@ -558,7 +561,8 @@ function ToolbarDropdown({
         aria-expanded={open}
       >
         {trigger}
-        <ChevronDownIcon size={10} />
+        <span className="pdfed__toolbtn-label">{label}</span>
+        <ChevronDownIcon size={8} />
       </button>
       {open && <div className="pdfed__dropdown">{children(() => setOpen(false))}</div>}
     </div>

@@ -486,10 +486,31 @@ export default function EditPdf() {
     return () => document.removeEventListener("keydown", onKey);
   }, [selectedId, deleteAnnotation]);
 
+  /* -------- visible page detection -------- */
+
+  /** Returns the editor page currently most visible in the viewport, falling back to the first page. */
+  function getVisiblePage(): EditorPage | undefined {
+    let best: EditorPage | undefined;
+    let bestRatio = -1;
+    for (const ep of editorPages) {
+      const el = document.querySelector(`[data-page-target="${ep.target}"]`);
+      if (!el) continue;
+      const rect = el.getBoundingClientRect();
+      const visibleTop = Math.max(0, rect.top);
+      const visibleBottom = Math.min(window.innerHeight, rect.bottom);
+      const ratio = rect.height > 0 ? Math.max(0, visibleBottom - visibleTop) / rect.height : 0;
+      if (ratio > bestRatio) {
+        bestRatio = ratio;
+        best = ep;
+      }
+    }
+    return best ?? editorPages[0];
+  }
+
   /* -------- image insert -------- */
 
   async function insertImage(imgFile: File) {
-    const targetPage = editorPages[0];
+    const targetPage = getVisiblePage();
     if (!targetPage) return;
     setImageError(null);
     try {
@@ -518,7 +539,7 @@ export default function EditPdf() {
   /* -------- signatures -------- */
 
   function placeSignature(sig: RecentSignature) {
-    const targetPage = editorPages[0];
+    const targetPage = getVisiblePage();
     if (!targetPage) return;
     const MAX_PT = 180;
     const scale = Math.min(MAX_PT / sig.width, MAX_PT / sig.height, 1);
@@ -1243,6 +1264,7 @@ function PageEditor(props: PageEditorProps) {
                 svgRef={svgRef}
                 selected={selectedId === ann.id}
                 editing={editingTextId === ann.id}
+                tool={tool}
                 onSelect={onSelect}
                 onStartEditingText={onStartEditingText}
                 onStopEditingText={onStopEditingText}

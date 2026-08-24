@@ -25,6 +25,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev", "--prefix", "tools/apps/pdf-tools"],
       "port": 5002
+    },
+    {
+      "name": "toolnest",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "C:\\Shashikanth_Data\\TempleProDocs\\toolnest"],
+      "port": 5000
     }
   ]
 }

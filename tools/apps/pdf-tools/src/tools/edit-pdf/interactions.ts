@@ -11,7 +11,7 @@ export interface Box {
 const MIN_BOX_PT = 6;
 
 /** Client-pixel delta -> PDF-point delta, accounting for the page being CSS-scaled down from its native size. */
-function screenDeltaToPdfDelta(
+export function screenDeltaToPdfDelta(
   svgEl: SVGSVGElement,
   page: RenderedPage,
   dxClient: number,
@@ -173,4 +173,52 @@ export function useEndpointDrag(
   }
 
   return { live: live ?? { start, end }, begin, onPointerMove, onPointerUp };
+}
+
+/* ------------------------------------------------------------------ */
+/* Drag delta — for text and pen annotations that need move support     */
+/* without the full box-resize machinery.                              */
+/* ------------------------------------------------------------------ */
+
+/**
+ * A lightweight drag hook that yields raw PDF-space deltas (dx, dy) while a
+ * gesture is in progress. Callers add the delta to their own coordinates
+ * for a live preview and commit the final offset on pointer-up.
+ *
+ * Used by TextAnnotationView (move text baseline) and PenAnnotationView
+ * (move all polyline points) — both use a single (x,y) or a point-set
+ * instead of a box, so the heavier useBoxDrag doesn't fit cleanly.
+ */
+export function useDragDelta(
+  svgRef: RefObject<SVGSVGElement | null>,
+  page: RenderedPage,
+  onCommit: (dx: number, dy: number) => void,
+) {
+  const [delta, setDelta] = useState<{ dx: number; dy: number } | null>(null);
+  const drag = useRef<{ startClientX: number; startClientY: number } | null>(null);
+
+  function beginMove(e: ReactPointerEvent) {
+    e.stopPropagation();
+    e.preventDefault();
+    (e.currentTarget as Element).setPointerCapture(e.pointerId);
+    drag.current = { startClientX: e.clientX, startClientY: e.clientY };
+  }
+
+  function onPointerMove(e: ReactPointerEvent) {
+    const d = drag.current;
+    const svg = svgRef.current;
+    if (!d || !svg) return;
+    setDelta(screenDeltaToPdfDelta(svg, page, e.clientX - d.startClientX, e.clientY - d.startClientY));
+  }
+
+  function onPointerUp() {
+    const d = drag.current;
+    drag.current = null;
+    if (d && delta && (Math.abs(delta.dx) > 0.5 || Math.abs(delta.dy) > 0.5)) {
+      onCommit(delta.dx, delta.dy);
+    }
+    setDelta(null);
+  }
+
+  return { delta, beginMove, onPointerMove, onPointerUp };
 }

@@ -13,7 +13,7 @@ import type {
   WhiteoutAnnotation,
 } from "@devtools/tools-core";
 import { boxToScreen, pdfToScreen, RENDER_SCALE, type RenderedPage } from "./geometry.js";
-import { useBoxDrag, useEndpointDrag, type Box, type Corner } from "./interactions.js";
+import { useBoxDrag, useDragDelta, useEndpointDrag, type Box, type Corner } from "./interactions.js";
 import type { ScreenBox } from "./ElementToolbar.js";
 import { isBoldStandardFont, isItalicStandardFont, standardFontCssStack } from "./fontMatch.js";
 import { measureText } from "./measureText.js";
@@ -28,6 +28,8 @@ export interface AnnotationViewProps {
   svgRef: RefObject<SVGSVGElement | null>;
   selected: boolean;
   editing: boolean;
+  /** Current editor tool — TextAnnotationView uses it to auto-start editing on single click when tool is "text", and to decide whether drag-to-move or click-to-edit takes priority. */
+  tool: string;
   onSelect: (id: string) => void;
   onStartEditingText: (id: string) => void;
   onStopEditingText: () => void;
@@ -525,18 +527,58 @@ function FormFieldAnnotationView(props: AnnotationViewProps & { annotation: Form
 /* ------------------------------------------------------------------ */
 
 function PenAnnotationView(props: AnnotationViewProps & { annotation: PenAnnotation }) {
-  const { annotation, page, selected, onSelect } = props;
-  const screenBox = useMemo(() => getAnnotationScreenBox(page, annotation), [page, annotation]);
+  const { annotation, page, svgRef, selected, onSelect, onUpdate } = props;
+
+  const { delta, beginMove, onPointerMove, onPointerUp } = useDragDelta(svgRef, page, (dx, dy) => {
+    onUpdate(annotation.id, {
+      points: annotation.points.map((p) => ({ x: p.x + dx, y: p.y + dy })),
+    } as Partial<Annotation>);
+  });
+
+  // Apply live preview offset to points while dragging — memo on the
+  // stable delta scalars (not the mapped array) so we don't defeat the
+  // memo on every render while the pointer is moving.
+  const ddx = delta?.dx ?? 0;
+  const ddy = delta?.dy ?? 0;
+  const livePoints = useMemo(
+    () => (ddx || ddy ? annotation.points.map((p) => ({ x: p.x + ddx, y: p.y + ddy })) : annotation.points),
+    [annotation.points, ddx, ddy],
+  );
+  const screenBox = useMemo(() => {
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
+    for (const p of livePoints) {
+      if (p.x < minX) minX = p.x;
+      if (p.y < minY) minY = p.y;
+      if (p.x > maxX) maxX = p.x;
+      if (p.y > maxY) maxY = p.y;
+    }
+    const topLeft = pdfToScreen(page, minX, maxY);
+    return { sx: topLeft.sx - 4, sy: topLeft.sy - 4, width: (maxX - minX) * RENDER_SCALE + 8, height: (maxY - minY) * RENDER_SCALE + 8 };
+  }, [livePoints, page]);
 
   return (
-    <g
-      data-annotation-id={annotation.id}
-      onPointerDown={(e) => {
-        e.stopPropagation();
-        onSelect(annotation.id);
-      }}
-    >
-      <PenPath points={annotation.points} page={page} color={annotation.color} strokeWidth={annotation.strokeWidth} />
+    <g data-annotation-id={annotation.id}>
+      {/* Transparent hit-area for easier grab — the visible stroke can be thin */}
+      <rect
+        x={screenBox.sx}
+        y={screenBox.sy}
+        width={screenBox.width}
+        height={screenBox.height}
+        fill="transparent"
+        style={{ cursor: selected ? "move" : "pointer" }}
+        onPointerDown={(e) => {
+          e.stopPropagation();
+          onSelect(annotation.id);
+          if (selected) beginMove(e);
+        }}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+      />
+      <PenPath points={livePoints} page={page} color={annotation.color} strokeWidth={annotation.strokeWidth} />
       {selected && <SelectionOutline screenBox={screenBox} />}
     </g>
   );
@@ -562,7 +604,7 @@ export function PenPath({
       .join(" ");
   }, [points, page]);
 
-  return <path d={d} stroke={color} strokeWidth={strokeWidth * RENDER_SCALE} strokeLinecap="round" strokeLinejoin="round" fill="none" />;
+  return <path d={d} stroke={color} strokeWidth={strokeWidth * RENDER_SCALE} strokeLinecap="round" strokeLinejoin="round" fill="none" pointerEvents="none" />;
 }
 
 /* ------------------------------------------------------------------ */
@@ -606,10 +648,22 @@ function HighlightAnnotationView(props: AnnotationViewProps & { annotation: High
 /* ------------------------------------------------------------------ */
 
 function TextAnnotationView(props: AnnotationViewProps & { annotation: TextAnnotation }) {
-  const { annotation, page, selected, editing, onStartEditingText, onStopEditingText, onUpdate, onSelect } = props;
-  const screen = pdfToScreen(page, annotation.x, annotation.y);
+  const { annotation, page, svgRef, selected, editing, tool, onStartEditingText, onStopEditingText, onUpdate, onSelect } = props;
   const inputRef = useRef<HTMLInputElement>(null);
   const [hovered, setHovered] = useState(false);
+  // Track whether the pointerdown started a drag so we can distinguish
+  // click (select/edit) from drag (move) on pointerup.
+  const didDrag = useRef(false);
+
+  const { delta, beginMove, onPointerMove: dragPointerMove, onPointerUp: dragPointerUp } = useDragDelta(svgRef, page, (dx, dy) => {
+    didDrag.current = true;
+    onUpdate(annotation.id, { x: annotation.x + dx, y: annotation.y + dy } as Partial<Annotation>);
+  });
+
+  // Live-preview position while dragging
+  const liveX = annotation.x + (delta?.dx ?? 0);
+  const liveY = annotation.y + (delta?.dy ?? 0);
+  const screen = pdfToScreen(page, liveX, liveY);
 
   useEffect(() => {
     if (editing) {
@@ -623,7 +677,7 @@ function TextAnnotationView(props: AnnotationViewProps & { annotation: TextAnnot
   }, [editing]);
 
   const displayFontSize = annotation.fontSize * RENDER_SCALE;
-  const screenBox = textAnnotationScreenBox(page, annotation);
+  const screenBox = textAnnotationScreenBox(page, { ...annotation, x: liveX, y: liveY });
   // Existing-text patches (design doc §3) carry a matched standard font —
   // approximate it on screen too, not just in the exported PDF, so what you
   // see while editing roughly matches what you get.
@@ -677,13 +731,46 @@ function TextAnnotationView(props: AnnotationViewProps & { annotation: TextAnnot
   return (
     <g
       data-annotation-id={annotation.id}
-      onPointerDown={(e) => {
-        e.stopPropagation();
-        onSelect(annotation.id);
-      }}
       onPointerEnter={() => setHovered(true)}
       onPointerLeave={() => setHovered(false)}
     >
+      {/* Transparent hit-area behind the text for easier grab target */}
+      <rect
+        x={screenBox.sx}
+        y={screenBox.sy}
+        width={screenBox.width}
+        height={screenBox.height}
+        fill="transparent"
+        style={{ cursor: selected ? "move" : "text" }}
+        onPointerDown={(e) => {
+          e.stopPropagation();
+          didDrag.current = false;
+          onSelect(annotation.id);
+          // When text tool is active, a single click should auto-start editing
+          // (like Sejda) — handled in onPointerUp below.
+          // When select tool is active and annotation is *already* selected,
+          // begin drag-to-move. Note: `selected` reflects the *previous* render
+          // (React hasn't re-rendered yet), so the first click selects and the
+          // *next* pointerdown (on the now-selected annotation) begins the drag.
+          if (tool !== "text" && selected) {
+            beginMove(e);
+          }
+        }}
+        onPointerMove={dragPointerMove}
+        onPointerUp={() => {
+          dragPointerUp();
+          // Auto-start editing on single click when text tool is active and
+          // the user didn't drag to move
+          if (tool === "text" && !didDrag.current) {
+            onStartEditingText(annotation.id);
+          }
+        }}
+        onPointerCancel={dragPointerUp}
+        onDoubleClick={(e) => {
+          e.stopPropagation();
+          onStartEditingText(annotation.id);
+        }}
+      />
       {selected ? <SelectionOutline screenBox={screenBox} /> : hovered && <SelectionOutline screenBox={screenBox} hover />}
       <text
         x={screen.sx}
@@ -693,11 +780,8 @@ function TextAnnotationView(props: AnnotationViewProps & { annotation: TextAnnot
         fontWeight={bold ? 700 : 400}
         fontStyle={italic ? "italic" : "normal"}
         fill={annotation.color}
-        style={{ cursor: "text", userSelect: "none" }}
-        onDoubleClick={(e) => {
-          e.stopPropagation();
-          onStartEditingText(annotation.id);
-        }}
+        style={{ cursor: selected ? "move" : "text", userSelect: "none" }}
+        pointerEvents="none"
       >
         {annotation.text || "(empty)"}
       </text>
