@@ -1068,7 +1068,7 @@ function PageEditor(props: PageEditorProps) {
           x: run.x,
           y: run.y + run.height,
           text: run.str,
-          fontSize: Math.max(6, run.height * 0.85),
+          fontSize: Math.max(6, Math.round(run.height)),
           color: textColor,
           fontFamily: standardFont,
           coverId: cover.id,

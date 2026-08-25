@@ -2,7 +2,13 @@ import type { Annotation, TextAnnotation, WhiteoutAnnotation } from "@devtools/t
 import { COLORS } from "./constants.js";
 import { baseFontFamily, composeStandardFont, FONT_FAMILY_OPTIONS, isBoldStandardFont, isItalicStandardFont, type FontFamilyBase } from "./fontMatch.js";
 
-const FONT_SIZES = [8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 30, 36, 48];
+const FONT_SIZE_PRESETS = [8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 30, 36, 48];
+
+/** Build a sorted, deduplicated size list that always includes the annotation's current value — ensures the dropdown never silently snaps a custom size (e.g. one derived from the PDF's original text metrics) to the nearest preset. */
+function fontSizeOptions(current: number): number[] {
+  if (FONT_SIZE_PRESETS.includes(current)) return FONT_SIZE_PRESETS;
+  return [...FONT_SIZE_PRESETS, current].sort((a, b) => a - b);
+}
 const BACKGROUND_COLORS = ["#FFFFFF", ...COLORS];
 
 /**
@@ -63,7 +69,7 @@ export function TextToolbarControls({
         onChange={(e) => onUpdate(annotation.id, { fontSize: Number(e.target.value) })}
         aria-label="Font size"
       >
-        {FONT_SIZES.map((s) => (
+        {fontSizeOptions(annotation.fontSize).map((s) => (
           <option key={s} value={s}>
             {s}
           </option>
