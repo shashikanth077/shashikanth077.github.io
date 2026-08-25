@@ -1,0 +1,12 @@
+Arimo, Tinos, and Cousine are licensed under the SIL Open Font License, Version 1.1.
+Copyright 2011 Google Inc. All Rights Reserved.
+
+These are metric-compatible substitutes for Arial/Helvetica (Arimo), Times New
+Roman (Tinos), and Courier New (Cousine), used by the existing-text patch
+pipeline (see ../fontMatch.ts) to embed a real, fully-covered font program in
+exported PDFs instead of relying on a PDF viewer's own "Helvetica" name
+substitution — which varies by viewer/OS and is the source of visible font
+mismatches between the editor's on-screen preview and other viewers.
+
+Full license text: https://openfontlicense.org
+Source: https://fonts.google.com/specimen/Arimo (and /Tinos, /Cousine)

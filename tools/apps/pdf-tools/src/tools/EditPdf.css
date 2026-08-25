@@ -1,5 +1,101 @@
 /* ==== PDF editor — premium, Sejda-quality styling ==== */
 
+/*
+ * Arimo/Tinos/Cousine — the same OFL font files the existing-text patch
+ * pipeline embeds into the exported PDF (see edit-pdf/embeddedFonts.ts and
+ * `flattenAnnotations`'s `customFontBytes` doc comment). Declaring them
+ * here too, under editor-private names, means the on-screen text overlay
+ * (TextAnnotationView, styled via fontMatch.ts's `standardFontCssStack`)
+ * renders with the *exact same font program* as the export — not the
+ * browser's own OS-dependent guess at "Helvetica, Arial, sans-serif",
+ * which is what caused the on-screen preview to visibly mismatch both the
+ * page underneath it and the eventual exported PDF.
+ */
+@font-face {
+  font-family: "PDFEdArimo";
+  src: url("./edit-pdf/fonts/Arimo-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PDFEdArimo";
+  src: url("./edit-pdf/fonts/Arimo-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PDFEdArimo";
+  src: url("./edit-pdf/fonts/Arimo-Italic.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PDFEdArimo";
+  src: url("./edit-pdf/fonts/Arimo-BoldItalic.ttf") format("truetype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PDFEdTinos";
+  src: url("./edit-pdf/fonts/Tinos-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PDFEdTinos";
+  src: url("./edit-pdf/fonts/Tinos-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PDFEdTinos";
+  src: url("./edit-pdf/fonts/Tinos-Italic.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PDFEdTinos";
+  src: url("./edit-pdf/fonts/Tinos-BoldItalic.ttf") format("truetype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PDFEdCousine";
+  src: url("./edit-pdf/fonts/Cousine-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PDFEdCousine";
+  src: url("./edit-pdf/fonts/Cousine-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PDFEdCousine";
+  src: url("./edit-pdf/fonts/Cousine-Italic.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PDFEdCousine";
+  src: url("./edit-pdf/fonts/Cousine-BoldItalic.ttf") format("truetype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
 .pdfed {
   display: flex;
   flex-direction: column;

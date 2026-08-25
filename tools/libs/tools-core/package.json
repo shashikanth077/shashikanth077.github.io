@@ -12,6 +12,7 @@
   "//sideEffects": "Every module here is pure functions — no top-level work, no globals. Marking it lets Rollup drop unreferenced re-exports from the barrel, which otherwise pulls bwip-js (1.2MB) into every tool that imports anything from this package.",
   "sideEffects": false,
   "dependencies": {
+    "@pdf-lib/fontkit": "^1.1.1",
     "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",
     "bwip-js": "^4.11.2",

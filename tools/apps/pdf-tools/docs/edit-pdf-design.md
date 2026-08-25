@@ -104,9 +104,17 @@ contain — i.e. corrupted output. Silently shipping that would violate the
      white — handles tinted or scanned backgrounds correctly), and
    - new text drawn with a standard font matched to the extracted run
      (serif/sans/mono/bold/italic detected from the font name string, mapped
-     to pdf-lib's 14 standard fonts, or the closest of the handful of
-     embeddable open-license fonts already used by the signature style
-     gallery) at the same position, size, and best-effort color.
+     to the closest of pdf-lib's 14 standard-font *names* — see
+     `edit-pdf/fontMatch.ts`) at the same position, size, and best-effort
+     color. What actually gets embedded for each of those 12 names is a
+     real, redistributable (OFL) font program — Arimo/Tinos/Cousine, metric-
+     compatible clones of Arial/Times New Roman/Courier New (see
+     `edit-pdf/embeddedFonts.ts`) — not pdf-lib's own bare `/BaseFont` name
+     reference, which every PDF viewer substitutes its own local font for.
+     That substitution, not the matching heuristic, was the actual source of
+     a reported "font doesn't match" mismatch: the exported PDF's text and
+     the editor's own on-screen preview (which uses the *same* font files,
+     via `@font-face` in EditPdf.css) now render identically everywhere.
 4. This is visually indistinguishable from true text editing in the normal
    case (unrotated, horizontal, standard-ish fonts — the overwhelming
    majority of real documents) and *never* corrupts the file, because nothing

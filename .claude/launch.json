@@ -31,6 +31,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev", "--prefix", "C:\\Shashikanth_Data\\TempleProDocs\\toolnest"],
       "port": 5000
+    },
+    {
+      "name": "toolnest-static",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["C:\\Shashikanth_Data\\TempleProDocs\\toolnest\\scripts\\serve-static.mjs"],
+      "port": 4173
     }
   ]
 }

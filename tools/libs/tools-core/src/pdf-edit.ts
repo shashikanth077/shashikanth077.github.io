@@ -26,6 +26,7 @@ import {
   type PDFPage,
   type PDFRadioGroup,
 } from "pdf-lib";
+import fontkit from "@pdf-lib/fontkit";
 
 export type AnnotationTool =
   | "text"
@@ -490,14 +491,37 @@ async function applyPageStructure(doc: PDFDocument, pageOrder: PageSlot[]): Prom
  * page-structure edits before drawing. Omitting it keeps every original
  * page as-is (pageNumber `n` -> the document's nth page) — the pre-Phase-3
  * behavior, and what a caller with no page-structure UI still wants.
+ *
+ * `customFontBytes`, when given, supplies real font programs (TrueType
+ * bytes) keyed by the same `StandardFontName`s pdf-lib's own 14 base fonts
+ * use. When a name is present here, its bytes are embedded via fontkit
+ * *instead of* `doc.embedFont(name)`. This matters because pdf-lib's named
+ * standard fonts aren't embedded font programs at all — they're just a
+ * `/BaseFont` name reference, and every PDF viewer substitutes its own
+ * local "Helvetica"/"Times"/"Courier" for that name. That substitution is
+ * inconsistent across viewers/OSes, and never matches this editor's own
+ * on-screen CSS preview of the same text — the mismatch a user sees is
+ * real, not a matching-heuristic bug (see fontMatch.ts). Embedding an
+ * actual, redistributable, full-Latin-coverage font program (the caller's
+ * job to supply — see edit-pdf's bundled Arimo/Tinos/Cousine, metric-
+ * compatible clones of Arial/Times New Roman/Courier New) instead makes
+ * the exported PDF render identically everywhere, and match the preview.
  */
 export async function flattenAnnotations(
   bytes: ArrayBuffer,
   annotations: Annotation[],
   pageOrder?: PageSlot[],
+  customFontBytes?: Partial<Record<StandardFontName, ArrayBuffer>>,
 ): Promise<Uint8Array> {
   const doc = await PDFDocument.load(bytes, { ignoreEncryption: true });
-  const font = await doc.embedFont(StandardFonts.Helvetica);
+  if (customFontBytes) doc.registerFontkit(fontkit);
+
+  async function embed(key: StandardFontName): Promise<PDFFont> {
+    const custom = customFontBytes?.[key];
+    return custom ? doc.embedFont(custom, { subset: true }) : doc.embedFont(key);
+  }
+
+  const font = await embed(StandardFonts.Helvetica);
 
   // Every text annotation used to be Helvetica unconditionally; the
   // existing-text patch pipeline (design doc §3) is the first thing that
@@ -508,7 +532,7 @@ export async function flattenAnnotations(
     const key = name ?? StandardFonts.Helvetica;
     const cached = fontCache.get(key);
     if (cached) return cached;
-    const embedded = await doc.embedFont(key);
+    const embedded = await embed(key);
     fontCache.set(key, embedded);
     return embedded;
   }

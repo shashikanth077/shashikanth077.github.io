@@ -1,15 +1,21 @@
 /**
  * Best-effort font matching for the existing-text patch-and-re-render
  * pipeline (design doc §3). There is no way to recover a PDF's actual
- * embedded font client-side well enough to re-embed it faithfully — this
+ * embedded font program client-side well enough to re-embed *that exact
+ * typeface* faithfully (it's commonly subsetted to only the glyphs the
+ * original document happened to use, which would silently break on any
+ * character the edit introduces that the original run didn't have) — this
  * maps pdf.js's own font-family guess for a text run onto the closest of
- * pdf-lib's 14 standard fonts, which is what "best-effort" concretely means
- * here: get serif/sans/mono and bold/italic right, accept that the exact
- * typeface won't match.
+ * pdf-lib's 14 standard-font *names* (serif/sans/mono, bold/italic), which
+ * is what "best-effort" concretely means here.
  *
  * The returned strings are the literal values pdf-lib's StandardFonts enum
- * uses (e.g. `StandardFonts.TimesRomanBoldItalic === "Times-BoldItalic"`),
- * so they can be handed straight to `doc.embedFont(name)` — see pdf-edit.ts.
+ * uses (e.g. `StandardFonts.TimesRomanBoldItalic === "Times-BoldItalic"`).
+ * What actually gets embedded for each name is a real, full-Latin-coverage
+ * font program (see embeddedFonts.ts's Arimo/Tinos/Cousine and the
+ * `customFontBytes` doc comment on `flattenAnnotations` in pdf-edit.ts) —
+ * not pdf-lib's own bare name reference, which different PDF viewers each
+ * substitute their own local font for.
  */
 
 export type StandardFontName =
@@ -74,11 +80,21 @@ export function composeStandardFont(family: FontFamilyBase, bold: boolean, itali
   return bold && italic ? "Helvetica-BoldOblique" : bold ? "Helvetica-Bold" : italic ? "Helvetica-Oblique" : "Helvetica";
 }
 
-/** Web-safe CSS stack approximating a standard font, for the live editor's on-screen preview only — the export uses the real pdf-lib standard font. */
+/**
+ * CSS font-family for the live editor's on-screen preview. Leads with the
+ * `@font-face`s declared in EditPdf.css (PDFEdArimo/Tinos/Cousine) — the
+ * exact same font files `embeddedFonts.ts` embeds into the exported PDF —
+ * so what's shown while editing matches what comes out, not just an OS's
+ * own approximation of "Helvetica"/"Times"/"Courier" (see the
+ * `customFontBytes` doc comment on `flattenAnnotations` for why that
+ * approximation is what caused a visible mismatch here). The named
+ * fallbacks after it only matter for the instant before the custom font
+ * finishes loading.
+ */
 export function standardFontCssStack(font: StandardFontName): string {
-  if (font.startsWith("Times")) return `"Times New Roman", Times, serif`;
-  if (font.startsWith("Courier")) return `"Courier New", Courier, monospace`;
-  return `Helvetica, Arial, sans-serif`;
+  if (font.startsWith("Times")) return `"PDFEdTinos", "Times New Roman", Times, serif`;
+  if (font.startsWith("Courier")) return `"PDFEdCousine", "Courier New", Courier, monospace`;
+  return `"PDFEdArimo", Helvetica, Arial, sans-serif`;
 }
 
 export function isBoldStandardFont(font: StandardFontName): boolean {

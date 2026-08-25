@@ -1,6 +1,6 @@
 /**
- * Serves ../out the way GitHub Pages does, for verifying a production build
- * locally before pushing.
+ * Serves ../../out the way GitHub Pages does, for verifying a production
+ * build locally before pushing.
  *
  * Mirrors Pages behaviour that a dev server does NOT: no SPA fallback, no
  * rewrites. A path only resolves if a real file or a directory index.html
@@ -34,6 +34,7 @@ const TYPES = {
   ".ico": "image/x-icon",
   ".woff": "font/woff",
   ".woff2": "font/woff2",
+  ".ttf": "font/ttf",
   ".pdf": "application/pdf",
   ".xml": "application/xml; charset=utf-8",
   ".txt": "text/plain; charset=utf-8",

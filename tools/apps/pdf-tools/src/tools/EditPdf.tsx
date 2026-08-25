@@ -39,6 +39,7 @@ import { PageThumbnails, type ThumbnailEntry } from "./edit-pdf/PageThumbnails.j
 import { PageChrome } from "./edit-pdf/PageChrome.js";
 import { findMatches, findRunAt, type TextMatch, type TextRun } from "./edit-pdf/textSearch.js";
 import { matchStandardFont } from "./edit-pdf/fontMatch.js";
+import { loadEmbeddedFonts } from "./edit-pdf/embeddedFonts.js";
 import { sampleRunColors } from "./edit-pdf/colorSample.js";
 import {
   COLORS,
@@ -670,7 +671,19 @@ export default function EditPdf() {
     setEditingTextId(null);
 
     await run(async () => {
-      const data = await flattenAnnotations(pdfBytes.slice(0), annotations, pageOrder);
+      // Every text annotation resolves to a StandardFontName one way or
+      // another (explicit `fontFamily`, or the Helvetica default) — collect
+      // exactly the ones actually used so a PDF with no text edits (or only
+      // one font) never fetches fonts it doesn't need. See the doc comment
+      // on `flattenAnnotations`'s `customFontBytes` param for why real font
+      // bytes, not just a name, are what actually fixes the on-screen vs.
+      // exported mismatch reported against the existing-text patch flow.
+      const usedFontNames = annotations
+        .filter((a): a is TextAnnotation => a.type === "text")
+        .map((a) => a.fontFamily ?? "Helvetica");
+      const customFontBytes = usedFontNames.length ? await loadEmbeddedFonts(usedFontNames) : undefined;
+
+      const data = await flattenAnnotations(pdfBytes.slice(0), annotations, pageOrder, customFontBytes);
       const blob = new Blob([data as unknown as BlobPart], { type: "application/pdf" });
       const name = file.file.name.replace(/\.pdf$/i, "-edited.pdf");
       return [{ name, blob }];
