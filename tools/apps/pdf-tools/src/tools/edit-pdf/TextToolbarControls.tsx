@@ -1,6 +1,7 @@
 import type { Annotation, TextAnnotation, WhiteoutAnnotation } from "@devtools/tools-core";
 import { COLORS } from "./constants.js";
 import { baseFontFamily, composeStandardFont, FONT_FAMILY_OPTIONS, isBoldStandardFont, isItalicStandardFont, type FontFamilyBase } from "./fontMatch.js";
+import { pressProps } from "./pressable.js";
 
 const FONT_SIZE_PRESETS = [8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 30, 36, 48];
 
@@ -27,6 +28,14 @@ const BACKGROUND_COLORS = ["#FFFFFF", ...COLORS];
  * booleans entirely, so writing to them here would look right on screen but
  * silently not export — `fontFamily` is the one field that's both visually
  * and structurally correct.
+ *
+ * Every plain `<button>` here (Bold/Italic/color swatches) uses `pressProps`
+ * (see pressable.ts) instead of a plain `onClick` — its action fires on
+ * mousedown, before the browser's focus-follows-click can blur the text
+ * `<input>` mid-edit and reflow this toolbar out from under the pointer.
+ * The `<select>`s below deliberately don't get this treatment — canceling
+ * mousedown on a native `<select>` would stop its own dropdown from
+ * opening.
  */
 export function TextToolbarControls({
   annotation,
@@ -78,7 +87,7 @@ export function TextToolbarControls({
       <button
         type="button"
         className={`pdfed__element-toolbar-btn${bold ? " pdfed__element-toolbar-btn--active" : ""}`}
-        onClick={() => setStyle({ bold: !bold })}
+        {...pressProps(() => setStyle({ bold: !bold }))}
         title="Bold"
         aria-label="Bold"
         aria-pressed={bold}
@@ -88,7 +97,7 @@ export function TextToolbarControls({
       <button
         type="button"
         className={`pdfed__element-toolbar-btn${italic ? " pdfed__element-toolbar-btn--active" : ""}`}
-        onClick={() => setStyle({ italic: !italic })}
+        {...pressProps(() => setStyle({ italic: !italic }))}
         title="Italic"
         aria-label="Italic"
         aria-pressed={italic}
@@ -102,7 +111,7 @@ export function TextToolbarControls({
             type="button"
             className={`pdfed__swatch pdfed__swatch--xs${annotation.color === c ? " pdfed__swatch--active" : ""}`}
             style={{ background: c }}
-            onClick={() => onUpdate(annotation.id, { color: c })}
+            {...pressProps(() => onUpdate(annotation.id, { color: c }))}
             title={`Text color ${c}`}
             aria-label={`Text color ${c}`}
             aria-pressed={annotation.color === c}
@@ -117,7 +126,7 @@ export function TextToolbarControls({
               type="button"
               className={`pdfed__swatch pdfed__swatch--xs pdfed__swatch--bg${(cover.color ?? "#FFFFFF") === c ? " pdfed__swatch--active" : ""}`}
               style={{ background: c }}
-              onClick={() => onUpdate(cover.id, { color: c })}
+              {...pressProps(() => onUpdate(cover.id, { color: c }))}
               title={`Background color ${c}`}
               aria-label={`Background color ${c}`}
               aria-pressed={(cover.color ?? "#FFFFFF") === c}

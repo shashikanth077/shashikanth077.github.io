@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { DuplicateIcon, TrashIcon } from "./icons.js";
+import { pressProps } from "./pressable.js";
 
 export interface ScreenBox {
   sx: number;
@@ -25,6 +26,12 @@ const GAP = 6;
  * "toolbar is overlaying on that text"). Measure the toolbar's own actual
  * rendered height after each render and reposition from that instead of a
  * constant, so it's correct however many rows it wraps to.
+ *
+ * Duplicate/Delete use `pressProps` (see pressable.ts), not a plain
+ * `onClick` — see that file for why acting on mousedown instead of click
+ * matters here (clicking either while a text annotation is mid-edit would
+ * otherwise blur its input first, which can reflow this very toolbar out
+ * from under the pointer before the click lands).
  */
 export function ElementToolbar({
   box,
@@ -58,14 +65,14 @@ export function ElementToolbar({
     >
       {children}
       {onDuplicate && (
-        <button type="button" className="pdfed__element-toolbar-btn" onClick={onDuplicate} title="Duplicate" aria-label="Duplicate">
+        <button type="button" className="pdfed__element-toolbar-btn" {...pressProps(onDuplicate)} title="Duplicate" aria-label="Duplicate">
           <DuplicateIcon size={14} />
         </button>
       )}
       <button
         type="button"
         className="pdfed__element-toolbar-btn pdfed__element-toolbar-btn--danger"
-        onClick={onDelete}
+        {...pressProps(onDelete)}
         title="Delete"
         aria-label="Delete"
       >
