@@ -40,6 +40,7 @@ import { PageChrome } from "./edit-pdf/PageChrome.js";
 import { findMatches, findRunAt, type TextMatch, type TextRun } from "./edit-pdf/textSearch.js";
 import { matchStandardFont } from "./edit-pdf/fontMatch.js";
 import { loadEmbeddedFonts } from "./edit-pdf/embeddedFonts.js";
+import { preloadEditorFonts, useFontLoadTick } from "./edit-pdf/useFontLoadTick.js";
 import { sampleRunColors } from "./edit-pdf/colorSample.js";
 import {
   COLORS,
@@ -279,6 +280,14 @@ export default function EditPdf() {
   const getBytes = useFileBytes();
   const { busy, error, results, run } = useProcessor();
 
+  // See useFontLoadTick.ts: the custom fonts behind the existing-text patch
+  // pipeline's on-screen preview load over the network, and the canvas
+  // measurement that sizes/positions each text annotation's box doesn't
+  // wait for that — this re-renders once a font actually finishes loading
+  // so that box picks up correct metrics instead of staying sized against
+  // whatever fallback font was available first.
+  useFontLoadTick();
+
   // Sejda's "Apply changes" flow downloads the finished file as soon as it's
   // ready, no extra click — ours used to stop at a "PDF saved" note with a
   // separate Download button. Auto-trigger the download the moment a new
@@ -430,6 +439,11 @@ export default function EditPdf() {
     setHistory(newHistory());
     setSelectedId(null);
     setEditingTextId(null);
+
+    // Kick off loading the custom fonts now, in parallel with page
+    // rendering below — by the time the user actually clicks existing text,
+    // the network fetch has had a head start (see useFontLoadTick.ts).
+    preloadEditorFonts();
 
     (async () => {
       try {
