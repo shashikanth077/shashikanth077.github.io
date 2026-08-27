@@ -223,9 +223,9 @@ export const siteConfig = {
 // the hero shows Shashikanth's current location, this is the mailing address
 // tied to his upcoming move for the VILNIUS TECH program (see aboutData.text).
 export const contactInfo = {
-  address: "Saulėtekio al. 11, LT-10223 Vilnius, Lithuania",
+  address: "Saulėtekio al.25, LT-10223 Vilnius, Lithuania",
   email: "shashikanth033@gmail.com",
-  phone: "+91 8123192799",
+  phone: "+370 60945446",
 };
 
 // Anchor ids shared between the nav menu (navItems below) and each section's
