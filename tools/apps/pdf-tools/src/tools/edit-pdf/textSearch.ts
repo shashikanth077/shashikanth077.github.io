@@ -19,8 +19,11 @@ export interface TextRun {
   y: number;
   width: number;
   height: number;
-  /** pdf.js's own font-family guess for this run (e.g. "serif", or a real name it recognized) — see fontMatch.ts. */
+  /** The run's real font name plus pdf.js's generic family guess, space-joined (e.g. "Helvetica-Bold sans-serif") — see `resolveRunFont` in EditPdf.tsx and fontMatch.ts. */
   fontFamilyHint: string;
+  /** pdf.js's own resolved weight/slant for this run, when the page rendered far enough to expose it — authoritative, and unlike `fontFamilyHint` not a keyword guess. Undefined means "unknown, fall back to matching on the hint string". */
+  bold?: boolean;
+  italic?: boolean;
   /** True when the run's transform isn't simple axis-aligned horizontal text — see design doc §3 point 5 (click-to-edit skips these, same as a rotated/vertical run always has). */
   rotated: boolean;
 }

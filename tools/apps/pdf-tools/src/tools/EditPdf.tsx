@@ -87,6 +87,53 @@ function saveRecentSignatures(signatures: RecentSignature[]): void {
 const BLANK_PAGE_DATA_URL =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=";
 
+/**
+ * Everything we can learn about the font a text run is drawn in.
+ *
+ * `getTextContent()`'s own `styles[fontName].fontFamily` is only ever a
+ * *generic* CSS family — literally "sans-serif" / "serif" / "monospace" —
+ * so on its own it can tell serif from sans, but carries no weight or slant
+ * at all. Matching bold/italic off that string alone (which is what this
+ * used to do) therefore always resolved to regular, and every bold heading
+ * or italic run came back as upright regular weight — the concrete reason
+ * patched text kept not matching the original.
+ *
+ * pdf.js does expose the real thing: once a page has been *rendered*, its
+ * `commonObjs` holds the resolved font, with the actual PostScript name
+ * (e.g. "Helvetica-Bold", "Times-Italic") plus authoritative `bold`/
+ * `italic` booleans. `renderPagesToImages` already renders each page before
+ * extracting its text, so this costs nothing extra — but `commonObjs.get()`
+ * *throws* rather than returning undefined for anything not yet resolved,
+ * hence the try/catch and the generic-only fallback.
+ *
+ * The returned `hint` deliberately concatenates the real name with the
+ * generic family so `matchStandardFont`'s keyword matching gets both: the
+ * name usually decides the family ("Times…" -> serif), and the generic one
+ * still covers embedded fonts whose names say nothing useful.
+ */
+function resolveRunFont(
+  page: { commonObjs: { get(name: string): unknown } },
+  content: { styles: Record<string, { fontFamily?: string } | undefined> },
+  fontName: string,
+): { hint: string; bold?: boolean; italic?: boolean } {
+  type ResolvedFont = { name?: string; bold?: boolean; italic?: boolean };
+  const generic = content.styles[fontName]?.fontFamily ?? "";
+  let resolved: ResolvedFont | null = null;
+  try {
+    resolved = page.commonObjs.get(fontName) as ResolvedFont | null;
+  } catch {
+    // Font not resolved (page not rendered, or pdf.js changed its internals) —
+    // fall back to the generic family, i.e. exactly the old behavior.
+    resolved = null;
+  }
+  const realName = typeof resolved?.name === "string" ? resolved.name : "";
+  return {
+    hint: [realName, generic].filter(Boolean).join(" "),
+    ...(typeof resolved?.bold === "boolean" ? { bold: resolved.bold } : {}),
+    ...(typeof resolved?.italic === "boolean" ? { italic: resolved.italic } : {}),
+  };
+}
+
 async function renderPagesToImages(bytes: ArrayBuffer): Promise<{ pages: RenderedPage[]; textRuns: TextRun[] }> {
   const { doc, pageCount, close } = await openPdf(bytes);
   const pages: RenderedPage[] = [];
@@ -130,6 +177,7 @@ async function renderPagesToImages(bytes: ArrayBuffer): Promise<{ pages: Rendere
         // Rotated/skewed text has non-zero b/c components; axis-aligned
         // horizontal text (the overwhelming common case) has b = c ≈ 0.
         const rotated = Math.abs(transform[1] ?? 0) > 0.01 || Math.abs(transform[2] ?? 0) > 0.01;
+        const font = resolveRunFont(page, content, item.fontName as string);
         textRuns.push({
           page: n,
           str: item.str,
@@ -137,7 +185,9 @@ async function renderPagesToImages(bytes: ArrayBuffer): Promise<{ pages: Rendere
           y: (item.transform[5] as number) - height * 0.2,
           width: item.width as number,
           height,
-          fontFamilyHint: content.styles[item.fontName]?.fontFamily ?? "",
+          fontFamilyHint: font.hint,
+          bold: font.bold,
+          italic: font.italic,
           rotated,
         });
       }
@@ -1073,7 +1123,7 @@ function PageEditor(props: PageEditorProps) {
       // overlay since the original glyphs can't safely be rewritten.
       const run = findRunAt(textRuns, page.pageNumber, pdf.x, pdf.y);
       if (run) {
-        const standardFont = matchStandardFont(run.fontFamilyHint);
+        const standardFont = matchStandardFont(run.fontFamilyHint, { bold: run.bold, italic: run.italic });
         const { textColor, backgroundColor } = imgRef.current
           ? sampleRunColors(imgRef.current, page, run)
           : { textColor: "#000000", backgroundColor: "#FFFFFF" };

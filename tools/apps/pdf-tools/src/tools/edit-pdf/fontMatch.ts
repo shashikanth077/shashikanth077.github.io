@@ -5,9 +5,14 @@
  * typeface* faithfully (it's commonly subsetted to only the glyphs the
  * original document happened to use, which would silently break on any
  * character the edit introduces that the original run didn't have) — this
- * maps pdf.js's own font-family guess for a text run onto the closest of
- * pdf-lib's 14 standard-font *names* (serif/sans/mono, bold/italic), which
- * is what "best-effort" concretely means here.
+ * maps a text run's font onto the closest of pdf-lib's 14 standard-font
+ * *names* (serif/sans/mono, bold/italic), which is what "best-effort"
+ * concretely means here.
+ *
+ * Family comes from keyword-matching the run's font name and pdf.js's
+ * generic family guess; weight and slant come from pdf.js's own resolved
+ * booleans when available (see the `style` parameter below), because the
+ * name alone is not reliable enough to determine them.
  *
  * The returned strings are the literal values pdf-lib's StandardFonts enum
  * uses (e.g. `StandardFonts.TimesRomanBoldItalic === "Times-BoldItalic"`).
@@ -32,10 +37,17 @@ export type StandardFontName =
   | "Courier-Oblique"
   | "Courier-BoldOblique";
 
-export function matchStandardFont(fontFamilyHint: string): StandardFontName {
+/**
+ * `style`, when supplied, carries pdf.js's own resolved weight/slant for the
+ * run (see `resolveRunFont` in EditPdf.tsx). It always wins over the keyword
+ * match below, which only ever sees a font *name* and so silently reports
+ * regular for any bold/italic font whose name doesn't happen to spell that
+ * out — including every font pdf.js could only describe generically.
+ */
+export function matchStandardFont(fontFamilyHint: string, style?: { bold?: boolean; italic?: boolean }): StandardFontName {
   const hint = fontFamilyHint.toLowerCase();
-  const bold = /bold|black|heavy|semibold/.test(hint);
-  const italic = /italic|oblique/.test(hint);
+  const bold = style?.bold ?? /bold|black|heavy|semibold/.test(hint);
+  const italic = style?.italic ?? /italic|oblique/.test(hint);
 
   // "sans-serif" — pdf.js's own generic fallback for any embedded font it
   // can't identify more specifically, which is most real-world documents
