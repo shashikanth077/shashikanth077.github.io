@@ -5,7 +5,7 @@ export const homeData = {
   designation: "Master's Student in AI Engineering",
   address: "Vilnius, Lithuania",
   img: "/img/hero/profile.png",
-  bio: "Full-Stack & Front-End Developer with 12+ years of experience in healthcare IT, energy, banking, and e-commerce — based in Vilnius, Lithuania, currently pursuing a Master's in Engineering of Artificial Intelligence at VILNIUS TECH (VGTU). Bringing deep expertise in React, Node.js, TypeScript, and systems architecture, with a growing focus on AI model design, development, and Generative AI.",
+  bio: "Full-Stack & Front-End Developer with 12+ years of experience in healthcare IT, energy, banking, insurance, and retail — based in Vilnius, Lithuania, currently pursuing a Master's in Engineering of Artificial Intelligence at VILNIUS TECH (VGTU). Bringing deep expertise in React, Node.js, TypeScript, and systems architecture, with a growing focus on AI model design, development, and Generative AI.",
   numberOfProject: 15,
   numberofyear: 12,
   backgroundImage: "/img/hero/1.jpg",
@@ -22,7 +22,7 @@ export const aboutData = {
   overlayImage: "/img/about/2.png",
   text: [
     "Full-Stack and Front-End Developer with 12+ years of progressive experience in software development and systems architecture across multinational organisations including Wipro, IBM, Sonata Software, and Theorem Inc.",
-    "Skilled in designing and delivering scalable web applications with demonstrated 25–40% operational efficiency improvements. Currently based in Vilnius, Lithuania, pursuing a Master's in Engineering of Artificial Intelligence at VILNIUS TECH (VGTU), and open to Front-End or Full-Stack Developer roles across the Lithuania. Authorized for full-time employment with valid Lithuanian Work Permit permit.",
+    "Skilled in designing and delivering scalable web applications — including reducing development time by 30% through AI-assisted tooling and enabling parallel delivery across three independent teams via Micro-Frontend architecture. Currently based in Vilnius, Lithuania, pursuing a Master's in Engineering of Artificial Intelligence at VILNIUS TECH (VGTU), and open to Front-End or Full-Stack Developer roles across Lithuania. Authorized for full-time employment with a valid Lithuanian Work Permit.",
   ],
   skillIcons: [
     { name: "frontend", icon: "/img/svg/design.svg" },
@@ -99,8 +99,8 @@ export const serviceData = [
     img: "/img/service/1.png",
     description: [
       "Expert full-stack development using React, Redux Toolkit, Node.js, TypeScript, and MySQL. Delivered clinical-data management platforms, energy grid balancing systems, wealth management portals, and e-commerce applications.",
-      "Proven track record of improving operational efficiency by 25-40% through UI workflow redesign, data validation layer architecture, back-end API optimisation, and modular microservice-oriented application design.",
-      "Experienced working within Agile/Scrum sprints, conducting code reviews, and delivering zero-defect releases at sprint cadence.",
+      "Track record of measurable delivery gains — including a 30% reduction in development time through AI-assisted tooling, and improved order-processing speed through UI workflow redesign, back-end API optimisation, and modular microservice-oriented application design.",
+      "Experienced working within Agile/Scrum sprints, conducting code reviews, and reducing post-deployment defects through automated smoke testing and CI/CD.",
     ],
   },
   {
@@ -110,8 +110,8 @@ export const serviceData = [
     description: [
       "Design and develop scalable, high-performance enterprise applications with a strong focus on frontend and full-stack architecture using React, TypeScript, JavaScript, and Node.js. Experienced in designing Micro-Frontend architectures, RESTful API integrations, reusable component architectures, state management solutions, and modular application platforms.",
       "Built and contributed to large-scale enterprise applications across banking, insurance, healthcare, and e-commerce domains, working on complex business workflows, frontend modernization, API-driven applications, and scalable user interfaces.",
-      "Hands-on experience with Redux Toolkit, GraphQL, Node.js, Docker, Kubernetes, Nginx, Azure, and CI/CD pipelines, providing a strong understanding of application architecture from development through deployment.",
-      "Strong focus on clean architecture, separation of concerns, performance optimization, reusable design patterns, code quality, security, and engineering best practices to ensure applications remain scalable, maintainable, and reliable as products and development teams grow.",
+      "Hands-on experience with Redux Toolkit, GraphQL, Node.js, Docker, Kubernetes, Azure, and CI/CD pipelines, providing a strong understanding of application architecture from development through deployment.",
+      "Strong focus on clean architecture, separation of concerns, performance optimization, reusable design patterns, code quality, and engineering best practices to ensure applications remain scalable, maintainable, and reliable as products and development teams grow.",
     ],
   },
   {
@@ -119,9 +119,9 @@ export const serviceData = [
     icon: "/img/svg/development.svg",
     img: "/img/service/3.png",
     description: [
-      "Strong hands-on knowledge of Docker, Kubernetes, Azure, Nginx, and CI/CD practices for building, packaging, and deploying modern web and microservice-based applications.",
-      "Experience with GitLab CI/CD and GitHub Actions, including automated build, test, and deployment workflows to improve delivery speed, reliability, and release quality.",
-      "Comfortable working with containerized environments, deployment pipelines, and DevOps tooling to support Agile teams and ensure consistent, scalable application deliveryments.",
+      "Strong hands-on knowledge of Docker, Kubernetes, and Azure for building, packaging, and deploying modern web and microservice-based applications.",
+      "Experience with GitLab CI/CD and GitHub/Azure CI/CD deployment pipelines, including automated smoke testing to improve delivery speed, reliability, and release quality.",
+      "Comfortable working with containerized environments, deployment pipelines, and DevOps tooling to support Agile teams and ensure consistent, scalable application delivery.",
     ],
   },
   {
@@ -129,9 +129,9 @@ export const serviceData = [
     icon: "/img/svg/star.svg",
     img: "/img/service/4.png",
     description: [
-      "Lead and manage multi-developer engineering teams, conducting sprint planning, backlog grooming, code reviews, and stakeholder demos. Experienced liaising with US and European clients.",
-      "Mentored teams of 5+ developers at IBM, enforcing coding standards and Agile documentation practices. Managed end-to-end client relationships at Sonata Software across two major accounts.",
-      "Consistently delivered sprint tasks ahead of schedule, maintaining 100% client satisfaction ratings and improving team velocity through proactive code refactoring.",
+      "Lead and manage multi-developer engineering teams, conducting sprint planning, code reviews, technical design, and stakeholder collaboration.",
+      "Mentored teams of 5+ developers at IBM, guiding code reviews and Agile ceremonies. Managed end-to-end delivery for two enterprise clients at Sonata Software.",
+      "Focused on reliable, predictable delivery — reducing post-deployment defects through automated testing and strengthening CI/CD practices across teams.",
     ],
   },
 ];
@@ -151,12 +151,12 @@ export const accordionData = [
   {
     title: "Performance & Efficiency First",
     details:
-      "Core value is delivering systems that work smarter, not just harder. Through UI workflow redesign, data validation layers, and API optimization, I have consistently achieved 25-40% operational efficiency improvements while maintaining code quality and team velocity.",
+      "Core value is delivering systems that work smarter, not just harder. Through AI-assisted tooling I've cut development time by 30% on recent projects, and through UI workflow redesign and API optimization I've improved order-processing speed and reduced post-deployment defects — all while maintaining code quality and team velocity.",
   },
   {
     title: "Mentorship & Team Excellence",
     details:
-      "Passionate about building high-performing teams. I mentor developers, conduct thorough code reviews, establish coding standards, and foster a culture of learning. Proven track record of leading 5+ developer teams and maintaining 100% client satisfaction ratings.",
+      "Passionate about building high-performing teams. I mentor developers, conduct thorough code reviews, establish coding standards, and foster a culture of learning. Proven track record of mentoring teams of 5+ developers and leading end-to-end delivery for enterprise clients.",
   },
 ];
 
@@ -223,7 +223,7 @@ export const siteConfig = {
 // the hero shows Shashikanth's current location, this is the mailing address
 // tied to his upcoming move for the VILNIUS TECH program (see aboutData.text).
 export const contactInfo = {
-  address: "Saulėtekio al.25, LT-10223 Vilnius, Lithuania",
+  address: "Saulėtekio al.25, LT-10225 Vilnius, Lithuania",
   email: "shashikanth033@gmail.com",
   phone: "+370 60945446",
 };
@@ -321,7 +321,7 @@ export const processIntro = {
   eyebrow: "Driven by Excellence",
   heading: "Engineering Solutions That Scale",
   description:
-    "With 12+ years of proven expertise in full-stack development and systems architecture, I deliver high-impact solutions that improve operational efficiency by 25-40%. My approach combines technical excellence with strategic leadership.",
+    "With 12+ years of proven expertise in full-stack development and systems architecture, I deliver high-impact solutions — from a 30% reduction in development time through AI-assisted tooling to reduced post-deployment defects through stronger CI/CD practices. My approach combines technical excellence with strategic leadership.",
 };
 
 export const contactIntro = {
