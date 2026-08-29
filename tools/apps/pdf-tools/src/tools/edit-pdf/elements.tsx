@@ -12,6 +12,7 @@ import type {
   TextAnnotation,
   WhiteoutAnnotation,
 } from "@devtools/tools-core";
+import { TEXT_ASCENT_RATIO } from "@devtools/tools-core";
 import { boxToScreen, pdfToScreen, RENDER_SCALE, type RenderedPage } from "./geometry.js";
 import { useBoxDrag, useDragDelta, useEndpointDrag, type Box, type Corner } from "./interactions.js";
 import type { ScreenBox } from "./ElementToolbar.js";
@@ -774,7 +775,7 @@ function TextAnnotationView(props: AnnotationViewProps & { annotation: TextAnnot
       {selected ? <SelectionOutline screenBox={screenBox} /> : hovered && <SelectionOutline screenBox={screenBox} hover />}
       <text
         x={screen.sx}
-        y={screen.sy + displayFontSize}
+        y={screen.sy + TEXT_ASCENT_RATIO * displayFontSize}
         fontFamily={cssFontFamily}
         fontSize={displayFontSize}
         fontWeight={bold ? 700 : 400}

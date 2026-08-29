@@ -196,13 +196,33 @@ function hexToRgb(hex: string): ReturnType<typeof rgb> {
   return rgb(((n >> 16) & 0xff) / 255, ((n >> 8) & 0xff) / 255, (n & 0xff) / 255);
 }
 
+/**
+ * How far below a text annotation's `y` (the top of its box) the baseline
+ * sits, as a fraction of the font size.
+ *
+ * This has to be ONE number shared by everything that positions text, and
+ * it previously was not -- three places each assumed something different.
+ * The editor derived a patched run's `y` as `baseline + 0.8 * size`, the
+ * on-screen `<text>` drew its baseline at `y - 1.0 * size`, and this
+ * exporter used `font.heightAtSize(size, { descender: false })`, about
+ * `0.683 * size` for the fonts actually embedded. So the live preview sat
+ * `0.317 * size` below the exported result, and text patched over existing
+ * content landed `0.117 * size` off the baseline it was replacing
+ * (measured at 1.4pt for 12pt text) -- visibly lifted against the lines
+ * around it.
+ *
+ * 0.8 is the ratio the patch pipeline already encodes when it turns a
+ * pdf.js run's baseline into a box top (see `renderPagesToImages`), so
+ * adopting it here and on screen makes a patched line land exactly on the
+ * baseline it replaces, and makes the preview match the exported file.
+ */
+export const TEXT_ASCENT_RATIO = 0.8;
+
 function drawText(page: PDFPage, ann: TextAnnotation, font: PDFFont): void {
-  // pdf-lib draws text from the baseline. Our y is the top of the text box in
-  // PDF space, so shift down by the font ascent to place the baseline correctly.
-  const ascent = font.heightAtSize(ann.fontSize, { descender: false });
+  // pdf-lib draws from the baseline; our `y` is the top of the text box.
   page.drawText(ann.text, {
     x: ann.x,
-    y: ann.y - ascent,
+    y: ann.y - TEXT_ASCENT_RATIO * ann.fontSize,
     size: ann.fontSize,
     color: hexToRgb(ann.color),
     font,
