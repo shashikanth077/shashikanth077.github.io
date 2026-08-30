@@ -5,7 +5,7 @@ export const homeData = {
   designation: "Master's Student in AI Engineering",
   address: "Vilnius, Lithuania",
   img: "/img/hero/profile.png",
-  bio: "Full-Stack & Front-End Developer with 12+ years of experience in healthcare IT, energy, banking, insurance, and retail — based in Vilnius, Lithuania, currently pursuing a Master's in Engineering of Artificial Intelligence at VILNIUS TECH (VGTU). Bringing deep expertise in React, Node.js, TypeScript, and systems architecture, with a growing focus on AI model design, development, and Generative AI.",
+  bio: "Full-Stack & Front-End Developer with 12+ years of experience in healthcare IT, energy, banking, insurance, and retail — based in Vilnius, Lithuania, currently pursuing a Master's in Engineering of Artificial Intelligence at VILNIUS TECH (VGTU). Bringing deep expertise in React, Node.js, PHP, TypeScript, and systems architecture, with a growing focus on AI model design, development, and Generative AI.",
   numberOfProject: 15,
   numberofyear: 12,
   backgroundImage: "/img/hero/1.jpg",
@@ -77,9 +77,9 @@ export const portfolioData = [
     client: "Sonata Software Limited",
     date: "2019 – 2021",
     title: "MFL Booking E-Commerce Platform",
-    tech: "React · Redux · Node.js · Microservices · JavaScript · HTML5 · CSS3 · REST APIs · GitHub · Azure CI/CD",
+    tech: "React · Redux · Node.js · PHP · Microservices · JavaScript · HTML5 · CSS3 · REST APIs · GitHub · Azure CI/CD",
     description: [
-      "Developed Sonata Software's MFL Booking e-commerce platform using React, Redux, Node.js, Microservices, JavaScript, HTML5, and CSS3, enabling real-time vendor inventory and purchase order management.",
+      "Developed Sonata Software's MFL Booking e-commerce platform using React, Redux, Node.js, PHP, Microservices, JavaScript, HTML5, and CSS3, enabling real-time vendor inventory and purchase order management.",
       "Improved order processing speed through React UI enhancements, Node.js microservices optimization, and API performance tuning, while supporting end-to-end delivery for two enterprise retail clients.",
     ],
     highlights: [
@@ -98,7 +98,7 @@ export const serviceData = [
     icon: "/img/svg/web.svg",
     img: "/img/service/1.png",
     description: [
-      "Expert full-stack development using React, Redux Toolkit, Node.js, TypeScript, and MySQL. Delivered clinical-data management platforms, energy grid balancing systems, wealth management portals, and e-commerce applications.",
+      "Expert full-stack development using React, Redux Toolkit, Node.js, PHP, TypeScript, and MySQL. Delivered clinical-data management platforms, energy grid balancing systems, wealth management portals, and e-commerce applications.",
       "Track record of measurable delivery gains — including a 30% reduction in development time through AI-assisted tooling, and improved order-processing speed through UI workflow redesign, back-end API optimisation, and modular microservice-oriented application design.",
       "Experienced working within Agile/Scrum sprints, conducting code reviews, and reducing post-deployment defects through automated smoke testing and CI/CD.",
     ],
@@ -110,7 +110,7 @@ export const serviceData = [
     description: [
       "Design and develop scalable, high-performance enterprise applications with a strong focus on frontend and full-stack architecture using React, TypeScript, JavaScript, and Node.js. Experienced in designing Micro-Frontend architectures, RESTful API integrations, reusable component architectures, state management solutions, and modular application platforms.",
       "Built and contributed to large-scale enterprise applications across banking, insurance, healthcare, and e-commerce domains, working on complex business workflows, frontend modernization, API-driven applications, and scalable user interfaces.",
-      "Hands-on experience with Redux Toolkit, GraphQL, Node.js, Docker, Kubernetes, Azure, and CI/CD pipelines, providing a strong understanding of application architecture from development through deployment.",
+      "Hands-on experience with Redux Toolkit, GraphQL, Node.js, PHP, Docker, Kubernetes, Azure, and CI/CD pipelines, providing a strong understanding of application architecture from development through deployment.",
       "Strong focus on clean architecture, separation of concerns, performance optimization, reusable design patterns, code quality, and engineering best practices to ensure applications remain scalable, maintainable, and reliable as products and development teams grow.",
     ],
   },
@@ -146,7 +146,7 @@ export const accordionData = [
   {
     title: "Full-Stack Development Lifecycle",
     details:
-      "From UI/UX design with React and modern frameworks, through robust backend APIs with Node.js and GraphQL, to database optimization with MySQL and cloud deployments. I manage the entire stack with TypeScript for type safety and DevOps practices for continuous deployment.",
+      "From UI/UX design with React and modern frameworks, through robust backend APIs with Node.js,PHP and GraphQL, to database optimization with MySQL and cloud deployments. I manage the entire stack with TypeScript for type safety and DevOps practices for continuous deployment.",
   },
   {
     title: "Performance & Efficiency First",
@@ -191,11 +191,16 @@ export const SKILL_BAR_COLOR = "#142eb5";
 export const skillsData = [
   { label: "React.js / Redux", value: 95 },
   { label: "Node.js", value: 90 },
-  { label: "TypeScript", value: 85 },
-  { label: "MySQL / Databases", value: 85 },
-  { label: "PHP", value: 85 },
+  { label: "JavaScript / TypeScript / ES6", value: 85 },
+  { label: "MySQL / MongoDB / PostgreSQL", value: 85 },
+  { label: "PHP", value: 90 },
   { label: "Docker / Kubernetes", value: 75 },
   { label: "GraphQL / REST APIs", value: 70 },
+  { label: "Laravel Framework", value: 85 },
+  { label: "HTML5 / CSS3 / SASS / Bootstrap / Material-UI", value: 90 },
+  { label: "Git / GitHub / GitLab", value: 90 },
+  { label: "Azure / AWS / Cloud Services", value: 75 },
+  { label: "Agile / Scrum / CI/CD", value: 80 },
 ];
 
 // Number of partner logos available at /img/partners/{light|dark}/{1..N}.png
@@ -206,11 +211,11 @@ export const siteConfig = {
   fullName: "Shashikanth Hosur Ramegowda",
   shortName: "Shashikanth H R",
   pageTitle:
-    "Shashikanth Hosur Ramegowda | Full-Stack Developer | Front-End Developer | React Developer",
+    "Shashikanth Hosur Ramegowda | PHP Developer | Full-Stack Developer | Front-End Developer | Node.js/React Developer",
   cvFile: "/Shashikanth_Hosur_Ramegowda.pdf",
   siteUrl: "https://shashikanth077.github.io",
   description:
-    "Shashikanth Hosur Ramegowda is a Full-Stack & Front-End Developer with 12+ years of experience in React, Node.js, and TypeScript across healthcare, banking, and e-commerce, based in Vilnius, Lithuania.",
+    "Shashikanth Hosur Ramegowda is a PHP, Full-Stack & Front-End Developer with 12+ years of experience in React, Node.js, and TypeScript across healthcare, banking, and e-commerce, based in Vilnius, Lithuania.",
   // Existing hero photo, reused as the social share preview image.
   // A dedicated 1200x630 banner would render better on social cards, but none exists yet.
   ogImage: "/img/hero/profile.png",
