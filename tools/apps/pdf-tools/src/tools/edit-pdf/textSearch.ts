@@ -57,7 +57,9 @@ export interface TextMatch {
  * through to "place new blank text" instead of patching the text that was
  * actually clicked — reported twice as stray "(empty)" boxes littering the
  * page. Where a click's tolerance zone overlaps more than one run, the run
- * it's *closest* to (or squarely inside, distance 0) wins.
+ * it's *closest* to (or squarely inside, distance 0) wins, and among runs
+ * that tie on distance the last-drawn one wins -- see the comment on the
+ * comparison below for why that matters on an already-edited PDF.
  */
 export function findRunAt(runs: TextRun[], page: number, x: number, y: number): TextRun | null {
   const H_PAD = 2;
@@ -70,7 +72,17 @@ export function findRunAt(runs: TextRun[], page: number, x: number, y: number): 
     const dx = Math.max(run.x - x, 0, x - (run.x + run.width));
     const dy = Math.max(run.y - y, 0, y - (run.y + run.height));
     const dist = dx + dy;
-    if (dist < bestDist) {
+    // `<=`, not `<`: on a tie keep the LATER run. pdf.js yields runs in
+    // content-stream order and later drawing paints over earlier, so among
+    // equally-close candidates the last one is the one actually visible.
+    // This matters for any PDF this editor has already edited: patching is
+    // strictly additive, so the original glyphs are still in the stream
+    // underneath the whiteout that hides them. Re-opening such a file and
+    // clicking the patched line found the buried original first and handed
+    // back its text and styling instead of the replacement's -- so a second
+    // round of editing silently reverted to the old content and stacked a
+    // fresh patch on top of it.
+    if (dist <= bestDist) {
       bestDist = dist;
       best = run;
     }

@@ -10,9 +10,9 @@
  * concretely means here.
  *
  * Family comes from keyword-matching the run's font name and pdf.js's
- * generic family guess; weight and slant come from pdf.js's own resolved
- * booleans when available (see the `style` parameter below), because the
- * name alone is not reliable enough to determine them.
+ * generic family guess; weight and slant come from pdf.js's resolved
+ * booleans OR-ed with that same keyword match (see the `style` parameter),
+ * since either source alone under-reports.
  *
  * The returned strings are the literal values pdf-lib's StandardFonts enum
  * uses (e.g. `StandardFonts.TimesRomanBoldItalic === "Times-BoldItalic"`).
@@ -38,36 +38,64 @@ export type StandardFontName =
   | "Courier-BoldOblique";
 
 /**
- * `style`, when supplied, carries pdf.js's own resolved weight/slant for the
- * run (see `resolveRunFont` in EditPdf.tsx). It always wins over the keyword
- * match below, which only ever sees a font *name* and so silently reports
- * regular for any bold/italic font whose name doesn't happen to spell that
- * out — including every font pdf.js could only describe generically.
+ * `style`, when supplied, carries pdf.js's own resolved weight/slant for
+ * the run (see `resolveRunFont` in EditPdf.tsx). It is OR-ed with the
+ * keyword match rather than replacing it, because each signal fails in a
+ * different direction and neither alone is enough:
+ *
+ *  - the keyword match only ever sees a font *name*, so it reports regular
+ *    for any bold/italic font whose name does not spell that out -- which
+ *    includes every font pdf.js could only describe generically as
+ *    "sans-serif"/"serif".
+ *  - pdf.js's booleans come from the embedded font's descriptor flags, and
+ *    read false for fonts whose descriptor does not set them even when the
+ *    name plainly says otherwise. Re-opening a PDF this editor itself
+ *    exported hit exactly that: a run in "Tinos-BoldItalic" came back
+ *    bold:false italic:false, and an earlier `??` here let that false win
+ *    over the name, silently dropping both styles on every round trip.
+ *
+ * Either signal saying yes is therefore taken as yes. A name containing
+ * "Bold" on a font that is not bold is far rarer than either source
+ * under-reporting.
  */
 export function matchStandardFont(fontFamilyHint: string, style?: { bold?: boolean; italic?: boolean }): StandardFontName {
   const hint = fontFamilyHint.toLowerCase();
-  const bold = style?.bold ?? /bold|black|heavy|semibold/.test(hint);
-  const italic = style?.italic ?? /italic|oblique/.test(hint);
+  const bold = (style?.bold ?? false) || /bold|black|heavy|semibold/.test(hint);
+  const italic = (style?.italic ?? false) || /italic|oblique/.test(hint);
 
-  // "sans-serif" — pdf.js's own generic fallback for any embedded font it
-  // can't identify more specifically, which is most real-world documents
-  // (anything exported from a resume builder, Google Docs, Word, etc.) —
-  // contains "serif" as a literal substring. Checking sans first is not
-  // an optimization, it's required: without it every one of those very
-  // common documents gets its plain sans-serif body text matched to Times,
-  // which is exactly backwards from "best-effort match the original font".
-  let family: FontFamilyBase;
-  if (/courier|mono|consolas|menlo|typewriter/.test(hint)) {
-    family = "Courier";
-  } else if (/sans|arial|helvetica|calibri|verdana|tahoma|segoe|roboto|opensans|open\s?sans|lato|inter\b/.test(hint)) {
-    family = "Helvetica";
-  } else if (/times|georgia|serif|garamond|minion|cambria|book\s?antiqua/.test(hint)) {
-    family = "Times";
-  } else {
-    family = "Helvetica";
-  }
+  // Family is decided in two passes, specific typeface names before generic
+  // ones. pdf.js's generic guess is frequently wrong for an embedded font --
+  // it labels this editor's own Tinos (a Times clone) "sans-serif" -- and a
+  // single combined pass lets that wrong generic win, because "sans-serif"
+  // contains the token "sans". Re-opening an edited PDF hit exactly that: a
+  // run in Tinos-BoldItalic came back as Helvetica. Matching real names
+  // first keeps the informative signal ahead of the unreliable one; the
+  // generic pass still covers fonts whose names say nothing useful.
+  //
+  // Note the generic pass must test mono and sans before serif: the literal
+  // string "sans-serif" contains "serif", so checking serif first would send
+  // every plain sans-serif document (anything out of Word, Google Docs, a
+  // resume builder) to Times -- backwards from matching the original.
+  const family: FontFamilyBase =
+    matchNamedFamily(hint) ?? matchGenericFamily(hint) ?? "Helvetica";
 
   return composeStandardFont(family, bold, italic);
+}
+
+/** Recognises an actual typeface name (never a generic CSS family word). */
+function matchNamedFamily(hint: string): FontFamilyBase | null {
+  if (/courier|cousine|consolas|menlo|monaco|typewriter/.test(hint)) return "Courier";
+  if (/arial|helvetica|arimo|calibri|verdana|tahoma|segoe|roboto|open\s?sans|lato|inter\b/.test(hint)) return "Helvetica";
+  if (/times|tinos|georgia|garamond|minion|cambria|book\s?antiqua/.test(hint)) return "Times";
+  return null;
+}
+
+/** Falls back to pdf.js's generic CSS family word. Order matters -- see matchStandardFont. */
+function matchGenericFamily(hint: string): FontFamilyBase | null {
+  if (/mono/.test(hint)) return "Courier";
+  if (/sans/.test(hint)) return "Helvetica";
+  if (/serif/.test(hint)) return "Times";
+  return null;
 }
 
 export type FontFamilyBase = "Helvetica" | "Times" | "Courier";
