@@ -453,7 +453,34 @@ export default function EditPdf() {
         source.type === "pen"
           ? { ...source, id: id2, points: source.points.map((p) => ({ x: p.x + OFFSET, y: p.y - OFFSET })) }
           : { ...source, id: id2, x: source.x + OFFSET, y: source.y - OFFSET };
-      setAnnotations((current) => [...current, copy]);
+
+      // A patched-text annotation's coverId points at the whiteout the
+      // existing-text patch pipeline drew underneath it (design doc §3) —
+      // spreading `...source` above copies that id verbatim, which would
+      // leave the duplicate sharing its ORIGINAL's cover instead of getting
+      // its own. Two texts pointing at one whiteout means editing either's
+      // background-color swatch silently repaints a rectangle sitting under
+      // the OTHER one, and deleting either text (once deletion also removes
+      // its cover — see deleteAnnotation) would strip the cover out from
+      // under whichever text is still in use. Duplicate the cover too, at
+      // the same offset as the text, and point the copy at that new cover
+      // instead — the same one-step-adds-both shape `addTextPatch` uses,
+      // so every patched text keeps sole ownership of exactly one cover.
+      const extra: Annotation[] = [];
+      if (copy.type === "text" && copy.coverId) {
+        const sourceCover = history.present.find((a) => a.id === copy.coverId);
+        if (sourceCover && sourceCover.type === "whiteout") {
+          const coverCopy: WhiteoutAnnotation = { ...sourceCover, id: newAnnotationId(), x: sourceCover.x + OFFSET, y: sourceCover.y - OFFSET };
+          copy.coverId = coverCopy.id;
+          extra.push(coverCopy);
+        } else {
+          // Source cover already gone (user deleted just the whiteout,
+          // keeping its text) — duplicate as plain text, no dangling id.
+          copy.coverId = undefined;
+        }
+      }
+
+      setAnnotations((current) => [...current, ...extra, copy]);
       setSelectedId(copy.id);
     },
     [history.present, setAnnotations],
@@ -461,11 +488,19 @@ export default function EditPdf() {
 
   const deleteAnnotation = useCallback(
     (id: string) => {
-      setAnnotations((current) => current.filter((a) => a.id !== id));
+      // Deleting a patched text should take its cover with it (both were
+      // added together, in the same `addTextPatch` step) — leaving the
+      // cover behind after the fix to `duplicateAnnotation` gives every
+      // patched text sole ownership of one cover strands a blank white
+      // rectangle with nothing drawn on it and no obvious way back to it,
+      // permanently hiding the original line for no visible reason.
+      const target = history.present.find((a) => a.id === id);
+      const coverId = target?.type === "text" ? target.coverId : undefined;
+      setAnnotations((current) => current.filter((a) => a.id !== id && a.id !== coverId));
       setSelectedId((cur) => (cur === id ? null : cur));
       setEditingTextId((cur) => (cur === id ? null : cur));
     },
-    [setAnnotations],
+    [history.present, setAnnotations],
   );
 
   /* -------- load PDF when file changes -------- */
