@@ -233,6 +233,45 @@ export const toolRoutes: ToolRoute[] = [
     icon: "🌐",
   },
   {
+    slug: "txt-to-pdf",
+    name: "TXT to PDF",
+    tagline: "Turn a plain-text file into a paginated PDF.",
+    description:
+      "Convert a plain .txt file into a PDF, preserving its original line breaks and wrapping any line too wide for the page. " +
+      "Runs entirely in your browser.",
+    keywords: ["txt to pdf", "text file to pdf", "convert text to pdf", "plain text to pdf online free"],
+    toolkit: "pdf",
+    category: "Convert",
+    remote: "pdf",
+    icon: "📝",
+  },
+  {
+    slug: "html-to-pdf",
+    name: "HTML to PDF",
+    tagline: "Convert an .html file into a PDF you can share.",
+    description:
+      "Convert an HTML file to PDF in your browser, with a choice between a one-click download and your browser's own print engine for the best text quality.",
+    keywords: ["html to pdf", "convert html to pdf", "webpage to pdf", "html file to pdf free"],
+    toolkit: "pdf",
+    category: "Convert",
+    remote: "pdf",
+    icon: "🌐",
+    caveat: "Scripts in the source file never run — only markup and styling are used to build the page.",
+  },
+  {
+    slug: "csv-to-pdf",
+    name: "CSV to PDF",
+    tagline: "Lay out a spreadsheet export as a PDF table.",
+    description:
+      "Convert a .csv file into a paginated PDF table, with an optional repeating header row. Runs entirely in your browser.",
+    keywords: ["csv to pdf", "convert csv to pdf", "spreadsheet to pdf", "csv table to pdf free"],
+    toolkit: "pdf",
+    category: "Convert",
+    remote: "pdf",
+    icon: "📊",
+    caveat: "Columns are evenly spaced and long cell values are truncated — this lays out a simple grid, not a full spreadsheet engine.",
+  },
+  {
     slug: "compress-pdf",
     name: "Compress PDF",
     tagline: "Shrink scan-heavy PDFs by flattening pages to images.",
