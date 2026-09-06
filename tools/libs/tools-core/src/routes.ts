@@ -309,6 +309,19 @@ export const toolRoutes: ToolRoute[] = [
       "Open-password PDFs can be unlocked by entering the password — the output is rebuilt from page images, so text stops being selectable.",
   },
   {
+    slug: "flatten-pdf",
+    name: "Flatten PDF",
+    tagline: "Lock in filled form fields so they can't be edited further.",
+    description:
+      "Flatten a PDF's fillable form fields into permanent, non-editable page content — the filled-in text, checkboxes and " +
+      "selections stay exactly as they look, but nobody can change them afterward. Runs entirely in your browser.",
+    keywords: ["flatten pdf", "flatten pdf form", "lock pdf form", "make pdf form uneditable", "flatten pdf fields"],
+    toolkit: "pdf",
+    category: "Security",
+    remote: "pdf",
+    icon: "📌",
+  },
+  {
     slug: "watermark-pdf",
     name: "Watermark PDF",
     tagline: "Stamp a text watermark across every page.",

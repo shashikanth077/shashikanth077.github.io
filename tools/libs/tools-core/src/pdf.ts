@@ -352,6 +352,29 @@ export async function removeAnnotations(bytes: ArrayBuffer): Promise<{ data: Uin
   return { data: await doc.save(), removed };
 }
 
+/**
+ * Bakes every fillable AcroForm field's current value into the page's own
+ * content as plain, non-interactive marks, then removes the (now-empty)
+ * form entirely — pdf-lib's own `PDFForm.flatten()` does both steps. The
+ * result looks identical to the filled form but has no fields left to edit,
+ * fill, or read programmatically: exactly what "share a filled form without
+ * it being alterable" needs, and a common step before archiving or emailing
+ * a form so the recipient's PDF viewer can't second-guess what was typed.
+ *
+ * Radio buttons and checkboxes rendered as their last-selected appearance;
+ * a field with no appearance stream (rare — a checkbox never interacted
+ * with by any viewer) flattens to blank rather than throwing, which is why
+ * `fieldCount` is reported separately from any per-field failure: the
+ * caller can say "12 fields flattened" even if pdf-lib silently no-ops one.
+ */
+export async function flattenForm(bytes: ArrayBuffer): Promise<{ data: Uint8Array; fieldCount: number }> {
+  const doc = await load(bytes);
+  const form = doc.getForm();
+  const fieldCount = form.getFields().length;
+  if (fieldCount > 0) form.flatten();
+  return { data: await doc.save(), fieldCount };
+}
+
 /* ------------------------------------------------------------------ */
 /* Images → PDF                                                         */
 /* ------------------------------------------------------------------ */

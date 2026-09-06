@@ -46,6 +46,7 @@ const TOOLS: Record<string, ComponentType> = {
   "extract-pdf-images": lazy(() => import("../tools/ExtractImagesPdf.js")),
   "edit-pdf-metadata": lazy(() => import("../tools/EditMetadataPdf.js")),
   "remove-pdf-annotations": lazy(() => import("../tools/RemoveAnnotationsPdf.js")),
+  "flatten-pdf": lazy(() => import("../tools/FlattenPdf.js")),
 };
 
 export function ownsSlug(slug: string): boolean {
