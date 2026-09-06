@@ -1,20 +1,32 @@
 import type { StandardFontName } from "@devtools/tools-core";
 
-// Vite emits each of these as its own hashed asset URL — nothing here joins
-// the main bundle unless loadEmbeddedFonts() is actually called (see
+// `new URL(..., import.meta.url)` instead of a plain `?url` import: Vite's
+// `?url` transform resolves to a *root-relative* dev-server path (e.g.
+// `/src/tools/edit-pdf/fonts/Arimo-Bold.ttf`), which is exactly right when
+// this module is served from the same origin as the page — true for the
+// assembled production build, but false the moment this remote is loaded
+// into the shell's page from its own dev-server port (Module Federation's
+// standard multi-port `npm run dev` setup). A root-relative path then
+// resolves against the *shell's* origin instead of this file's, 404s, and
+// `loadEmbeddedFonts` below used to hand fontkit the 404 page's HTML as if
+// it were a font program — surfacing only as fontkit's own opaque "Unknown
+// font format", nowhere near this comment. `import.meta.url` is always
+// *this module's* actual URL regardless of which origin loaded it, so the
+// resolved asset URL is correct in both topologies. Nothing here joins the
+// main bundle unless loadEmbeddedFonts() is actually called (see
 // EditPdf.tsx's save()), so a PDF with no text edits never fetches them.
-import arimoRegular from "./fonts/Arimo-Regular.ttf?url";
-import arimoBold from "./fonts/Arimo-Bold.ttf?url";
-import arimoItalic from "./fonts/Arimo-Italic.ttf?url";
-import arimoBoldItalic from "./fonts/Arimo-BoldItalic.ttf?url";
-import tinosRegular from "./fonts/Tinos-Regular.ttf?url";
-import tinosBold from "./fonts/Tinos-Bold.ttf?url";
-import tinosItalic from "./fonts/Tinos-Italic.ttf?url";
-import tinosBoldItalic from "./fonts/Tinos-BoldItalic.ttf?url";
-import cousineRegular from "./fonts/Cousine-Regular.ttf?url";
-import cousineBold from "./fonts/Cousine-Bold.ttf?url";
-import cousineItalic from "./fonts/Cousine-Italic.ttf?url";
-import cousineBoldItalic from "./fonts/Cousine-BoldItalic.ttf?url";
+const arimoRegular = new URL("./fonts/Arimo-Regular.ttf", import.meta.url).href;
+const arimoBold = new URL("./fonts/Arimo-Bold.ttf", import.meta.url).href;
+const arimoItalic = new URL("./fonts/Arimo-Italic.ttf", import.meta.url).href;
+const arimoBoldItalic = new URL("./fonts/Arimo-BoldItalic.ttf", import.meta.url).href;
+const tinosRegular = new URL("./fonts/Tinos-Regular.ttf", import.meta.url).href;
+const tinosBold = new URL("./fonts/Tinos-Bold.ttf", import.meta.url).href;
+const tinosItalic = new URL("./fonts/Tinos-Italic.ttf", import.meta.url).href;
+const tinosBoldItalic = new URL("./fonts/Tinos-BoldItalic.ttf", import.meta.url).href;
+const cousineRegular = new URL("./fonts/Cousine-Regular.ttf", import.meta.url).href;
+const cousineBold = new URL("./fonts/Cousine-Bold.ttf", import.meta.url).href;
+const cousineItalic = new URL("./fonts/Cousine-Italic.ttf", import.meta.url).href;
+const cousineBoldItalic = new URL("./fonts/Cousine-BoldItalic.ttf", import.meta.url).href;
 
 /**
  * Real, redistributable (OFL) font programs standing in for pdf-lib's 14
@@ -52,7 +64,13 @@ export async function loadEmbeddedFonts(
   const unique = [...new Set(names)];
   const entries = await Promise.all(
     unique.map(async (name) => {
-      const res = await fetch(FONT_URLS[name]);
+      const url = FONT_URLS[name];
+      const res = await fetch(url);
+      // Without this check, a failed fetch (wrong origin, offline, a CDN
+      // hiccup) hands fontkit the error response's body — HTML or JSON, not
+      // a font program — and fontkit's own error ("Unknown font format")
+      // gives no hint that the *real* problem was a failed network request.
+      if (!res.ok) throw new Error(`Failed to load font ${name} from ${url}: ${res.status} ${res.statusText}`);
       return [name, await res.arrayBuffer()] as const;
     }),
   );

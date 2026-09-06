@@ -105,15 +105,29 @@ export function ProcessorOutput({
   );
 }
 
-/** Reads a picked file once and caches the bytes for repeated operations. */
+/**
+ * Reads a picked file once and caches the bytes for repeated operations.
+ *
+ * Returns a fresh `.slice(0)` of the cached buffer on every call, never the
+ * cached object itself. Several callers (edit-pdf's pdf.js render, its own
+ * `flattenAnnotations` export) already re-slice defensively because pdf.js
+ * transfers-and-neuters whatever ArrayBuffer it's handed — but that
+ * protects only the one call site that remembered to do it. Two overlapping
+ * readers of the *same* cached buffer (React 18/19 StrictMode's double
+ * effect invocation in development is the case that actually happens) can
+ * otherwise race: one reader's in-flight transfer can leave the other
+ * holding a buffer that's part-neutered out from under it. Slicing here,
+ * once, at the source, means every caller — present and future — gets its
+ * own independent copy regardless of whether it remembers to ask for one.
+ */
 export function useFileBytes() {
   const cache = useRef(new Map<string, ArrayBuffer>());
 
   return useCallback(async (file: PickedFile): Promise<ArrayBuffer> => {
     const hit = cache.current.get(file.id);
-    if (hit) return hit;
+    if (hit) return hit.slice(0);
     const bytes = await file.file.arrayBuffer();
     cache.current.set(file.id, bytes);
-    return bytes;
+    return bytes.slice(0);
   }, []);
 }
