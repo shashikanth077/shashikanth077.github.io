@@ -1,5 +1,6 @@
 import type { Annotation, TextAnnotation, WhiteoutAnnotation } from "@devtools/tools-core";
 import { COLORS } from "./constants.js";
+import { CustomColorSwatch } from "./CustomColorSwatch.js";
 import { baseFontFamily, composeStandardFont, FONT_FAMILY_OPTIONS, isBoldStandardFont, isItalicStandardFont, type FontFamilyBase } from "./fontMatch.js";
 import { pressProps } from "./pressable.js";
 
@@ -117,6 +118,13 @@ export function TextToolbarControls({
             aria-pressed={annotation.color === c}
           />
         ))}
+        <CustomColorSwatch
+          size="xs"
+          value={annotation.color}
+          isCustom={!COLORS.includes(annotation.color)}
+          onChange={(hex) => onUpdate(annotation.id, { color: hex })}
+          label="Custom text color"
+        />
       </span>
       {cover && (
         <span className="pdfed__element-toolbar-swatches" role="group" aria-label="Background color">
@@ -132,6 +140,13 @@ export function TextToolbarControls({
               aria-pressed={(cover.color ?? "#FFFFFF") === c}
             />
           ))}
+          <CustomColorSwatch
+            size="xs"
+            value={cover.color ?? "#FFFFFF"}
+            isCustom={!BACKGROUND_COLORS.includes(cover.color ?? "#FFFFFF")}
+            onChange={(hex) => onUpdate(cover.id, { color: hex })}
+            label="Custom background color"
+          />
         </span>
       )}
     </>

@@ -841,14 +841,21 @@ export default function EditPdf() {
           // pointerdown — pointerdown's stopPropagation does not stop the
           // *click* event that follows it, so without this guard every
           // annotation click immediately deselects what it just selected.
-          //
-          // Blank-canvas deselection only makes sense for "select" — every
-          // other tool's blank click is a creation gesture (handled by the
-          // page's pointerdown/up flow) that should keep its new element
-          // selected, not have this bubble-up handler immediately clear it.
-          if (tool !== "select") return;
           const target = e.target as HTMLElement;
           if (target.closest("[data-annotation-id]") || target.closest(".pdfed__element-toolbar")) return;
+
+          // A click that lands on a page's own canvas is a creation gesture
+          // for every tool except "select" (handled by the page's own
+          // pointerdown/up flow below — see its onClick, which keeps this
+          // same guard) — this bubble-up handler shouldn't immediately clear
+          // whatever that gesture just selected. A click anywhere else in
+          // the chrome (outside every page, the surrounding scroll gutters,
+          // the toolbar area itself) is never a creation gesture no matter
+          // which tool is active, and previously left the floating
+          // per-element toolbar (and its color swatches) stuck open forever
+          // once the default tool changed from "select" to "text" — Escape
+          // was the only way out. Deselect unconditionally there.
+          if (tool !== "select" && target.closest("svg.pdfed__svg")) return;
           setSelectedId(null);
         }}
       >

@@ -532,6 +532,15 @@
     var(--surface);
 }
 
+/* Shows a conic "any color" wheel until a custom (non-preset) color is
+   picked, at which point the swatch's inline `background` (the picked
+   color itself) takes over — see CustomColorSwatch.tsx. */
+.pdfed__swatch--custom {
+  display: inline-block;
+  background: conic-gradient(red, yellow, lime, cyan, blue, magenta, red);
+  cursor: pointer;
+}
+
 /* ---- text editing input ---- */
 
 .pdfed__textedit {

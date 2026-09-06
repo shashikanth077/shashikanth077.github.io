@@ -2,6 +2,7 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState, type Reac
 import type { AnnotationTool, FormFieldKind, ShapeKind } from "@devtools/tools-core";
 import { Button } from "@devtools/ui";
 import { COLORS, HIGHLIGHT_COLORS, SHAPE_KINDS } from "./constants.js";
+import { CustomColorSwatch } from "./CustomColorSwatch.js";
 import {
   AnnotateIcon,
   ArrowIcon,
@@ -295,6 +296,7 @@ export function Toolbar(props: ToolbarProps) {
               aria-pressed={props.color === c}
             />
           ))}
+          <CustomColorSwatch value={props.color} isCustom={!COLORS.includes(props.color)} onChange={props.onColorChange} label="Custom color" />
         </div>
       )}
 
@@ -312,6 +314,7 @@ export function Toolbar(props: ToolbarProps) {
               aria-pressed={props.color === c}
             />
           ))}
+          <CustomColorSwatch value={props.color} isCustom={!COLORS.includes(props.color)} onChange={props.onColorChange} label="Custom color" />
         </div>
       )}
 
@@ -329,6 +332,12 @@ export function Toolbar(props: ToolbarProps) {
               aria-pressed={props.highlightColor === c}
             />
           ))}
+          <CustomColorSwatch
+            value={props.highlightColor}
+            isCustom={!HIGHLIGHT_COLORS.includes(props.highlightColor)}
+            onChange={props.onHighlightColorChange}
+            label="Custom highlight color"
+          />
         </div>
       )}
 
@@ -346,6 +355,7 @@ export function Toolbar(props: ToolbarProps) {
               aria-pressed={props.markupColor === c}
             />
           ))}
+          <CustomColorSwatch value={props.markupColor} isCustom={!COLORS.includes(props.markupColor)} onChange={props.onMarkupColorChange} label="Custom markup color" />
         </div>
       )}
 
@@ -400,6 +410,12 @@ export function Toolbar(props: ToolbarProps) {
               aria-pressed={props.shapeStrokeColor === c}
             />
           ))}
+          <CustomColorSwatch
+            value={props.shapeStrokeColor}
+            isCustom={!COLORS.includes(props.shapeStrokeColor)}
+            onChange={props.onShapeStrokeColorChange}
+            label="Custom stroke color"
+          />
           {(props.tool === "shape-rectangle" || props.tool === "shape-ellipse") && (
             <>
               <span className="pdfed__toolbar-label">Fill</span>
@@ -421,6 +437,12 @@ export function Toolbar(props: ToolbarProps) {
                   aria-pressed={props.shapeFillColor === c}
                 />
               ))}
+              <CustomColorSwatch
+                value={props.shapeFillColor ?? "#000000"}
+                isCustom={props.shapeFillColor !== null && !COLORS.includes(props.shapeFillColor)}
+                onChange={props.onShapeFillColorChange}
+                label="Custom fill color"
+              />
             </>
           )}
         </div>

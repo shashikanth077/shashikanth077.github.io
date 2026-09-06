@@ -50,7 +50,6 @@ export function sampleRunColors(
   // handful of very-slightly-different pinks don't each look like a
   // one-off color and lose to some other, unrelated bucket.
   const QUANT = 16;
-  let darkest = { r: 255, g: 255, b: 255, sum: 765 };
   const buckets = new Map<string, { r: number; g: number; b: number; count: number }>();
   try {
     const region = ctx.getImageData(left, top, Math.min(w, canvas.width - left), Math.min(h, canvas.height - top)).data;
@@ -58,8 +57,6 @@ export function sampleRunColors(
       const r = region[i]!;
       const g = region[i + 1]!;
       const b = region[i + 2]!;
-      const sum = r + g + b;
-      if (sum < darkest.sum) darkest = { r, g, b, sum };
 
       const key = `${Math.round(r / QUANT)},${Math.round(g / QUANT)},${Math.round(b / QUANT)}`;
       const bucket = buckets.get(key);
@@ -86,19 +83,56 @@ export function sampleRunColors(
   // reported as a colored section's background "vanishing" to white after
   // an edit. Ties are broken by whichever bucket the loop met first
   // (top-left to bottom-right), an arbitrary but stable choice.
+  let bgKey = "";
   let bg = { r: 255, g: 255, b: 255 };
   let bgCount = 0;
-  for (const bucket of buckets.values()) {
+  for (const [key, bucket] of buckets) {
     if (bucket.count > bgCount) {
       bgCount = bucket.count;
+      bgKey = key;
       bg = { r: Math.round(bucket.r / bucket.count), g: Math.round(bucket.g / bucket.count), b: Math.round(bucket.b / bucket.count) };
     }
   }
 
+  // Ink used to be "whichever pixel is darkest" — wrong the moment the run
+  // is light text on a dark or colored background (a heading banner, a dark
+  // theme, reversed-out text in a callout box): the darkest pixel *is* the
+  // background there, so textColor came back equal to backgroundColor and
+  // the patched replacement text rendered invisible against its own cover.
+  // Ink is reliably the bucket that differs most from the background in
+  // color, regardless of which one is lighter — a real glyph fill is a
+  // solid, repeated color (anti-aliasing aside), not a handful of stray
+  // pixels, so requiring a minimum *count* excludes single-pixel noise along
+  // a glyph edge without assuming a light-on-dark vs. dark-on-light
+  // direction either way. This has to be an absolute pixel count, not a
+  // share of the sample: normal-weight text at a typical size has a thin
+  // stroke relative to its own bounding box (padded further by MARGIN and
+  // the inter-glyph/line whitespace the majority vote above relies on), so
+  // even a long, entirely solid-ink run can leave its true ink bucket well
+  // under 1% of the total sampled pixels — a share-based floor high enough
+  // to reject stray anti-aliasing rejected genuine ink right along with it,
+  // letting an antialiased edge-blend bucket (partway between ink and
+  // background, and therefore *closer* to the true colors than the correct
+  // one this was trying to avoid) win by default instead.
+  const MIN_INK_PIXELS = 4;
+  let ink = { r: 0, g: 0, b: 0 };
+  let inkDist = -1;
+  for (const [key, bucket] of buckets) {
+    if (key === bgKey || bucket.count < MIN_INK_PIXELS) continue;
+    const r = bucket.r / bucket.count;
+    const g = bucket.g / bucket.count;
+    const b = bucket.b / bucket.count;
+    const dist = (r - bg.r) ** 2 + (g - bg.g) ** 2 + (b - bg.b) ** 2;
+    if (dist > inkDist) {
+      inkDist = dist;
+      ink = { r: Math.round(r), g: Math.round(g), b: Math.round(b) };
+    }
+  }
+
   return {
-    // A very light "darkest pixel" (sum close to 765 = pure white) means the
-    // box was blank/anti-aliased-only — fall back to black rather than trust noise.
-    textColor: darkest.sum < 650 ? rgbToHex(darkest.r, darkest.g, darkest.b) : "#000000",
+    // No bucket cleared the noise floor — a blank click with nothing but
+    // anti-aliasing in the sample — fall back to black rather than trust it.
+    textColor: inkDist >= 0 ? rgbToHex(ink.r, ink.g, ink.b) : "#000000",
     backgroundColor: rgbToHex(bg.r, bg.g, bg.b),
   };
 }
