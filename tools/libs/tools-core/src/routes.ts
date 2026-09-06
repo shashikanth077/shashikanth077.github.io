@@ -60,6 +60,7 @@ export const TOOLKIT_META: Record<Toolkit, { label: string; tagline: string; ico
 export type ToolCategory =
   | "Organize"
   | "Convert"
+  | "Scan"
   | "Optimize"
   | "Security"
   | "Transform"
@@ -270,6 +271,20 @@ export const toolRoutes: ToolRoute[] = [
     remote: "pdf",
     icon: "📊",
     caveat: "Columns are evenly spaced and long cell values are truncated — this lays out a simple grid, not a full spreadsheet engine.",
+  },
+  {
+    slug: "pdf-scanner",
+    name: "PDF Scanner",
+    tagline: "Scan pages with your camera and save them as a PDF.",
+    description:
+      "Turn your device's camera into a scanner — capture one or more pages, reorder them, and download a PDF. " +
+      "The camera stream never leaves your browser.",
+    keywords: ["pdf scanner", "scan to pdf", "camera to pdf", "document scanner online free", "scan document online"],
+    toolkit: "pdf",
+    category: "Scan",
+    remote: "pdf",
+    icon: "📷",
+    caveat: "Image quality depends entirely on your device's camera and lighting — there's no perspective correction or auto-cropping.",
   },
   {
     slug: "compress-pdf",

@@ -50,6 +50,7 @@ const TOOLS: Record<string, ComponentType> = {
   "txt-to-pdf": lazy(() => import("../tools/TxtToPdf.js")),
   "html-to-pdf": lazy(() => import("../tools/HtmlToPdf.js")),
   "csv-to-pdf": lazy(() => import("../tools/CsvToPdf.js")),
+  "pdf-scanner": lazy(() => import("../tools/PdfScanner.js")),
 };
 
 export function ownsSlug(slug: string): boolean {
