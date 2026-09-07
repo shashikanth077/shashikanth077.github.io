@@ -1,61 +1,28 @@
-import { useEffect } from "react";
-import { activeSkillProgress } from "../utilits";
-import { SKILL_BAR_COLOR, skillsData, skillsIntro } from "../constants";
-
-const SkillBar = ({ skill }) => (
-  <div
-    className="skillsInner___ progress_inner"
-    data-value={skill.value}
-    data-color={SKILL_BAR_COLOR}
-  >
-    <span>
-      <span className="label">{skill.label}</span>
-      <span className="number">{skill.value}%</span>
-    </span>
-    <div className="background">
-      <div className="bar">
-        <div className="bar_in" />
-      </div>
-    </div>
-  </div>
-);
+import { techStack, skillsIntro } from "../constants";
 
 const Skills = () => {
-  useEffect(() => {
-    window.addEventListener("scroll", activeSkillProgress);
-  }, []);
-
-  const leftColumn = skillsData.slice(0, 3);
-  const rightColumn = skillsData.slice(3);
-
   return (
-    <div className="devman_tm_section">
-      <div className="devman_tm_skills">
-        <div className="container">
-          <div className="devman_tm_main_title" data-text-align="center">
-            <span>{skillsIntro.eyebrow}</span>
-            <h2>{skillsIntro.heading}</h2>
-            <p>{skillsIntro.description}</p>
-          </div>
-          <div className="skills_wrapper">
-            <div className="left">
-              <div className="dodo_progress">
-                {leftColumn.map((skill, i) => (
-                  <SkillBar skill={skill} key={i} />
+    <section className="section skills">
+      <div className="container">
+        <div className="section-header reveal">
+          <span className="eyebrow">{skillsIntro.eyebrow}</span>
+          <h2>{skillsIntro.heading}</h2>
+          <p>{skillsIntro.description}</p>
+        </div>
+        <div className="skills-categories">
+          {techStack.map((group, i) => (
+            <div key={i} className={`skill-group reveal reveal-delay-${Math.min(i + 1, 4)}`}>
+              <h4 className="skill-group-title">{group.category}</h4>
+              <div className="skill-chips">
+                {group.items.map((item) => (
+                  <span key={item} className="skill-chip">{item}</span>
                 ))}
               </div>
             </div>
-            <div className="right">
-              <div className="dodo_progress">
-                {rightColumn.map((skill, i) => (
-                  <SkillBar skill={skill} key={i} />
-                ))}
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 export default Skills;

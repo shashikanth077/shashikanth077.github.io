@@ -1,89 +1,78 @@
-import { homeData, sectionIds } from "../constants";
+import { homeData, sectionIds, siteConfig } from "../constants";
 import Image from "next/image";
 import Counter from "./Counter";
 
 const Home = () => {
   return (
-    <div className="devman_tm_section" id={sectionIds.home}>
-      <div className="devman_tm_hero">
-        <div className="background">
-          <div className="image" data-img-url={homeData.backgroundImage} />
-        </div>
-        <div className="container">
-          <div className="content">
-            <div className="left">
-              <div className="inner">
-                <h3 className="hello">Hello {`I'm`}</h3>
-                <h1 className="name">
-                  {homeData.firstName} {homeData.lastName}
-                </h1>
-                <h3 className="job">
-                  {homeData.designation} from {homeData.address}
-                </h3>
-                <p className="text">{homeData.bio}</p>
-                <div className="buttons">
-                  <div className="simple_button">
-                    <a className="anchor" href={`#${sectionIds.about}`}>
-                      About Me
-                    </a>
-                  </div>
-                </div>
-              </div>
-              <h3 className="stroke_1">{homeData.firstName}</h3>
-              <h3 className="stroke_2">{homeData.lastName}</h3>
+    <section className="hero section" id={sectionIds.home}>
+      <div className="container">
+        <div className="hero-inner">
+          <div className="hero-text">
+            <p className="hero-greeting">
+              <span className="wave">👋</span>
+              Hello, I&apos;m
+            </p>
+            <h1 className="hero-name">
+              {homeData.firstName}{" "}
+              <span className="gradient-text">{homeData.lastName}</span>
+            </h1>
+            <p className="hero-title">{homeData.designation}</p>
+            <p className="hero-location">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+              {homeData.address}
+            </p>
+            <p className="hero-bio">{homeData.bio}</p>
+            <div className="hero-buttons">
+              <a href={`#${sectionIds.about}`} className="btn btn-primary">
+                About Me
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg>
+              </a>
+              <a href={siteConfig.cvFile} download className="btn btn-outline">
+                Download CV
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+              </a>
             </div>
-            <div className="right">
-              <div className="image">
-                <Image
-                  src={homeData.placeholderImage}
-                  alt=""
-                  width={400}
-                  height={300}
-                />
-                <div className="main" data-img-url={homeData.img} />
-                <span className="win">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={homeData.awardIcon} alt="" className="svg" />
+          </div>
+          <div className="hero-photo-wrap">
+            <div className="hero-photo-frame float-anim">
+              <Image
+                src={homeData.img}
+                alt={`${siteConfig.shortName} — ${homeData.designation}`}
+                width={380}
+                height={420}
+                priority
+              />
+              <div className="hero-badge years">
+                <span className="hero-badge-number">
+                  <Counter end={homeData.numberofyear} />+
                 </span>
-                <div className="numbers year">
-                  <div className="wrapper">
-                    <h3>
-                      <Counter end={homeData.numberofyear} />
-                    </h3>
-                    <span className="item_name">
-                      Years of
-                      <br />
-                      Success
-                    </span>
-                  </div>
-                </div>
-                <div className="numbers project">
-                  <div className="wrapper">
-                    <h3>
-                      <Counter end={homeData.numberOfProject} />
-                      <span className="extra">+</span>
-                    </h3>
-                    <span className="item_name">
-                      Projects
-                      <br />
-                      Completed
-                    </span>
-                  </div>
-                </div>
-                <span className="circle anim_circle">
-                  <Image
-                    src={homeData.circleImage}
-                    alt=""
-                    width={150}
-                    height={150}
-                  />
+                <span>Years of<br />Experience</span>
+              </div>
+              <div className="hero-badge projects">
+                <span className="hero-badge-number">
+                  <Counter end={homeData.numberOfProject} />+
                 </span>
+                <span>Projects<br />Delivered</span>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+      <div className="hero-scroll-hint">
+        <span>Scroll</span>
+        <div className="scroll-line" />
+      </div>
+    </section>
   );
 };
 export default Home;

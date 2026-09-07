@@ -1,41 +1,44 @@
 import { useEffect } from "react";
 import { scrollSection, stickyNav } from "../utilits";
-import { assets, navItems, sectionIds, siteConfig } from "../constants";
+import { navItems, siteConfig } from "../constants";
 
 const Header = () => {
   useEffect(() => {
-    window.addEventListener("scroll", stickyNav);
-    window.addEventListener("scroll", scrollSection);
+    const onScroll = () => {
+      stickyNav();
+      scrollSection();
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return (
-    <div className="devman_tm_header">
-      <div className="container">
-        <div className="header_inner">
-          <div className="logo">
-            <a className="light" href="#"></a>
-          </div>
-          <div className="menu">
-            <ul className="anchor_nav">
-              {navItems.map((item) => {
-                const className = item.download
-                  ? "download_cv"
-                  : item.href === `#${sectionIds.home}`
-                    ? "current"
-                    : "";
-                return (
-                  <li key={item.href} className={className}>
-                    <a href={item.href} download={item.download}>
-                      {item.label}
-                    </a>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        </div>
+    <header className="site-header">
+      <div className="header-inner">
+        <a href="#home" className="header-logo">
+          S<span className="accent">.</span>
+        </a>
+        <nav className="header-nav">
+          {navItems.map((item) => {
+            if (item.href.startsWith("#")) {
+              return (
+                <a key={item.href} href={item.href} className="nav-link">
+                  {item.label}
+                </a>
+              );
+            }
+            return (
+              <a key={item.href} href={item.href} className="nav-link">
+                {item.label}
+              </a>
+            );
+          })}
+          <a href={siteConfig.cvFile} download className="nav-cv">
+            Download CV
+          </a>
+        </nav>
       </div>
-    </div>
+    </header>
   );
 };
 export default Header;

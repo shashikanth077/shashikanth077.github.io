@@ -1,6 +1,14 @@
-﻿import { Fragment, useState } from "react";
+import { Fragment, useState } from "react";
+import Image from "next/image";
 import DetailsPopup from "./popup/DetailsPopup";
-import { portfolioData, portfolioIntro, sectionIds, wowDelay } from "../constants";
+import { portfolioData, portfolioIntro, sectionIds } from "../constants";
+
+const ArrowIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="5" y1="12" x2="19" y2="12" />
+    <polyline points="12 5 19 12 12 19" />
+  </svg>
+);
 
 const Portfolio = () => {
   const [activeData, setActiveData] = useState(null);
@@ -18,72 +26,51 @@ const Portfolio = () => {
         close={() => setPopup(false)}
         data={activeData}
       />
-      <div className="devman_tm_section" id={sectionIds.portfolio}>
-        <div className="devman_tm_portfolio">
-          <div className="container">
-            <div className="devman_tm_main_title" data-text-align="center">
-              <span>{portfolioIntro.eyebrow}</span>
-              <h2>{portfolioIntro.heading}</h2>
-              <p>{portfolioIntro.description}</p>
-            </div>
-            <div className="portfolio_list">
-              <ul>
-                {portfolioData.map((project, i) => (
-                  <li
-                    key={i}
-                    className="wow fadeInUp"
-                    data-wow-duration="1s"
-                    data-wow-delay={wowDelay(i)}
-                  >
-                    <div className="list_inner">
-                      <div
-                        className="background_image"
-                        data-img-url={project.img}
-                      />
-                      <div className="content">
-                        <div className="details">
-                          <span className="category">
-                            <a href="#">{project.category}</a>
-                          </span>
-                          <h3 className="title">
-                            <a href="#">{project.title}</a>
-                          </h3>
-                          <span className="view_project">
-                            <a
-                              href="#"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                openPopup(project);
-                              }}
-                            >
-                              View Details <i className="icon-right-big" />
-                            </a>
-                          </span>
-                        </div>
-                      </div>
-                      <div className="overlay" />
-                      <a
-                        className="devman_tm_full_link portfolio_popup c-pointer"
-                        onClick={() => openPopup(project)}
-                      />
-                    </div>
-                  </li>
-                ))}
-                <div
-                  className="shape_1 moving_effect"
-                  data-direction="y"
-                  data-reverse="yes"
+      <section className="section" id={sectionIds.portfolio}>
+        <div className="container">
+          <div className="section-header reveal">
+            <span className="eyebrow">{portfolioIntro.eyebrow}</span>
+            <h2>{portfolioIntro.heading}</h2>
+            <p>{portfolioIntro.description}</p>
+          </div>
+          <div className="portfolio-grid">
+            {portfolioData.map((project, i) => (
+              <div
+                key={i}
+                className={`portfolio-card reveal reveal-delay-${i + 1}`}
+                onClick={() => openPopup(project)}
+              >
+                <Image
+                  className="portfolio-img"
+                  src={project.img}
+                  alt={project.title}
+                  width={400}
+                  height={200}
                 />
-                <div
-                  className="shape_2 moving_effect"
-                  data-direction="y"
-                  data-reverse="yes"
-                />
-              </ul>
-            </div>
+                <div className="portfolio-body">
+                  <div className="portfolio-meta">
+                    <span className="portfolio-date">{project.date}</span>
+                    <span className="portfolio-category">{project.category}</span>
+                  </div>
+                  <h3 className="portfolio-card-title">{project.title}</h3>
+                  <p className="portfolio-client">{project.client}</p>
+                  <div className="portfolio-tech">
+                    {project.tech.slice(0, 5).map((t) => (
+                      <span key={t} className="tech-chip">{t}</span>
+                    ))}
+                    {project.tech.length > 5 && (
+                      <span className="tech-chip">+{project.tech.length - 5}</span>
+                    )}
+                  </div>
+                  <span className="portfolio-link">
+                    View Details <ArrowIcon />
+                  </span>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-      </div>
+      </section>
     </Fragment>
   );
 };

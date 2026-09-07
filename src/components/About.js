@@ -1,76 +1,44 @@
-import { aboutData, sectionIds, siteConfig, wowDelay } from "../constants";
+import { aboutData, homeData, sectionIds } from "../constants";
 import Image from "next/image";
 
 const About = () => {
   return (
-    <div className="devman_tm_section" id={sectionIds.about}>
-      <div className="devman_tm_about">
-        <div className="container">
-          <div className="about_inner">
-            <div className="left">
-              <div className="image_wrap">
-                <Image
-                  src={aboutData.mainImage}
-                  alt={`${siteConfig.shortName} — ${aboutData.designation}`}
-                  width={400}
-                  height={400}
-                />
-                <div className="main" data-img-url={aboutData.overlayImage} />
-                <div className="extra_image">
-                  <div className="image_inner">
-                    <Image
-                      src={aboutData.mainImage}
-                      alt=""
-                      width={300}
-                      height={300}
-                    />
-                    <div
-                      className="main_extra"
-                      data-img-url={aboutData.mainImage}
-                    />
-                  </div>
-                </div>
-                {aboutData.skillIcons.map((skill, i) => (
-                  <div className={i === 0 ? "extra_image" : ""} key={i}>
-                    <span
-                      className={`icon_${i + 1} wow fadeIn`}
-                      data-wow-duration="1s"
-                      data-wow-delay={wowDelay(i)}
-                    >
-                      <Image
-                        className="svg"
-                        src={skill.icon}
-                        alt=""
-                        width={50}
-                        height={50}
-                      />
-                    </span>
-                  </div>
-                ))}
-              </div>
+    <section className="section" id={sectionIds.about}>
+      <div className="container">
+        <div className="about-grid">
+          <div className="about-photo-wrap reveal">
+            <div className="about-photo-frame">
+              <Image
+                src={aboutData.mainImage}
+                alt={aboutData.designation}
+                width={500}
+                height={625}
+              />
             </div>
-            <div className="right">
-              <div className="title">
-                <span>
-                  {`I'm`} a {aboutData.designation}
-                </span>
-                <h2>{aboutData.title}</h2>
-              </div>
-              <div className="text">
-                {aboutData.text.map((text, i) => (
-                  <p key={i}>{text}</p>
-                ))}
-              </div>
-              <div className="devman_tm_button">
-                <a className="anchor" href={`#${sectionIds.portfolio}`}>
-                  View Portfolio
-                </a>
-              </div>
+            <div className="about-float-card">
+              <div className="about-float-number">{homeData.numberofyear}+</div>
+              <span className="about-float-label">Years Experience</span>
             </div>
+          </div>
+          <div className="about-content reveal reveal-delay-2">
+            <span className="about-tag">I&apos;m a {aboutData.designation}</span>
+            <h2 className="about-title">{aboutData.title}</h2>
+            <div className="about-text">
+              {aboutData.text.map((text, i) => (
+                <p key={i}>{text}</p>
+              ))}
+            </div>
+            <a href={`#${sectionIds.portfolio}`} className="btn btn-primary">
+              View My Work
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </a>
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 export default About;

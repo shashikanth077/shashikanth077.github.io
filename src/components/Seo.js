@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { homeData, siteConfig, SKILL_BAR_COLOR } from "../constants";
+import { homeData, siteConfig } from "../constants";
 
 const Seo = ({ title, description, path, noindex = false }) => {
   const url = `${siteConfig.siteUrl}${path}`;
@@ -19,14 +19,17 @@ const Seo = ({ title, description, path, noindex = false }) => {
       addressLocality: "Vilnius",
       addressCountry: "LT",
     },
-    sameAs: [siteConfig.socialLinks.linkedin],
+    sameAs: [
+      siteConfig.socialLinks.linkedin,
+      siteConfig.socialLinks.github,
+    ].filter(Boolean),
   };
 
   return (
     <Head>
       <title>{title}</title>
       <meta name="description" content={description} />
-      <meta name="theme-color" content={SKILL_BAR_COLOR} />
+      <meta name="theme-color" content="#6366f1" />
       <meta
         name="robots"
         content={noindex ? "noindex, follow" : "index, follow"}

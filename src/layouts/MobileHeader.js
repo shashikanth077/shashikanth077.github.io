@@ -1,48 +1,49 @@
-import { useState } from "react";
-import { assets, navItems, siteConfig } from "../constants";
+import { useState, useCallback } from "react";
+import { navItems, siteConfig } from "../constants";
 
 const MobileHeader = () => {
-  const [toggle, setToggle] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const close = useCallback(() => setOpen(false), []);
+
   return (
-    <div className="devman_tm_mobile_menu">
-      <div className="mobile_menu_inner">
-        <div className="mobile_in">
-          <div className="logo">
-            <a href="#"></a>
-          </div>
-          <div className="trigger">
-            <div
-              className={`hamburger hamburger--slider ${
-                toggle ? "is-active" : ""
-              }`}
-            >
-              <div className="hamburger-box" onClick={() => setToggle(!toggle)}>
-                <div className="hamburger-inner" />
-              </div>
-            </div>
-          </div>
+    <div className="mobile-nav">
+      <div className="mobile-bar">
+        <a href="#home" className="mobile-logo">
+          S<span className="accent">.</span>
+        </a>
+        <div
+          className={`burger ${open ? "open" : ""}`}
+          onClick={() => setOpen(!open)}
+          role="button"
+          aria-label="Toggle menu"
+          tabIndex={0}
+        >
+          <span />
+          <span />
+          <span />
         </div>
       </div>
-      <div
-        className="dropdown"
-        style={{
-          display: toggle ? "block" : "none",
-        }}
-      >
-        <div className="dropdown_inner">
-          <ul className="anchor_nav">
-            {navItems.map((item) => (
-              <li
-                key={item.href}
-                className={item.download ? "download_cv" : ""}
-              >
-                <a href={item.href} download={item.download}>
-                  {item.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
+      <div className={`mobile-menu ${open ? "open" : ""}`}>
+        {navItems.map((item) => (
+          <a
+            key={item.href}
+            href={item.href}
+            className="mobile-menu-link"
+            onClick={close}
+          >
+            {item.label}
+          </a>
+        ))}
+        <a
+          href={siteConfig.cvFile}
+          download
+          className="btn btn-primary"
+          style={{ marginTop: 24, textAlign: "center", justifyContent: "center" }}
+          onClick={close}
+        >
+          Download CV
+        </a>
       </div>
     </div>
   );

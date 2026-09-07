@@ -1,48 +1,43 @@
-import { Fragment, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { accordionData } from "../constants";
 
 const Accordion = () => {
   const [active, setActive] = useState(null);
-  const contentEl = useRef();
+  const refs = useRef([]);
+
   useEffect(() => {
     setActive(0);
   }, []);
 
-  const onClick = (value) =>
-    value === active ? setActive(null) : setActive(value);
+  const toggle = (i) => setActive(active === i ? null : i);
 
   return (
-    <Fragment>
-      <div className="devman_tm_accordion" data-type="accordion">
-        {accordionData.map((accordion, i) => (
+    <div>
+      {accordionData.map((item, i) => (
+        <div
+          key={i}
+          className={`accordion-item ${active === i ? "active" : ""}`}
+        >
+          <div className="accordion-head" onClick={() => toggle(i)}>
+            <p>{item.title}</p>
+            <span className="accordion-icon" />
+          </div>
           <div
-            className={`accordion_in ${active == i ? "acc_active" : ""}`}
-            key={i}
+            className="accordion-body"
+            ref={(el) => (refs.current[i] = el)}
+            style={{
+              height: active === i && refs.current[i]
+                ? refs.current[i].scrollHeight
+                : 0,
+            }}
           >
-            <div className="acc_head" onClick={() => onClick(i)}>
-              <span className="plus" />
-              <p>{accordion.title}</p>
-            </div>
-            <div
-              className={`acc_content d-block`}
-              ref={contentEl}
-              style={
-                active === i
-                  ? {
-                      height:
-                        contentEl.current && contentEl.current.scrollHeight,
-                    }
-                  : { height: "0px" }
-              }
-            >
-              <div className="acc_content_in">
-                <p>{accordion.details}</p>
-              </div>
+            <div className="accordion-body-inner">
+              <p>{item.details}</p>
             </div>
           </div>
-        ))}
-      </div>
-    </Fragment>
+        </div>
+      ))}
+    </div>
   );
 };
 export default Accordion;

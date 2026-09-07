@@ -3,26 +3,20 @@ import { processIntro } from "../constants";
 
 const Process = () => {
   return (
-    <div className="devman_tm_section">
-      <div className="devman_tm_process">
-        <div className="container">
-          <div className="process_inner">
-            <div className="left">
-              <div className="devman_tm_main_title" data-text-align="left">
-                <span>{processIntro.eyebrow}</span>
-                <h2>{processIntro.heading}</h2>
-                <p>{processIntro.description}</p>
-              </div>
-            </div>
-            <div className="right">
-              <div className="acc_holder">
-                <Accordion />
-              </div>
-            </div>
+    <section className="section" style={{ background: "var(--bg-alt)" }}>
+      <div className="container">
+        <div className="process-grid">
+          <div className="reveal">
+            <span className="eyebrow">{processIntro.eyebrow}</span>
+            <h2 style={{ marginBottom: 16 }}>{processIntro.heading}</h2>
+            <p style={{ fontSize: "1.0625rem" }}>{processIntro.description}</p>
+          </div>
+          <div className="accordion-wrap reveal reveal-delay-2">
+            <Accordion />
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 export default Process;

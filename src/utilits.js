@@ -1,246 +1,68 @@
-import { timeouts } from "./constants";
+/**
+ * Lightweight utility functions for scroll behaviour and animations.
+ * Replaces the old wowjs + custom-cursor + dataImage utilities.
+ */
 
-const MOBILE_USER_AGENT_REGEX = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i;
+/** Sticky header — adds .scrolled when scrolled past 50px */
+export const stickyNav = () => {
+  const header = document.querySelector(".site-header");
+  if (header) {
+    header.classList.toggle("scrolled", window.scrollY > 50);
+  }
+};
 
-const preloader_ = () => {
-  const isMobile = MOBILE_USER_AGENT_REGEX.test(navigator.userAgent);
-  let preloader = document.getElementById("preloader");
+/** Active nav highlighting — marks the link whose section is in view */
+export const scrollSection = () => {
+  const sections = document.querySelectorAll(".section[id]");
+  const links = document.querySelectorAll(".nav-link");
+  let currentId = "";
 
-  if (preloader) {
-    if (!isMobile) {
-      setTimeout(function () {
-        preloader.classList.add("preloaded");
-      }, timeouts.preloaderFadeMs);
-      setTimeout(function () {
-        preloader.remove();
-      }, timeouts.preloaderRemoveMs);
-    } else {
-      preloader.remove();
+  sections.forEach((section) => {
+    const top = section.offsetTop;
+    const height = section.clientHeight;
+    if (window.scrollY >= top - height / 3) {
+      currentId = section.getAttribute("id");
     }
-  }
-};
+  });
 
-export const customCursor = () => {
-  var myCursor = document.querySelectorAll(".mouse-cursor"),
-    hamburger = document.querySelector(".hamburger"),
-    kura_tm_topbar = document.querySelector(".kura_tm_topbar "),
-    pointer = document.querySelector(".cursor-pointer"),
-    e = document.querySelector(".cursor-inner"),
-    t = document.querySelector(".cursor-outer");
-
-  function mouseEvent(element) {
-    element.addEventListener("mouseenter", function () {
-      (e.classList.add("cursor-hover"), t.classList.add("cursor-hover"));
-    });
-    element.addEventListener("mouseleave", function () {
-      (e.classList.remove("cursor-hover"), t.classList.remove("cursor-hover"));
-    });
-  }
-  if (myCursor.length) {
-    if (document.body) {
-      let n,
-        i = 0,
-        o = !1;
-      ((window.onmousemove = function (s) {
-        (o ||
-          (t.style.transform =
-            "translate(" + s.clientX + "px, " + s.clientY + "px)"),
-          (e.style.transform =
-            "translate(" + s.clientX + "px, " + s.clientY + "px)"),
-          (n = s.clientY),
-          (i = s.clientX));
-      }),
-        document.body.addEventListener(
-          "mouseenter",
-          // "a,.kura_tm_topbar .trigger, .cursor-pointer",
-          function () {
-            let a = document.querySelectorAll("a");
-            (e.classList.add("cursor-inner"), t.classList.add("cursor-outer"));
-
-            for (let i = 0; i < a.length; i++) {
-              const element = a[i];
-              mouseEvent(element);
-            }
-
-            hamburger && mouseEvent(hamburger);
-            kura_tm_topbar && mouseEvent(kura_tm_topbar);
-            pointer && mouseEvent(pointer);
-          },
-        ),
-        (e.style.visibility = "visible"),
-        (t.style.visibility = "visible"));
+  links.forEach((link) => {
+    link.classList.remove("active");
+    if (link.getAttribute("href") === `#${currentId}`) {
+      link.classList.add("active");
     }
+  });
+};
+
+/** Scroll-to-top button visibility */
+export const scrollTopVisibility = () => {
+  const btn = document.querySelector(".scroll-top");
+  if (btn) {
+    btn.classList.toggle("visible", window.scrollY > 300);
   }
 };
 
-export const preloader = () => {
-  preloader_();
-  setTimeout(() => {
-    document.querySelector("body").classList.add("opened");
-  }, timeouts.bodyOpenDelayMs);
-};
-
-export const aTagClick = () => {
-  const aTag = document.querySelectorAll("[href='#']");
-  for (let i = 0; i < aTag.length; i++) {
-    const a = aTag[i];
-    a.addEventListener("click", (e) => {
-      e.preventDefault();
-    });
+/**
+ * Intersection-Observer scroll reveal.
+ * Adds .visible to every .reveal element when it enters the viewport.
+ */
+export const initScrollReveal = () => {
+  if (typeof IntersectionObserver === "undefined") {
+    // Fallback: just show everything
+    document.querySelectorAll(".reveal").forEach((el) => el.classList.add("visible"));
+    return;
   }
-};
-// Data image
-export const dataImage = () => {
-  let d = document.querySelectorAll("[data-img-url");
-  for (let i = 0; i < d.length; i++) {
-    const element = d[i];
-    element.style.backgroundImage = `url(${element.getAttribute(
-      "data-img-url",
-    )})`;
-  }
-};
 
-export const imgToSVG = () => {
-  document.querySelectorAll("img.svg").forEach((el) => {
-    const imgID = el.getAttribute("id");
-    const imgClass = el.getAttribute("class");
-    const imgURL = el.getAttribute("src");
-
-    fetch(imgURL)
-      .then((data) => data.text())
-      .then((response) => {
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(response, "image/svg+xml");
-        let svg = xmlDoc.querySelector("svg");
-
-        if (svg && typeof imgID !== "undefined") {
-          svg.setAttribute("id", imgID);
-        }
-
-        if (svg && typeof imgClass !== "undefined") {
-          svg.setAttribute("class", imgClass + " replaced-svg");
-        }
-
-        if (svg) {
-          svg.removeAttribute("xmlns:a");
-          if (el.parentNode) {
-            el.parentNode.replaceChild(svg, el);
-          }
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+          observer.unobserve(entry.target);
         }
       });
-  });
-};
+    },
+    { threshold: 0.08, rootMargin: "0px 0px -40px 0px" },
+  );
 
-export const activeSkillProgress = () => {
-  const progress_inner = document.querySelectorAll(".skillsInner___"),
-    triggerBottom = (window.innerHeight / 5) * 5;
-  progress_inner.forEach((box) => {
-    const boxTop = box.getBoundingClientRect().top,
-      boxElement = box.getElementsByClassName("bar"),
-      label = box.getElementsByClassName("label"),
-      number = box.getElementsByClassName("number"),
-      boxItem = boxElement[0],
-      pWidth = box.getAttribute("data-value"),
-      pColor = box.getAttribute("data-color");
-    if (boxTop < triggerBottom) {
-      boxItem.classList.add("open");
-      label[0].classList.add("opened");
-      number[0].style.right = `${100 - pWidth}%`;
-      boxItem.getElementsByClassName("bar_in")[0].style.width = `${pWidth}%`;
-      boxItem.getElementsByClassName("bar_in")[0].style.backgroundColor =
-        pColor;
-    } else {
-      boxItem.classList.remove("open");
-      label[0].classList.remove("opened");
-      number[0].style.right = `${120}%`;
-    }
-  });
-};
-
-export const scrollSection = () => {
-  const sections = document.querySelectorAll(".devman_tm_section");
-  const navLi = document.querySelectorAll(".anchor_nav li");
-  let current = "";
-  sections.forEach((section) => {
-    const sectionTop = section.offsetTop;
-    const sectionHeight = section.clientHeight;
-    if (pageYOffset >= sectionTop - sectionHeight / 3) {
-      current = section.getAttribute("id");
-    }
-  });
-
-  navLi.forEach((li) => {
-    if (current !== null) {
-      li.classList.remove("current");
-    }
-    if (li.getElementsByTagName("a")[0].getAttribute("href") == `#${current}`) {
-      li.classList.add("current");
-    }
-  });
-};
-export const stickyNav = () => {
-  let offset = window.scrollY;
-  const stickys = document.querySelectorAll(".devman_tm_header");
-  stickys.forEach((sticky) => {
-    if (sticky) {
-      if (offset > 100) {
-        sticky.classList.add("animate");
-      } else {
-        sticky.classList.remove("animate");
-      }
-    }
-  });
-};
-
-export const scrollTop = () => {
-  var bar = document.querySelector(".progressbar");
-  var line = document.querySelector(".progressbar .line");
-  var documentHeight = document.documentElement.scrollHeight;
-  var windowHeight = window.innerHeight;
-  var winScroll = window.scrollY;
-  var value = (winScroll / (documentHeight - windowHeight)) * 100;
-  var position = value;
-  if (winScroll > 100) {
-    bar.classList.add("animate");
-    line.style.height = position + "%";
-  } else {
-    bar.classList.remove("animate");
-  }
-};
-
-export const wowJsAnimation = () => {
-  if (typeof window !== "undefined") {
-    window.WOW = require("wowjs");
-  }
-  new WOW.WOW().init();
-};
-
-// Moveing effect
-export const devman_tm_moving_animation = () => {
-  var detail = document.querySelectorAll(".moving_effect");
-  var offset = 0;
-  detail.forEach((element) => {
-    var direction = element.getAttribute("data-direction");
-    window.addEventListener("scroll", function () {
-      offset = window.scrollY;
-      var h = window.innerHeight;
-      var i = element.getBoundingClientRect().top + window.scrollY - offset - h;
-      if (element.getAttribute("data-reverse") == "yes") {
-        i *= -1;
-      }
-      var x = direction === "x" ? (i * 70) / h : 0;
-      var y = direction === "x" ? 0 : (i * 70) / h;
-      if (element.getAttribute("data-reverse") == "yes") {
-        i *= -1;
-      }
-      if (i * -1 < h + 300 && i < 300) {
-        element.style.transform = `translate3d(${x}px,${y}px, 0px)`;
-      }
-    });
-  });
-};
-
-// linebrack
-export const lineBreak = (value) => {
-  return { __html: value.replace(/\n/g, "<br />") };
+  document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
 };

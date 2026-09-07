@@ -1,72 +1,48 @@
 import Image from "next/image";
 import Popup from "./Popup";
-import { POPUP_PLACEHOLDER_IMAGE } from "../../constants";
 
 const DetailsPopup = ({ open, close, data }) => {
   if (!data) return null;
   return (
     <Popup open={open} close={close}>
-      <div className="popup_details">
-        <div className="top_image">
-          <Image
-            src={POPUP_PLACEHOLDER_IMAGE}
-            alt=""
-            width={400}
-            height={300}
-          />
-          <div
-            className="main popup-image-bg"
-            data-img-url={data.img}
-            style={{ backgroundImage: data.img ? `url(${data.img})` : undefined }}
-          />
+      <Image
+        className="modal-img"
+        src={data.img}
+        alt={data.title}
+        width={720}
+        height={240}
+      />
+      <div className="modal-body">
+        <h3 className="modal-title">{data.title}</h3>
+        <p className="modal-subtitle">{data.category} · {data.date}</p>
+        <div className="modal-text">
+          {data.description.map((para, i) => (
+            <p key={i}>{para}</p>
+          ))}
         </div>
-        <div className="portfolio_main_title">
-          <h3>{data.title}</h3>
-          <span>
-            <a href="#" onClick={(e) => e.preventDefault()}>
-              {data.category}
-            </a>
-          </span>
-          <div />
-        </div>
-        <div className="main_details">
-          <div className="textbox">
-            {data.description.map((para, i) => (
-              <p key={i}>{para}</p>
+        {data.highlights && (
+          <ul className="modal-highlights">
+            {data.highlights.map((h, i) => (
+              <li key={i}>{h}</li>
             ))}
-            {data.highlights && (
-              <ul className="popup-highlights-list">
-                {data.highlights.map((h, i) => (
-                  <li key={i} className="popup-highlights-item">
-                    {h}
-                  </li>
-                ))}
-              </ul>
-            )}
+          </ul>
+        )}
+        <div className="modal-meta">
+          <div className="modal-meta-item">
+            <div className="modal-meta-label">Client</div>
+            <div className="modal-meta-value">{data.client}</div>
           </div>
-          <div className="detailbox">
-            <ul>
-              <li>
-                <span className="first">Client</span>
-                <span>{data.client}</span>
-              </li>
-              <li>
-                <span className="first">Category</span>
-                <span>
-                  <a href="#" onClick={(e) => e.preventDefault()}>
-                    {data.category}
-                  </a>
-                </span>
-              </li>
-              <li>
-                <span className="first">Timeline</span>
-                <span>{data.date}</span>
-              </li>
-              <li>
-                <span className="first">Tech Stack</span>
-                <span>{data.tech}</span>
-              </li>
-            </ul>
+          <div className="modal-meta-item">
+            <div className="modal-meta-label">Category</div>
+            <div className="modal-meta-value">{data.category}</div>
+          </div>
+          <div className="modal-meta-item">
+            <div className="modal-meta-label">Timeline</div>
+            <div className="modal-meta-value">{data.date}</div>
+          </div>
+          <div className="modal-meta-item">
+            <div className="modal-meta-label">Tech Stack</div>
+            <div className="modal-meta-value">{data.tech.join(" · ")}</div>
           </div>
         </div>
       </div>
