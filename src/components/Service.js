@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useState, useCallback } from "react";
 import ServicePopup from "./popup/ServicePopup";
 import { sectionIds, serviceData } from "../constants";
 
@@ -20,9 +20,20 @@ const ArrowIcon = () => (
   </svg>
 );
 
+/** Mouse-tracking spotlight for each card */
+const useSpotlight = () => {
+  return useCallback((e) => {
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    card.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
+    card.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
+  }, []);
+};
+
 const Service = () => {
   const [activeData, setActiveData] = useState({});
   const [open, setOpen] = useState(false);
+  const onMouseMove = useSpotlight();
 
   return (
     <Fragment>
@@ -46,6 +57,7 @@ const Service = () => {
               <div
                 key={i}
                 className={`service-card reveal reveal-delay-${Math.min(i + 1, 4)}`}
+                onMouseMove={onMouseMove}
                 onClick={() => {
                   setActiveData(service);
                   setOpen(true);

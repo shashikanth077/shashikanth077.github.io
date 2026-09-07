@@ -4,6 +4,7 @@ import Copyright from "../src/components/Copyright";
 import CounterSection from "../src/components/CounterSection";
 import Features from "../src/components/Features";
 import Home from "../src/components/Home";
+import Marquee from "../src/components/Marquee";
 import Portfolio from "../src/components/Portfolio";
 import Process from "../src/components/Process";
 import Service from "../src/components/Service";
@@ -26,6 +27,7 @@ const Index = () => {
       <Header />
       <MobileHeader />
       <Home />
+      <Marquee />
       <Features />
       <About />
       <CounterSection />

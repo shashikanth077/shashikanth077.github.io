@@ -1,10 +1,41 @@
-import { homeData, sectionIds, siteConfig } from "../constants";
+import { homeData, heroTitles, sectionIds, siteConfig } from "../constants";
 import Image from "next/image";
 import Counter from "./Counter";
+import Typewriter from "./Typewriter";
+import ParticleField from "./ParticleField";
+
+/** Split text into staggered letter spans */
+const LetterReveal = ({ text, offset = 0, className }) => (
+  <span className={className}>
+    {text.split("").map((ch, i) =>
+      ch === " " ? (
+        <span key={i}>&nbsp;</span>
+      ) : (
+        <span
+          key={i}
+          className="letter"
+          style={{ animationDelay: `${(offset + i) * 0.04 + 0.3}s` }}
+        >
+          {ch}
+        </span>
+      ),
+    )}
+  </span>
+);
 
 const Home = () => {
   return (
     <section className="hero section" id={sectionIds.home}>
+      {/* Animated aurora blobs */}
+      <div className="aurora">
+        <div className="aurora-blob" />
+        <div className="aurora-blob" />
+        <div className="aurora-blob" />
+      </div>
+
+      {/* Particle constellation */}
+      <ParticleField />
+
       <div className="container">
         <div className="hero-inner">
           <div className="hero-text">
@@ -13,10 +44,12 @@ const Home = () => {
               Hello, I&apos;m
             </p>
             <h1 className="hero-name">
-              {homeData.firstName}{" "}
+              <LetterReveal text={homeData.firstName} offset={0} />{" "}
               <span className="gradient-text">{homeData.lastName}</span>
             </h1>
-            <p className="hero-title">{homeData.designation}</p>
+            <p className="hero-title">
+              <Typewriter texts={heroTitles} />
+            </p>
             <p className="hero-location">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />

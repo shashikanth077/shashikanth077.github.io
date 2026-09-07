@@ -34,6 +34,21 @@ export const navItems = [
   { href: "/tools/", label: "ToolNest" },
 ];
 
+// ===== Typewriter titles =====
+export const heroTitles = [
+  "Full-Stack Developer",
+  "System Architect",
+  "AI Engineering Student",
+  "Technical Leader",
+];
+
+// ===== Marquee strip items =====
+export const marqueeItems = [
+  "React", "Node.js", "TypeScript", "Redux Toolkit", "Docker", "Kubernetes",
+  "Azure", "MongoDB", "PostgreSQL", "GraphQL", "PHP", "Laravel",
+  "AWS", "CI/CD", "Microservices", "Next.js", "Git", "MySQL",
+];
+
 // ===== Hero =====
 export const homeData = {
   firstName: "Shashikanth",

@@ -2,6 +2,7 @@ import Head from "next/head";
 import { Fragment, useEffect } from "react";
 import { initScrollReveal } from "../utilits";
 import { assets } from "../constants";
+import CursorGlow from "../components/CursorGlow";
 
 const Layout = ({ children }) => {
   useEffect(() => {
@@ -16,6 +17,8 @@ const Layout = ({ children }) => {
         <link rel="icon" href={assets.favicon} type="image/png" />
         <link rel="shortcut icon" href={assets.favicon} />
       </Head>
+      <div className="grain" aria-hidden="true" />
+      <CursorGlow />
       <div className="site-wrap">{children}</div>
     </Fragment>
   );
