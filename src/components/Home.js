@@ -47,6 +47,10 @@ const Home = () => {
               <LetterReveal text={homeData.firstName} offset={0} />{" "}
               <span className="gradient-text">{homeData.lastName}</span>
             </h1>
+            <div className="status-badge">
+              <span className="status-dot" />
+              Open to Opportunities
+            </div>
             <p className="hero-title">
               <Typewriter texts={heroTitles} />
             </p>

@@ -17,7 +17,6 @@ const Layout = ({ children }) => {
         <link rel="icon" href={assets.favicon} type="image/png" />
         <link rel="shortcut icon" href={assets.favicon} />
       </Head>
-      <div className="grain" aria-hidden="true" />
       <CursorGlow />
       <div className="site-wrap">{children}</div>
     </Fragment>

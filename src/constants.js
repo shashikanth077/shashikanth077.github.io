@@ -84,14 +84,17 @@ export const featuresData = [
   {
     title: "Full-Stack Expert",
     text: "12+ years building end-to-end web applications with React, Redux Toolkit, Node.js, PHP, TypeScript, and MySQL — from UI design to API architecture and database optimisation.",
+    metric: "30% faster delivery",
   },
   {
     title: "Cloud & DevOps",
     text: "Hands-on experience with Docker, Kubernetes, and Azure for CI/CD pipelines, containerised deployments, and scalable cloud infrastructure.",
+    metric: "3 parallel teams",
   },
   {
     title: "AI Engineering",
     text: "Transitioning into AI Engineering with a Master's in AI at VILNIUS TECH. Skilled in AI-assisted development using GitHub Copilot, Cursor, and Claude.",
+    metric: "Master's at VILNIUS TECH",
   },
 ];
 
@@ -287,6 +290,60 @@ export const timeouts = {
   contactErrorClearMs: 3000,
   contactSuccessClearMs: 4000,
   counterDurationSec: 3,
+};
+
+// ===== Career Timeline =====
+export const careerTimeline = [
+  {
+    company: "Wipro (Harman Connected Services)",
+    role: "Senior Full-Stack Developer",
+    date: "2024 – Present",
+    current: true,
+    description:
+      "Architecting a clinical trial business rules engine with React, Node.js, and Micro-Frontend architecture. Reduced development time by 30% with AI-assisted tooling.",
+    tags: ["React", "Node.js", "MongoDB", "Docker", "Kubernetes", "Micro-Frontend"],
+  },
+  {
+    company: "IBM India",
+    role: "Full-Stack Developer",
+    date: "2021 – 2024",
+    current: false,
+    description:
+      "Delivered the Investor Advisory Portal and Open Balancing Platform for a banking client. Mentored 5+ developers through Agile ceremonies.",
+    tags: ["React", "Redux Toolkit", "Node.js", "MySQL", "Material UI"],
+  },
+  {
+    company: "Sonata Software",
+    role: "Software Developer",
+    date: "2019 – 2021",
+    current: false,
+    description:
+      "Developed the MFL Booking e-commerce platform with microservices, improving order processing speed and reducing post-deployment defects.",
+    tags: ["React", "Redux", "PHP", "Microservices", "Azure CI/CD"],
+  },
+  {
+    company: "Theorem Inc / Earlier Roles",
+    role: "Software Developer",
+    date: "2014 – 2019",
+    current: false,
+    description:
+      "Built web applications across insurance and enterprise domains. Gained deep expertise in PHP, JavaScript, and relational databases.",
+    tags: ["PHP", "Laravel", "JavaScript", "MySQL", "REST APIs"],
+  },
+];
+
+export const education = {
+  degree: "Master's in Engineering of Artificial Intelligence",
+  school: "VILNIUS TECH (VGTU)",
+  location: "Vilnius, Lithuania",
+  status: "Currently Pursuing",
+};
+
+export const timelineIntro = {
+  eyebrow: "Career Journey",
+  heading: "Where I've Built & Led",
+  description:
+    "12+ years of progressive experience across multinational organisations — from hands-on development to system architecture and team leadership.",
 };
 
 // Placeholder images used by popups

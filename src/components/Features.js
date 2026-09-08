@@ -23,6 +23,9 @@ const Features = () => {
               <div className="feature-number">{`0${i + 1}`}</div>
               <h3 className="feature-title">{feature.title}</h3>
               <p className="feature-text">{feature.text}</p>
+              {feature.metric && (
+                <span className="feature-metric">{feature.metric}</span>
+              )}
             </div>
           ))}
         </div>

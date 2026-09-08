@@ -6,7 +6,7 @@ import Features from "../src/components/Features";
 import Home from "../src/components/Home";
 import Marquee from "../src/components/Marquee";
 import Portfolio from "../src/components/Portfolio";
-import Process from "../src/components/Process";
+import Timeline from "../src/components/Timeline";
 import Service from "../src/components/Service";
 import Skills from "../src/components/Skills";
 import Header from "../src/layouts/Header";
@@ -34,7 +34,7 @@ const Index = () => {
       <Portfolio />
       <Skills />
       <Service />
-      <Process />
+      <Timeline />
       <Contact />
       <Copyright />
       <ScrollTop />

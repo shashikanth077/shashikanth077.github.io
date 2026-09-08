@@ -163,26 +163,25 @@ p { color: var(--text-secondary); }
 }
 .btn svg { width: 18px; height: 18px; flex-shrink: 0; }
 
-/* ===== 6. Scroll Reveal (with blur entrance) ===== */
+/* ===== 6. Scroll Reveal (compositor-only: opacity + transform) ===== */
 .reveal {
   opacity: 0;
   transform: translateY(40px);
-  filter: blur(8px);
   transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.9s cubic-bezier(0.16, 1, 0.3, 1),
-              filter 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+              transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+  contain: layout style;
 }
 .reveal.visible {
   opacity: 1;
   transform: translateY(0);
-  filter: blur(0);
 }
 .reveal-delay-1 { transition-delay: 0.1s; }
 .reveal-delay-2 { transition-delay: 0.2s; }
 .reveal-delay-3 { transition-delay: 0.3s; }
 .reveal-delay-4 { transition-delay: 0.4s; }
 @media (prefers-reduced-motion: reduce) {
-  .reveal { opacity: 1; transform: none; filter: none; transition: none; }
+  .reveal { opacity: 1; transform: none; transition: none; }
 }
 
 /* ===== 7. Card Base ===== */
@@ -199,21 +198,7 @@ p { color: var(--text-secondary); }
   box-shadow: var(--shadow-md);
 }
 
-/* ===== 8. Grain Texture Overlay ===== */
-.grain {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9998;
-}
-.grain::before {
-  content: '';
-  position: absolute;
-  inset: -200%;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  opacity: 0.02;
-  animation: grainShift 0.4s steps(1) infinite;
-}
+/* ===== 8. (Grain removed — perf bottleneck) ===== */
 
 /* ===== 9. Cursor Glow ===== */
 .cursor-glow {
@@ -1002,7 +987,7 @@ p { color: var(--text-secondary); }
   overflow: hidden;
   z-index: 0;
 }
-/* Rotating gradient border (CSS Houdini @property) */
+/* Rotating gradient border — animate only on hover (perf fix) */
 .service-card::before {
   content: '';
   position: absolute;
@@ -1012,6 +997,8 @@ p { color: var(--text-secondary); }
   z-index: -2;
   opacity: 0;
   transition: opacity 0.5s;
+}
+.service-card:hover::before {
   animation: rotateBorder 4s linear infinite;
 }
 /* Mouse-tracking spotlight */
@@ -1505,20 +1492,217 @@ p { color: var(--text-secondary); }
   to { --angle: 360deg; }
 }
 
-@keyframes grainShift {
-  0%, 100% { transform: translate(0, 0); }
-  10% { transform: translate(-2%, -3%); }
-  20% { transform: translate(3%, 1%); }
-  30% { transform: translate(-1%, 2%); }
-  40% { transform: translate(2%, -1%); }
-  50% { transform: translate(-3%, 3%); }
-  60% { transform: translate(1%, -2%); }
-  70% { transform: translate(-2%, 1%); }
-  80% { transform: translate(3%, -3%); }
-  90% { transform: translate(-1%, -1%); }
+/* grainShift removed (grain overlay eliminated for performance) */
+
+/* ===== 29. Status Badge (Hero) ===== */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px 6px 12px;
+  border-radius: 100px;
+  background: rgba(52,211,153,0.08);
+  border: 1px solid rgba(52,211,153,0.2);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--green);
+  margin-bottom: 20px;
+  animation: fadeIn 1s ease 1.2s both;
+}
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: statusPulse 2s ease-in-out infinite;
+}
+@keyframes statusPulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(52,211,153,0.4); }
+  50% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(52,211,153,0); }
 }
 
-/* ===== 29. Responsive ===== */
+/* ===== 30. Feature Metric Badge ===== */
+.feature-metric {
+  display: inline-block;
+  margin-top: 16px;
+  padding: 4px 12px;
+  border-radius: 100px;
+  background: rgba(99,102,241,0.08);
+  border: 1px solid rgba(99,102,241,0.15);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--accent-light);
+  letter-spacing: 0.02em;
+}
+
+/* ===== 31. Career Timeline ===== */
+.timeline {
+  position: relative;
+  padding: 0 0 0 48px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+/* Vertical line */
+.timeline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 23px;
+  width: 2px;
+  background: linear-gradient(180deg, var(--accent), var(--accent-2), transparent);
+  opacity: 0.3;
+}
+.timeline-item {
+  position: relative;
+  padding-bottom: 48px;
+}
+.timeline-item:last-child { padding-bottom: 0; }
+/* Timeline dot */
+.timeline-dot {
+  position: absolute;
+  left: -33px;
+  top: 8px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 3px solid var(--accent);
+  z-index: 1;
+  transition: all 0.3s ease;
+}
+.timeline-item:first-child .timeline-dot {
+  border-color: var(--green);
+  box-shadow: 0 0 0 4px rgba(52,211,153,0.15), 0 0 12px rgba(52,211,153,0.2);
+}
+.timeline-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.timeline-card:hover {
+  border-color: var(--border-light);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.3), 0 0 40px rgba(99,102,241,0.06);
+}
+.timeline-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.timeline-company {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-heading);
+}
+.timeline-date {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--accent-light);
+  padding: 3px 12px;
+  border-radius: 100px;
+  background: rgba(99,102,241,0.08);
+}
+.timeline-role {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+.timeline-desc {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: var(--text-muted);
+}
+.timeline-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 14px;
+}
+.timeline-tag {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 100px;
+  background: rgba(148,163,184,0.06);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+/* Current position badge */
+.timeline-current {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--green);
+  margin-left: 8px;
+}
+.timeline-current::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+}
+
+/* ===== 32. Education Highlight Card ===== */
+.education-card {
+  background: linear-gradient(135deg, rgba(99,102,241,0.06), rgba(168,85,247,0.04));
+  border: 1px solid rgba(99,102,241,0.15);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  margin-top: 48px;
+  position: relative;
+  overflow: hidden;
+}
+.education-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent-3));
+}
+.education-icon {
+  font-size: 2rem;
+  margin-bottom: 12px;
+}
+.education-degree {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-heading);
+  margin-bottom: 4px;
+}
+.education-school {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--accent-light);
+  margin-bottom: 4px;
+}
+.education-location {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.education-location svg {
+  width: 14px;
+  height: 14px;
+  color: var(--text-muted);
+}
+
+/* ===== 33. Responsive ===== */
 @media (max-width: 1024px) {
   :root { --section-py: 80px; }
   .hero-inner { grid-template-columns: 1fr; gap: 40px; text-align: center; }
@@ -1537,6 +1721,9 @@ p { color: var(--text-secondary); }
   .about-content .btn { display: inline-flex; }
   .services-grid { grid-template-columns: 1fr; }
   .process-grid { grid-template-columns: 1fr; }
+  .timeline { padding-left: 36px; }
+  .timeline::before { left: 15px; }
+  .timeline-dot { left: -27px; }
   .contact-grid { grid-template-columns: 1fr; }
   .stats-grid { gap: 40px; }
   .portfolio-grid { grid-template-columns: 1fr; }
