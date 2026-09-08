@@ -2,7 +2,6 @@ import {
   careerTimeline,
   education,
   timelineIntro,
-  sectionIds,
 } from "../constants";
 
 const Timeline = () => {
@@ -63,8 +62,24 @@ const Timeline = () => {
               <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
               <circle cx="12" cy="10" r="3" />
             </svg>
-            {education.location} · {education.status}
+            {education.location} · {education.period}
           </div>
+          {education.bachelor && (
+            <div
+              style={{
+                marginTop: 16,
+                paddingTop: 16,
+                borderTop: "1px solid var(--border)",
+              }}
+            >
+              <div style={{ fontSize: "0.9375rem", fontWeight: 600, color: "var(--text-heading)" }}>
+                {education.bachelor.degree}
+              </div>
+              <div style={{ fontSize: "0.8125rem", color: "var(--text-muted)", marginTop: 2 }}>
+                {education.bachelor.school} · {education.bachelor.location} · {education.bachelor.period}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </section>
