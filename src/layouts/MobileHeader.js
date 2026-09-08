@@ -10,7 +10,7 @@ const MobileHeader = () => {
     <div className="mobile-nav">
       <div className="mobile-bar">
         <a href="#home" className="mobile-logo">
-          S<span className="accent">.</span>
+          SH<span className="accent">R</span>
         </a>
         <div
           className={`burger ${open ? "open" : ""}`}

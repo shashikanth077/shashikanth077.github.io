@@ -16,7 +16,7 @@ const Header = () => {
     <header className="site-header">
       <div className="header-inner">
         <a href="#home" className="header-logo">
-          S<span className="accent">.</span>
+          SH<span className="accent">R</span>
         </a>
         <nav className="header-nav">
           {navItems.map((item) => {
