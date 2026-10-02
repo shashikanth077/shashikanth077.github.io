@@ -37,14 +37,14 @@ const CHECKS = [
   ["keywords added", (h) => /<meta name="keywords" content="jwt decoder, decode jwt online"/.test(h)],
   [
     "canonical rewritten",
-    (h) => /<link rel="canonical" href="https:\/\/shashikanth077\.github\.io\/tools\/jwt-decoder"/.test(h),
+    (h) => /<link rel="canonical" href="https:\/\/shashikant-hr\.me\/tools\/jwt-decoder"/.test(h),
   ],
   ["exactly one canonical", (h) => count(h, /rel="canonical"/g) === 1],
   ["og:title replaced", (h) => /<meta property="og:title" content="JWT Decoder/.test(h)],
   ["og:description replaced", (h) => /<meta property="og:description" content="Decode a JSON/.test(h)],
   [
     "og:url replaced",
-    (h) => /<meta property="og:url" content="https:\/\/shashikanth077\.github\.io\/tools\/jwt-decoder"/.test(h),
+    (h) => /<meta property="og:url" content="https:\/\/shashikant-hr\.me\/tools\/jwt-decoder"/.test(h),
   ],
   ["ampersand escaped", (h) => /payload &amp; expiry/.test(h)],
   ["double quote escaped", (h) => /&quot;private&quot;/.test(h)],
