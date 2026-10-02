@@ -30,7 +30,7 @@ const CORRECTION_HINT: Record<QrErrorCorrection, string> = {
 
 export default function QrGenerator() {
   const [kind, setKind] = useState<PayloadKind>("text");
-  const [text, setText] = useState("https://shashikanth077.github.io/tools");
+  const [text, setText] = useState("https://shashikant-hr.me/tools");
   const [wifi, setWifi] = useState({ ssid: "", password: "", security: "WPA" as "WPA" | "WEP" | "nopass" });
   const [vcard, setVcard] = useState({ fullName: "", organisation: "", phone: "", email: "", url: "" });
 

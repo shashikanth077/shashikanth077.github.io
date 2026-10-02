@@ -3,7 +3,7 @@
 A micro-frontend developer-tools platform. Every tool runs entirely in the browser — no backend,
 no account, and no file ever leaves the user's machine.
 
-**Live:** [shashikanth077.github.io/tools](https://shashikanth077.github.io/tools/)  
+**Live:** [shashikant-hr.me/tools](https://shashikant-hr.me/tools/)  
 **Stack:** React 19 · TypeScript 5.7 · Vite 7 · Module Federation · Redux Toolkit · React Router 7  
 **Hosting:** GitHub Pages — static files, zero cost, genuinely private by construction
 

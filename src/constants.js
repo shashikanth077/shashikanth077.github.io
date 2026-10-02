@@ -5,7 +5,7 @@ export const siteConfig = {
   pageTitle:
     "Shashikanth H R — Full-Stack Developer | Node.js & React.js Specialist",
   cvFile: "/Shashikanth_Hosur_Ramegowda.pdf",
-  siteUrl: "https://shashikanth077.github.io",
+  siteUrl: "https://shashikant-hr.me",
   description:
     "Full-Stack Developer with 10+ years of experience in React, Node.js, GraphQL, TypeScript, and PHP across healthcare, energy, banking, insurance, and e-commerce. Currently pursuing a Master's in AI Engineering at VILNIUS TECH, Vilnius, Lithuania.",
   ogImage: "/img/hero/profile.png",

@@ -2,7 +2,7 @@
 
 A personal portfolio website for **Shashikanth H R**, Principal Engineer with 12+ years of experience in full-stack development, systems architecture, and engineering leadership.
 
-Live site: [shashikanth077.github.io](https://shashikanth077.github.io)
+Live site: [shashikant-hr.me](https://shashikant-hr.me)
 
 ## Tech Stack
 

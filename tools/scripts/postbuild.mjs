@@ -38,7 +38,7 @@ const OUT_ROOT = join(repoRoot, "out");
 const OUT_TOOLS = join(OUT_ROOT, "tools");
 const SITEMAP = join(OUT_ROOT, "sitemap.xml");
 
-const SITE_ORIGIN = "https://shashikanth077.github.io";
+const SITE_ORIGIN = "https://shashikant-hr.me";
 
 /* ------------------------------------------------------------------ */
 

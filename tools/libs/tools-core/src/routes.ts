@@ -12,7 +12,7 @@
 /** Public base path. This repo is a GitHub user-page, so the platform sits at /tools. */
 export const BASE_PATH = "/tools";
 
-export const SITE_ORIGIN = "https://shashikanth077.github.io";
+export const SITE_ORIGIN = "https://shashikant-hr.me";
 
 /** Which micro-frontend owns a route. */
 export type RemoteName = "utility" | "image" | "pdf" | "media";

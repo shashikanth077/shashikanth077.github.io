@@ -12,6 +12,6 @@ export const brand = {
   productName: "ToolNest",
   productIcon: "🧰",
   authorName: "Shashikanth Hosur Ramegowda",
-  portfolioUrl: "https://shashikanth077.github.io/",
+  portfolioUrl: "https://shashikant-hr.me/",
   linkedinUrl: "https://www.linkedin.com/in/shashikanth-hr/",
 };
