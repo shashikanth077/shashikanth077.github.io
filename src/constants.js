@@ -73,7 +73,6 @@ export const homeData = {
   img: "/img/hero/profile.png",
   bio: "Full-Stack Developer specializing in building scalable web applications across healthcare, energy, banking, insurance, and retail. Currently pursuing a Master's in AI Engineering at VILNIUS TECH. Experienced in React, Node.js, TypeScript, GraphQL, APIs, and scalable system architecture.",
   numberOfProject: 15,
-  numberofyear: 10,
 };
 
 // ===== About =====
