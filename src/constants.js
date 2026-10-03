@@ -7,7 +7,7 @@ export const siteConfig = {
   cvFile: "/Shashikanth_Hosur_Ramegowda.pdf",
   siteUrl: "https://shashikant-hr.me",
   description:
-    "Full-Stack Developer with 10+ years of experience in React, Node.js, GraphQL, TypeScript, and PHP across healthcare, energy, banking, insurance, and e-commerce. Currently pursuing a Master's in AI Engineering at VILNIUS TECH, Vilnius, Lithuania.",
+    "Full-Stack Developer specializing in building scalable web applications across healthcare, energy, banking, insurance, and retail. Currently pursuing a Master's in AI Engineering at VILNIUS TECH. Experienced in React, Node.js, TypeScript, GraphQL, APIs, and scalable system architecture.",
   ogImage: "/img/hero/profile.png",
   socialLinks: {
     linkedin: "https://www.linkedin.com/in/shashikanth-hr/",
@@ -44,9 +44,24 @@ export const heroTitles = [
 
 // ===== Marquee strip items =====
 export const marqueeItems = [
-  "React", "Node.js", "TypeScript", "Redux Toolkit", "Docker", "Kubernetes",
-  "Azure", "MongoDB", "PostgreSQL", "GraphQL", "PHP", "Laravel",
-  "AWS", "CI/CD", "Microservices", "Kafka", "Git", "MySQL",
+  "React",
+  "Node.js",
+  "TypeScript",
+  "Redux Toolkit",
+  "Docker",
+  "Kubernetes",
+  "Azure",
+  "MongoDB",
+  "PostgreSQL",
+  "GraphQL",
+  "PHP",
+  "Laravel",
+  "AWS",
+  "CI/CD",
+  "Microservices",
+  "Kafka",
+  "Git",
+  "MySQL",
 ];
 
 // ===== Hero =====
@@ -56,7 +71,7 @@ export const homeData = {
   designation: "Full-Stack Developer | Node.js & React.js Specialist",
   address: "Vilnius, Lithuania",
   img: "/img/hero/profile.png",
-  bio: "Full-Stack Developer with 10+ years designing and delivering scalable web applications across healthcare, energy, banking, insurance, and retail. Currently pursuing a Master's in AI Engineering at VILNIUS TECH. Proficient in React, Node.js, GraphQL, TypeScript, and systems architecture.",
+  bio: "Full-Stack Developer specializing in building scalable web applications across healthcare, energy, banking, insurance, and retail. Currently pursuing a Master's in AI Engineering at VILNIUS TECH. Experienced in React, Node.js, TypeScript, GraphQL, APIs, and scalable system architecture.",
   numberOfProject: 15,
   numberofyear: 10,
 };
@@ -107,7 +122,15 @@ export const portfolioData = [
     date: "2024 – 2026",
     title: "Clinical Trial Business Rules Engine",
     role: "Principal Engineer",
-    tech: ["React", "Redux Toolkit", "Node.js", "MongoDB", "Micro-Frontend", "Docker", "Kubernetes"],
+    tech: [
+      "React",
+      "Redux Toolkit",
+      "Node.js",
+      "MongoDB",
+      "Micro-Frontend",
+      "Docker",
+      "Kubernetes",
+    ],
     description: [
       "Architected a full-stack clinical trial business rules engine using React, Redux Toolkit, Node.js, and MongoDB, improving data accuracy for healthcare IT operations.",
       "Enabled parallel deployments across 3 independent teams by implementing a Micro-Frontend architecture, and drove CI/CD pipelines using GitLab, Docker, and Kubernetes for reliable production releases.",
@@ -126,7 +149,16 @@ export const portfolioData = [
     date: "2021 – 2024",
     title: "Enterprise Platforms — Energy, Banking & Insurance",
     role: "Senior System Analyst",
-    tech: ["React", "Redux Toolkit", "Node.js", "GraphQL", "TypeScript", "Kafka", "Microservices", "MySQL"],
+    tech: [
+      "React",
+      "Redux Toolkit",
+      "Node.js",
+      "GraphQL",
+      "TypeScript",
+      "Kafka",
+      "Microservices",
+      "MySQL",
+    ],
     description: [
       "Developed the Open Balancing Platform (React, Redux Toolkit, Node.js, GraphQL, TypeScript) enabling real-time energy demand-supply balancing across energy grids.",
       "Built the IFRS 17 Data Platform (React, Node.js, TypeScript, Kafka, Microservices) delivering real-time data streaming and scalable insurance data processing. Delivered the Investor Advisory Portal (React, Node.js, Express.js, MySQL) providing portfolio management dashboards for a banking client.",
@@ -145,7 +177,15 @@ export const portfolioData = [
     date: "2019 – 2021",
     title: "MFL Booking E-Commerce Platform",
     role: "Senior System Analyst",
-    tech: ["React", "Redux", "Node.js", "Express.js", "PHP", "REST APIs", "Azure CI/CD"],
+    tech: [
+      "React",
+      "Redux",
+      "Node.js",
+      "Express.js",
+      "PHP",
+      "REST APIs",
+      "Azure CI/CD",
+    ],
     description: [
       "Managed full-stack development of Sonata's MFL Booking e-commerce platform using React, Redux, Node.js, Express.js, PHP, and REST APIs, enabling real-time vendor inventory and purchase order management.",
       "Improved order processing speed through React UI enhancements, Node.js optimization, and API performance tuning. Enhanced automated smoke testing and CI/CD pipelines.",
@@ -163,11 +203,29 @@ export const portfolioData = [
 export const techStack = [
   {
     category: "Frontend",
-    items: ["React.js", "Redux Toolkit", "TypeScript", "JavaScript ES6+", "HTML5", "CSS3 / SASS", "Material UI", "Bootstrap"],
+    items: [
+      "React.js",
+      "Redux Toolkit",
+      "TypeScript",
+      "JavaScript ES6+",
+      "HTML5",
+      "CSS3 / SASS",
+      "Material UI",
+      "Bootstrap",
+    ],
   },
   {
     category: "Backend",
-    items: ["Node.js", "Express.js", "PHP", "Laravel", "GraphQL", "REST APIs", "Kafka", "Microservices"],
+    items: [
+      "Node.js",
+      "Express.js",
+      "PHP",
+      "Laravel",
+      "GraphQL",
+      "REST APIs",
+      "Kafka",
+      "Microservices",
+    ],
   },
   {
     category: "Database",
@@ -175,11 +233,26 @@ export const techStack = [
   },
   {
     category: "Cloud & DevOps",
-    items: ["Docker", "Kubernetes", "Azure", "AWS", "GitLab CI/CD", "GitHub Actions"],
+    items: [
+      "Docker",
+      "Kubernetes",
+      "Azure",
+      "AWS",
+      "GitLab CI/CD",
+      "GitHub Actions",
+    ],
   },
   {
     category: "Tools & Methods",
-    items: ["Git", "GitHub", "GitLab", "JIRA", "Agile / Scrum", "CI/CD Pipelines", "VS Code"],
+    items: [
+      "Git",
+      "GitHub",
+      "GitLab",
+      "JIRA",
+      "Agile / Scrum",
+      "CI/CD Pipelines",
+      "VS Code",
+    ],
   },
   {
     category: "AI-Assisted Dev",
@@ -308,7 +381,14 @@ export const careerTimeline = [
     current: false,
     description:
       "Architected a full-stack clinical trial business rules engine with React, Node.js, and Micro-Frontend architecture. Reduced development time by 30% with AI-assisted tooling (Cursor, Claude, Copilot).",
-    tags: ["React", "Node.js", "MongoDB", "Docker", "Kubernetes", "Micro-Frontend"],
+    tags: [
+      "React",
+      "Node.js",
+      "MongoDB",
+      "Docker",
+      "Kubernetes",
+      "Micro-Frontend",
+    ],
   },
   {
     company: "IBM India Private Limited",
@@ -317,7 +397,15 @@ export const careerTimeline = [
     current: false,
     description:
       "Delivered 3 enterprise platforms: Open Balancing Platform (real-time energy grids), IFRS 17 Data Platform (insurance streaming), and Investor Advisory Portal (banking dashboards). Mentored 5+ developers.",
-    tags: ["React", "Redux Toolkit", "Node.js", "GraphQL", "TypeScript", "Kafka", "MySQL"],
+    tags: [
+      "React",
+      "Redux Toolkit",
+      "Node.js",
+      "GraphQL",
+      "TypeScript",
+      "Kafka",
+      "MySQL",
+    ],
   },
   {
     company: "Sonata Software Limited",
@@ -345,15 +433,6 @@ export const careerTimeline = [
     description:
       "Engineered PayPal APAC Lifecycle Email Builder using Laravel and PHP, empowering non-technical teams to create and manage scalable HTML email campaigns.",
     tags: ["Laravel", "PHP", "JavaScript", "REST APIs", "Agile Scrum"],
-  },
-  {
-    company: "Fortunesoft IT Innovations",
-    role: "Software Engineer",
-    date: "Nov 2014 – Jun 2016",
-    current: false,
-    description:
-      "Led full-stack development of Scam Book platform, reducing fraudulent activity by 25% and increasing report submissions by 30%. Deployed on AWS.",
-    tags: ["PHP", "CodeIgniter", "MySQL", "JavaScript", "AWS"],
   },
 ];
 
