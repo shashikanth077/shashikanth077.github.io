@@ -6,7 +6,7 @@
   background: #111815;
   color: var(--paper);
   font-family: Inter, Arial, sans-serif;
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.75;
   overflow: clip;
 }
@@ -61,7 +61,7 @@
   backdrop-filter: blur(18px);
 }
 .navInner {
-  width: min(1360px, calc(100% - 72px));
+  width: min(1240px, calc(100% - 64px));
   margin: auto;
   height: 86px;
   display: flex;
@@ -92,7 +92,7 @@
   display: flex;
   gap: 29px;
   align-items: center;
-  font-size: 12px;
+  font-size: 14px;
 }
 .nav > a {
   color: var(--muted);
@@ -116,10 +116,10 @@
 }
 .hero {
   display: grid;
-  grid-template-columns: 1.3fr 1fr;
-  gap: 72px;
-  padding-top: 84px;
-  padding-bottom: 76px;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: 56px;
+  padding-top: 64px;
+  padding-bottom: 64px;
   align-items: center;
 }
 .availability {
@@ -127,7 +127,7 @@
   align-items: center;
   gap: 8px;
   color: #b5c0b8;
-  font-size: 11px;
+  font-size: 12px;
 }
 .availability > span {
   width: 6px;
@@ -143,7 +143,7 @@
   margin: 0 5px;
 }
 .intro {
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 2.2px;
   margin-top: 34px !important;
   margin-bottom: 17px !important;
@@ -178,7 +178,7 @@
   gap: 22px;
   padding: 13px 21px;
   border-radius: 5px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   transition:
     transform 0.2s,
@@ -202,11 +202,12 @@
 .heroMeta {
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-size: 8px;
-  letter-spacing: 1.2px;
+  gap: 8px 12px;
+  font-size: 11px;
+  letter-spacing: .6px;
   margin-top: 37px;
   color: #a3aea5;
+  flex-wrap: wrap;
 }
 .heroMeta i {
   color: var(--lime);
@@ -214,20 +215,23 @@
 }
 .portraitArea {
   position: relative;
-  padding: 0 0 42px 18px;
+  padding: 0;
+  max-width: 420px;
+  width: 100%;
+  justify-self: end;
 }
 .portraitCard {
   border: 1px solid #4a5747;
   border-radius: 12px;
   background: #242e24;
-  transform: rotate(2deg);
+  transform: none;
   overflow: hidden;
 }
 .portraitTop {
   display: flex;
   justify-content: space-between;
   padding: 16px 20px;
-  font-size: 8px;
+  font-size: 10px;
   letter-spacing: 1.7px;
   color: #cad1c0;
 }
@@ -256,7 +260,7 @@
   display: block;
 }
 .portraitCaption div > span {
-  font-size: 10px;
+  font-size: 12px;
   color: #acb6a9;
 }
 .portraitMark {
@@ -270,9 +274,9 @@
 }
 .experienceBadge {
   position: relative;
-  left: -25px;
+  left: 0;
   width: fit-content;
-  margin-top: 14px;
+  margin-top: 16px;
   display: flex;
   align-items: center;
   gap: 17px;
@@ -281,7 +285,8 @@
   padding: 15px 23px;
   border-radius: 8px;
   box-shadow: 0 12px 30px #0004;
-  transform: rotate(-3deg);
+  transform: none;
+  max-width: 100%;
 }
 .experienceBadge > strong {
   font-size: 48px;
@@ -293,22 +298,23 @@
   font-size: 30px;
 }
 .experienceBadge > div {
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 1px;
 }
 .experienceBadge > div > span {
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 0;
   font-weight: 400;
 }
 .locationNote {
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
-  text-align: right;
-  position: absolute;
+  text-align: left;
+  position: static;
   bottom: -8px;
   right: 0;
+  margin-top: 16px;
 }
 .locationNote > span {
   color: var(--lime);
@@ -324,7 +330,7 @@
   gap: 32px;
 }
 .companyStrip > p {
-  font-size: 8px;
+  font-size: 11px;
   letter-spacing: 1.4px;
   line-height: 1.9;
 }
@@ -358,14 +364,14 @@
   font-weight: 400 !important;
 }
 .section {
-  padding-top: 108px;
-  padding-bottom: 108px;
+  padding-top: 80px;
+  padding-bottom: 80px;
 }
 .label {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 9px !important;
+  font-size: 12px !important;
   letter-spacing: 1.8px;
   line-height: 1.6;
   color: #bac5b9 !important;
@@ -400,7 +406,7 @@
   display: inline-flex;
   align-items: center;
   gap: 22px;
-  font-size: 12px;
+  font-size: 14px;
   border-bottom: 1px solid #59694b;
   padding: 10px 0;
   color: var(--lime) !important;
@@ -419,26 +425,31 @@
 }
 .sectionHeading > p {
   max-width: 300px;
-  font-size: 13px;
+  font-size: 16px;
 }
 .projects {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 22px;
-  align-items: start;
+  align-items: stretch;
 }
 .project {
   border: 1px solid #354035;
   border-radius: 9px;
   overflow: hidden;
   background: #131b16;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 .projectVisual {
-  height: 238px;
+  height: auto;
   background: #25362c;
   border-bottom: 1px solid #3b4b3e;
-  padding: 20px 17px 0;
+  padding: 18px;
   overflow: hidden;
+  min-height: 260px;
+  flex-shrink: 0;
 }
 .visual1 {
   background: #22323b;
@@ -463,7 +474,7 @@
   background: #758476;
 }
 .windowBar span {
-  font-size: 7px;
+  font-size: 10px;
   font-family: monospace;
   color: #a3b8aa;
   margin-left: 10px;
@@ -471,12 +482,13 @@
 .diagram {
   border: 1px solid #ffffff21;
   background: #0d1814b8;
-  padding: 18px 12px;
+  padding: 16px 12px;
 }
 .diagramHeading {
   display: flex;
   justify-content: space-between;
-  font-size: 12px;
+  font-size: 14px;
+  gap: 12px;
 }
 .diagramHeading b {
   font-size: 10px;
@@ -487,15 +499,18 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  margin-top: 24px;
+  margin-top: 20px;
   justify-content: space-between;
 }
 .nodes > span {
   border: 1px solid #80917b66;
   border-radius: 4px;
-  font-size: 7px;
-  padding: 8px 6px;
+  font-size: 11px;
+  padding: 7px 5px;
   background: #b0dd9410;
+  text-align: center;
+  line-height: 1.4;
+  min-width: 0;
 }
 .nodes > i {
   font-style: normal;
@@ -522,36 +537,43 @@
 }
 .diagram > small {
   font-family: monospace;
-  font-size: 6px;
-  letter-spacing: 1px;
+  font-size: 10px;
+  letter-spacing: .4px;
   color: #a0b0a3;
+  display: block;
+  line-height: 1.5;
 }
 .projectBody {
-  padding: 23px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 .projectEyebrow {
   display: flex;
   justify-content: space-between;
-  font-size: 8px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 1px;
   color: var(--lime) !important;
   margin-bottom: 12px !important;
+  gap: 12px;
+  align-items: flex-start;
 }
 .project h3 {
-  font-size: 21px;
+  font-size: 23px;
   line-height: 1.4;
   font-weight: 500;
   letter-spacing: -0.5px;
-  min-height: 88px;
+  min-height: 0;
 }
 .projectRole {
-  font-size: 10px !important;
+  font-size: 13px !important;
   margin: 12px 0 !important;
   color: #c5cec6 !important;
 }
 .projectBody > p {
-  font-size: 12px;
+  font-size: 15px;
   line-height: 1.8;
 }
 .tags {
@@ -565,12 +587,13 @@
   border-radius: 4px;
   color: #b9c7bb;
   padding: 3px 7px;
-  font-size: 9px;
+  font-size: 12px;
 }
 .details {
   border-top: 1px solid var(--line);
-  font-size: 12px;
-  margin-top: 23px;
+  font-size: 14px;
+  margin-top: auto;
+  padding-top: 18px;
 }
 .details summary {
   padding-top: 15px;
@@ -591,7 +614,7 @@
   transform: rotate(45deg);
 }
 .details h4 {
-  font-size: 12px;
+  font-size: 15px;
   margin: 18px 0 8px;
 }
 .details ul {
@@ -602,7 +625,7 @@
   margin: 8px 0;
 }
 .confidential {
-  font-size: 10px;
+  font-size: 12px;
   margin-top: 20px !important;
 }
 .toolnest {
@@ -628,7 +651,7 @@
   margin-bottom: 20px;
 }
 .toolnest .label {
-  font-size: 8px !important;
+  font-size: 11px !important;
   margin-bottom: 12px !important;
 }
 .toolnest h3 {
@@ -640,7 +663,7 @@
   color: var(--lime);
 }
 .toolnest p {
-  font-size: 13px;
+  font-size: 15px;
   max-width: 400px;
   margin: 10px 0 22px;
 }
@@ -661,7 +684,7 @@
   background: #30442b;
 }
 .toolGrid > a > span {
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 2px;
   color: var(--lime);
   display: flex;
@@ -673,7 +696,7 @@
   line-height: 1;
 }
 .toolGrid strong {
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 500;
 }
 .career {
@@ -683,7 +706,7 @@
 }
 .careerIntro > p {
   margin-top: 23px;
-  font-size: 13px;
+  font-size: 16px;
 }
 .education {
   margin-top: 42px;
@@ -693,7 +716,7 @@
   background: #1a241a;
 }
 .education > span {
-  font-size: 8px;
+  font-size: 11px;
   letter-spacing: 1.7px;
   color: var(--lime);
 }
@@ -704,11 +727,11 @@
   margin-top: 14px;
 }
 .education p {
-  font-size: 12px;
+  font-size: 15px;
   margin-top: 14px;
 }
 .education small {
-  font-size: 10px;
+  font-size: 12px;
   color: #b9caae;
 }
 .timeline {
@@ -734,14 +757,18 @@
   background: #111815;
 }
 .jobDate {
-  font-size: 10px;
+  font-size: 13px;
   color: #b6c1b6 !important;
   margin-bottom: 10px !important;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
 }
 .jobDate > span {
-  font-size: 7px;
+  font-size: 10px;
   color: var(--lime);
-  margin-left: 15px;
+  margin-left: 0;
   padding: 4px 7px;
   border: 1px solid #445333;
   border-radius: 3px;
@@ -752,13 +779,13 @@
   letter-spacing: -0.4px;
 }
 .timeline h4 {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--lime);
   font-weight: 400;
   margin: 4px 0 12px;
 }
 .timeline article > p:not(.jobDate) {
-  font-size: 12px;
+  font-size: 15px;
 }
 .timeline .tags {
   margin-bottom: 0;
@@ -780,7 +807,7 @@
 .stackNumber {
   font-family: monospace;
   color: #b1c89d;
-  font-size: 10px;
+  font-size: 12px;
 }
 .stackGrid h3 {
   font-size: 18px;
@@ -788,7 +815,7 @@
   margin: 12px 0;
 }
 .stackGrid p {
-  font-size: 12px;
+  font-size: 15px;
   line-height: 2;
 }
 .githubPanel {
@@ -802,7 +829,7 @@
   margin-bottom: 22px;
 }
 .githubPanel p:not(.label) {
-  font-size: 13px;
+  font-size: 16px;
   max-width: 370px;
   margin: 22px 0;
 }
@@ -811,7 +838,8 @@
   border-radius: 9px;
   overflow: hidden;
   background: #17201a;
-  transform: rotate(-2deg);
+  transform: none;
+  min-width: 0;
 }
 .codeTitle {
   display: flex;
@@ -819,7 +847,7 @@
   padding: 15px 22px;
   border-bottom: 1px solid #354137;
   font-family: monospace;
-  font-size: 10px;
+  font-size: 12px;
   color: #b6c4b4;
 }
 .codeTitle > span:last-child {
@@ -828,7 +856,7 @@
 .codeCard pre {
   font-family: monospace;
   padding: 25px;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 2;
   overflow: auto;
   margin: 0;
@@ -848,7 +876,7 @@
   padding: 16px 22px;
   border-top: 1px solid #354137;
   font-family: monospace;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--lime);
 }
 .contact {
@@ -878,7 +906,7 @@
   margin-top: 35px;
 }
 .contactBottom p {
-  font-size: 12px;
+  font-size: 15px;
 }
 .contactEmail {
   display: flex;
@@ -900,12 +928,13 @@
   font-size: 30px;
 }
 .footer > p {
-  font-size: 10px;
+  font-size: 12px;
 }
 .footer > div {
   display: flex;
   gap: 23px;
-  font-size: 10px;
+  font-size: 12px;
+  flex-wrap: wrap;
 }
 .footer a:hover {
   color: var(--lime);
@@ -974,20 +1003,20 @@
   }
   .nodes > span {
     padding: 7px 4px;
-    font-size: 6px;
+    font-size: 11px;
   }
   .githubPanel {
     gap: 45px;
   }
   .heroMeta {
-    font-size: 7px;
+    font-size: 11px;
     gap: 8px;
   }
   .toolnest {
     gap: 35px;
   }
 }
-@media (max-width: 800px) {
+@media (max-width: 980px) {
   .navInner {
     width: calc(100% - 40px);
     height: 72px;
@@ -1011,6 +1040,11 @@
     padding: 22px;
     border-bottom: 1px solid #46543e;
     align-items: stretch;
+    /* Keep every link reachable on landscape phones and zoomed screens. */
+    max-height: calc(100vh - 72px);
+    max-height: calc(100dvh - 72px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
   .navOpen {
     display: flex;
@@ -1019,6 +1053,7 @@
   }
   .nav > a {
     padding: 12px;
+    flex-shrink: 0;
   }
   .navGithub {
     margin: 10px 0 0;
@@ -1052,10 +1087,10 @@
     height: 340px;
   }
   .experienceBadge {
-    left: -5px;
+    left: 0;
   }
   .heroMeta {
-    font-size: 8px;
+    font-size: 11px;
     gap: 12px;
   }
   .companyStrip {
@@ -1094,7 +1129,7 @@
     grid-template-columns: 1fr 1.2fr;
   }
   .projectVisual {
-    height: 100%;
+    height: auto;
     min-height: 290px;
     padding-top: 35px;
   }
@@ -1102,7 +1137,7 @@
     min-height: 0;
   }
   .diagram {
-    min-height: 225px;
+    min-height: 0;
   }
   .nodes {
     margin-top: 30px;
@@ -1163,11 +1198,11 @@
 }
 @media (max-width: 480px) {
   .availability {
-    font-size: 9px;
+    font-size: 12px;
     gap: 6px;
   }
   .intro {
-    font-size: 9px;
+    font-size: 12px;
     letter-spacing: 1.5px;
   }
   .hero h1 {
@@ -1176,7 +1211,7 @@
   }
   .heroMeta {
     flex-wrap: wrap;
-    font-size: 7px;
+    font-size: 11px;
     gap: 8px;
   }
   .actions {
@@ -1213,7 +1248,7 @@
     display: block;
   }
   .projectVisual {
-    height: 240px;
+    height: auto;
     min-height: 0;
     padding: 20px 20px 0;
   }
@@ -1221,7 +1256,7 @@
     min-height: 0;
   }
   .nodes > span {
-    font-size: 8px;
+    font-size: 11px;
     padding: 8px;
   }
   .visualLines {
@@ -1242,7 +1277,7 @@
     font-size: 16px;
   }
   .stackGrid p {
-    font-size: 11px;
+    font-size: 15px;
   }
   .contact h2 {
     font-size: 38px;
@@ -1256,14 +1291,14 @@
     gap: 10px;
   }
   .codeCard pre {
-    font-size: 10px;
+    font-size: 13px;
     padding: 18px;
   }
   .codeCard > a {
-    font-size: 10px;
+    font-size: 12px;
   }
   .jobDate > span {
-    font-size: 6px;
+    font-size: 10px;
     margin-left: 8px;
   }
   .site h2 {
@@ -1276,4 +1311,16 @@
     transition: none !important;
     scroll-behavior: auto !important;
   }
+}
+/* Stack project content before the side-by-side layout becomes cramped. */
+@media (max-width: 680px) {
+  .project { display: flex; }
+  .projectVisual { min-height: 0; }
+  .heroMeta { line-height: 1.8; }
+  .availability { flex-wrap: wrap; }
+  .portraitArea { max-width: 360px; padding-left: 0; }
+  .stackGrid { grid-template-columns: 1fr; }
+  .contactEmail { overflow-wrap: anywhere; min-width: 0; }
+  .toolGrid { gap: 10px; }
+  .toolGrid > a { padding: 16px 12px; }
 }
