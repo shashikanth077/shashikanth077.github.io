@@ -29,7 +29,7 @@ const Seo = ({ title, description, path, noindex = false }) => {
     <Head>
       <title>{title}</title>
       <meta name="description" content={description} />
-      <meta name="theme-color" content="#6366f1" />
+      <meta name="theme-color" content="#111815" />
       <meta
         name="robots"
         content={noindex ? "noindex, follow" : "index, follow"}
