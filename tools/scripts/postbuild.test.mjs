@@ -65,6 +65,7 @@ const CHECKS = [
 const base = await readFile(INDEX, "utf8");
 const html = buildToolHtml(base, route);
 const resourceHtml = buildResourceHtml(base);
+const stackHtml = buildResourceHtml(base, { slug: "nodejs", name: "Node.js", blurb: "Runtime & APIs." });
 
 let failed = 0;
 for (const [label, check] of CHECKS) {
@@ -80,7 +81,9 @@ for (const [label, check] of CHECKS) {
 }
 
 for (const [label, ok] of [
-  ["resource title", /<title>Resource Pool/.test(resourceHtml)],
+  ["resource title", /<title>Learning Portal/.test(resourceHtml)],
+  ["stack title", /<title>Node\.js Learning Portal/.test(stackHtml)],
+  ["stack canonical", stackHtml.includes('<link rel="canonical" href="https://shashikant-hr.me/tools/resources/nodejs" />')],
   ["resource canonical", resourceHtml.includes('<link rel="canonical" href="https://shashikant-hr.me/tools/resources" />')],
   ["one resource description", count(resourceHtml, /name="description"/g) === 1],
 ]) {

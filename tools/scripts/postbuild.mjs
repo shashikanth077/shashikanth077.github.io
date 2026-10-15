@@ -114,10 +114,14 @@ export function buildToolHtml(baseHtml, route) {
   return html;
 }
 
-export function buildResourceHtml(baseHtml) {
-  const title = "Resource Pool — Learning Guides & Interview Prep | ToolNest";
-  const description = "Explore technology learning paths and practice interview questions across frontend, backend, data, cloud, and system design.";
-  const canonical = `${SITE_ORIGIN}/tools/resources`;
+export function buildResourceHtml(baseHtml, stack) {
+  const title = stack
+    ? `${stack.name} Learning Portal — Concepts & Interview Prep | ToolNest`
+    : "Learning Portal — Concepts & Interview Prep by Tech Stack | ToolNest";
+  const description = stack
+    ? `${stack.name} learning portal: ${stack.blurb}`
+    : "Pick a tech stack and learn it properly: concept library with production and interview angles, drills, code labs, question bank and mock interviews.";
+  const canonical = `${SITE_ORIGIN}/tools/resources${stack ? `/${stack.slug}` : ""}`;
   let html = baseHtml.replace(/<title>[\s\S]*?<\/title>/, `<title>${escapeAttr(title)}</title>`);
   html = upsert(html, /<meta\s+name="description"[\s\S]*?\/?>/, `<meta name="description" content="${escapeAttr(description)}" />`);
   html = upsert(html, /<link\s+rel="canonical"[\s\S]*?\/?>/, `<link rel="canonical" href="${canonical}" />`);
@@ -127,14 +131,14 @@ export function buildResourceHtml(baseHtml) {
   return html;
 }
 
-async function mergeSitemap(routes) {
+async function mergeSitemap(routes, stacks) {
   if (!existsSync(SITEMAP)) {
     console.warn("  · out/sitemap.xml not found — skipping sitemap merge.");
     return;
   }
 
   const xml = await readFile(SITEMAP, "utf8");
-  const urls = [`${SITE_ORIGIN}/tools/`, `${SITE_ORIGIN}/tools/resources`, ...routes.map((r) => `${SITE_ORIGIN}/tools/${r.slug}`)];
+  const urls = [`${SITE_ORIGIN}/tools/`, `${SITE_ORIGIN}/tools/resources`, ...stacks.map((s) => `${SITE_ORIGIN}/tools/resources/${s.slug}`), ...routes.map((r) => `${SITE_ORIGIN}/tools/${r.slug}`)];
   const allowed = new Set(urls);
   // Remove stale tool URLs (including retired tools) without touching portfolio entries.
   const cleaned = xml.replace(/<url>[\s\S]*?<\/url>/g, (entry) => {
@@ -187,6 +191,7 @@ async function main() {
 
   // routes.json is a build artefact, not something to serve.
   await rm(join(OUT_TOOLS, "routes.json"), { force: true });
+  await rm(join(OUT_TOOLS, "stacks.json"), { force: true });
 
   const baseHtml = await readFile(join(OUT_TOOLS, "index.html"), "utf8");
 
@@ -198,12 +203,22 @@ async function main() {
   const resourcesDir = join(OUT_TOOLS, "resources");
   await mkdir(resourcesDir, { recursive: true });
   await writeFile(join(resourcesDir, "index.html"), buildResourceHtml(baseHtml), "utf8");
+
+  // One prerendered page per live learning stack (GitHub Pages has no SPA fallback).
+  const stacksFile = join(SHELL_DIST, "stacks.json");
+  if (!existsSync(stacksFile)) fail(`${stacksFile} missing — the shell's emit-stacks plugin did not run.`);
+  const stacks = JSON.parse(await readFile(stacksFile, "utf8"));
+  for (const stack of stacks) {
+    const dir = join(resourcesDir, stack.slug);
+    await mkdir(dir, { recursive: true });
+    await writeFile(join(dir, "index.html"), buildResourceHtml(baseHtml, stack), "utf8");
+  }
   console.log(
     `  · prerendered ${routes.length} tool pages` +
       (hiddenCount > 0 ? ` (${hiddenCount} hidden route${hiddenCount === 1 ? "" : "s"} skipped)` : ""),
   );
 
-  await mergeSitemap(routes);
+  await mergeSitemap(routes, stacks);
 
   const top = (await readdir(OUT_TOOLS)).filter((n) => !n.startsWith("."));
   console.log(`  · out/tools contains ${top.length} entries\n`);

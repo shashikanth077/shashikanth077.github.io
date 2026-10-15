@@ -1,86 +1,75 @@
-import { useEffect, useMemo, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
-import { guides } from "./resource-guides.js";
-
-const categories = ["All skills", "Frontend", "Backend", "Data", "Cloud", "Foundations"] as const;
+import { useEffect } from "react";
+import { Link } from "react-router-dom";
+import { stacks } from "../learn/catalog.js";
 
 export default function Resources() {
-  const [params, setParams] = useSearchParams();
-  const [query, setQuery] = useState("");
-  const [category, setCategory] = useState<string>("All skills");
-  const selected = guides.find((guide) => guide.slug === params.get("guide"));
-  const filtered = useMemo(() => {
-    const term = query.trim().toLowerCase();
-    return guides.filter((guide) =>
-      (category === "All skills" || guide.category === category) &&
-      (!term || `${guide.title} ${guide.summary} ${guide.category} ${guide.topics.map((topic) => topic.title).join(" ")}`.toLowerCase().includes(term)),
-    );
-  }, [query, category]);
-
   useEffect(() => {
-    document.title = selected ? `${selected.title} | ToolNest Resources` : "Resource pool | ToolNest";
-    const description = selected?.summary ?? "Practical technology learning guides and interview questions for developers.";
-    document.querySelector<HTMLMetaElement>('meta[name="description"]')?.setAttribute("content", description);
+    document.title = "Learning Portal — Concepts & Interview Prep by Tech Stack | ToolNest";
+    document.querySelector<HTMLMetaElement>('meta[name="description"]')?.setAttribute(
+      "content",
+      "Pick a tech stack and learn it properly: concept library with production and interview angles, drills, code labs, question bank and mock interviews.",
+    );
     document.querySelector<HTMLLinkElement>('link[rel="canonical"]')?.setAttribute("href", "https://shashikant-hr.me/tools/resources");
-  }, [selected]);
+  }, []);
 
-  function chooseGuide(slug: string | null) {
-    setParams(slug ? { guide: slug } : {});
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
+  const live = stacks.filter((s) => s.load);
+  const soon = stacks.filter((s) => !s.load);
 
   return (
-    <div className="resources">
-      <div className="resources__crumb"><Link to="/">Tools</Link><span>/</span> Resource pool</div>
-      {selected ? (
-        <>
-          <button className="resources__back" type="button" onClick={() => chooseGuide(null)}>← All guides</button>
-          <section className="resources__hero resources__hero--guide">
-            <span className="resources__eyebrow">SKILL GUIDE / {selected.category.toUpperCase()}</span>
-            <h1>{selected.title}</h1>
-            <p>{selected.summary}</p>
-            <div className="resources__heroMeta"><span>{selected.level}</span><span>{selected.topics.length} learning steps</span><span>{selected.questions.length} interview questions</span></div>
-          </section>
-          <div className="resources__detailGrid">
-            <section className="resources__panel">
-              <span className="resources__eyebrow">LEARNING PATH</span>
-              <h2>What to learn</h2>
-              <ol className="resources__steps">
-                {selected.topics.map((topic) => <li key={topic.title}><strong>{topic.title}</strong><p>{topic.detail}</p></li>)}
-              </ol>
-            </section>
-            <aside className="resources__panel resources__panel--aside">
-              <span className="resources__eyebrow">YOUR GOAL</span>
-              <h2>After this guide</h2>
-              <p>{selected.outcome}</p>
-              <a href="#interview" className="resources__textLink">Practice interview questions →</a>
-            </aside>
+    <div className="lp">
+      <div className="lp-crumb"><Link to="/">Tools</Link><span>/</span>Learning portal</div>
+
+      <section className="lp-hero">
+        <span className="lp-eyebrow">TOOLNEST / LEARNING PORTAL</span>
+        <h1>Pick a stack.<br /><em>Learn it, then prove it.</em></h1>
+        <p>Every stack has the same path: a concept library that explains the idea, shows it in production and shows how interviewers probe it — then drills, code labs and a full interview kit.</p>
+        <ol className="lp-hero__steps">
+          <li><b>1</b> Learn concepts</li>
+          <li><b>2</b> Practice with drills</li>
+          <li><b>3</b> Prepare for interviews</li>
+        </ol>
+      </section>
+
+      <section>
+        <div className="lp-head"><div><span className="lp-eyebrow">AVAILABLE NOW</span><h2>Choose your tech stack</h2></div></div>
+        <div className="lp-stacks">
+          {live.map((s) => (
+            <Link key={s.slug} to={`/resources/${s.slug}`} className="lp-stackcard" style={{ ["--lp-accent" as string]: s.accent }}>
+              <span className="lp-stackcard__icon" aria-hidden="true">{s.icon}</span>
+              <h3>{s.name}</h3>
+              <p className="lp-stackcard__tag">{s.tagline}</p>
+              <p>{s.blurb}</p>
+              {s.stats && (
+                <ul className="lp-stackcard__stats">
+                  <li><b>{s.stats.concepts}</b> concepts</li>
+                  <li><b>{s.stats.questions}</b> questions</li>
+                  <li><b>{s.stats.drills}</b> drills</li>
+                  <li><b>{s.stats.codeLab}</b> code labs</li>
+                </ul>
+              )}
+              <small>{s.audience}</small>
+              <span className="lp-stackcard__cta">Open learning portal →</span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {soon.length > 0 && (
+        <section>
+          <div className="lp-head"><div><span className="lp-eyebrow">ON THE WAY</span><h2>Coming soon</h2></div></div>
+          <div className="lp-stacks lp-stacks--soon">
+            {soon.map((s) => (
+              <div key={s.slug} className="lp-stackcard is-soon" style={{ ["--lp-accent" as string]: s.accent }}>
+                <span className="lp-stackcard__icon" aria-hidden="true">{s.icon}</span>
+                <h3>{s.name} <span className="lp-badge">soon</span></h3>
+                <p>{s.blurb}</p>
+              </div>
+            ))}
           </div>
-          <section className="resources__panel" id="interview">
-            <span className="resources__eyebrow">INTERVIEW PREP</span>
-            <h2>Questions to practice</h2>
-            <div className="resources__qa">
-              {selected.questions.map((item) => <details key={item.question}><summary>{item.question}</summary><p>{item.answer}</p></details>)}
-            </div>
-          </section>
-        </>
-      ) : (
-        <>
-          <section className="resources__hero">
-            <span className="resources__eyebrow">TOOLNEST / RESOURCE POOL</span>
-            <h1>Learn a skill.<br /><em>Walk into the interview ready.</em></h1>
-            <p>Focused guides for building your knowledge, reviewing key concepts, and practicing the questions that matter.</p>
-            <div className="resources__heroMeta"><span>{guides.length} starter guides</span><span>Learning paths</span><span>Interview practice</span></div>
-          </section>
-          <div className="resources__sectionHead"><div><span className="resources__eyebrow">EXPLORE THE LIBRARY</span><h2>Choose your next skill</h2></div><p>Start with a topic. Follow the learning path, then test yourself.</p></div>
-          <div className="resources__controls">
-            <label className="resources__search"><span aria-hidden="true">⌕</span><input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search skills or topics" aria-label="Search resource guides" /></label>
-            <div className="resources__filters" aria-label="Filter guides by category">{categories.map((item) => <button key={item} type="button" className={category === item ? "is-active" : ""} onClick={() => setCategory(item)} aria-pressed={category === item}>{item}</button>)}</div>
-          </div>
-          <p className="resources__count" aria-live="polite">Showing {filtered.length} {filtered.length === 1 ? "guide" : "guides"}</p>
-          {filtered.length ? <div className="resources__grid">{filtered.map((guide) => <button className="resources__card" type="button" key={guide.slug} onClick={() => chooseGuide(guide.slug)}><span className="resources__cardTop"><span className="resources__cardIcon" aria-hidden="true">{guide.icon}</span><span className="resources__cardArrow" aria-hidden="true">↗</span></span><span className="resources__cardTags"><span>{guide.category}</span><span>{guide.level}</span></span><strong>{guide.title}</strong><span className="resources__cardSummary">{guide.summary}</span><span className="resources__cardFoot">{guide.topics.length} learning steps <span>·</span> {guide.questions.length} questions</span></button>)}</div> : <div className="resources__empty">No guides match your search. Try another skill or category.</div>}
-        </>
+        </section>
       )}
+
+      <p className="lp-muted lp-note">Your progress is saved in this browser only. Nothing is uploaded — same promise as every other ToolNest tool.</p>
     </div>
   );
 }

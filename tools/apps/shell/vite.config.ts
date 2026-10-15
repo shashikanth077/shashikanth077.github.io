@@ -4,6 +4,7 @@ import { federation } from "@module-federation/vite";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 import { toolRoutes } from "../../libs/tools-core/src/routes";
+import { stacks } from "./src/learn/catalog";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const lib = (name: string) => resolve(here, `../../libs/${name}/src`);
@@ -26,6 +27,18 @@ function emitRoutesJson(): Plugin {
         fileName: "routes.json",
         source: JSON.stringify(toolRoutes, null, 2),
       });
+    },
+  };
+}
+
+/** Live learning stacks for the prerender + sitemap step (same idea as routes.json). */
+function emitStacksJson(): Plugin {
+  return {
+    name: "devtools:emit-stacks-json",
+    apply: "build",
+    generateBundle() {
+      const live = stacks.filter((s) => s.load).map(({ slug, name, tagline, blurb }) => ({ slug, name, tagline, blurb }));
+      this.emitFile({ type: "asset", fileName: "stacks.json", source: JSON.stringify(live, null, 2) });
     },
   };
 }
@@ -68,6 +81,7 @@ export default defineConfig(({ command }) => {
     plugins: [
       react(),
       emitRoutesJson(),
+      emitStacksJson(),
       federation({
         name: "shell",
         // Automatic type-sharing is off deliberately. It expects a tsconfig.json

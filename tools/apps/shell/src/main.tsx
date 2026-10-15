@@ -11,6 +11,7 @@ import "@devtools/ui/tokens.css";
 import "@devtools/ui/components.css";
 import "@devtools/ui/files.css";
 import "./shell.css";
+import "./learn/learn.css";
 
 /**
  * TanStack Query is wired but genuinely idle in this slice — the platform has

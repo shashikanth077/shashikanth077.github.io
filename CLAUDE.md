@@ -40,6 +40,12 @@ tools/
 - **Health math**: `libs/tools-core/src/health.ts` — pure functions for BMI, BMR, TDEE, body fat (Navy), LBM, ideal weight, WHR, WHtR, BSA
 - **Privacy badge**: All tools show "runs in your browser" — this is true by construction (no backend)
 
+### Learning portal (`/resources`)
+- Shell pages `Resources.tsx` (stack picker) and `ResourceStack.tsx` (workspace); UI in `apps/shell/src/learn/` (`lp-` CSS prefix in `learn.css`)
+- Content is JSON per stack in `learn/content/`, lazy-loaded; progress is localStorage only (`toolnest-learn:<slug>`)
+- **Add a stack**: `node scripts/import-handbook.mjs <handbook.html> <slug>` (from `tools/`), then add/enable the entry in `learn/catalog.ts` (`stats` + `load`). Prerender + sitemap pick it up via `stacks.json`
+- Importer expects the handbook's `/* ===== DATA` … `/* ===== ENGINE` JS arrays; missing optional sections are simply hidden
+
 ### Adding a new tool
 1. Define the route in `libs/tools-core/src/routes.ts` (slug, name, toolkit, category, remote)
 2. Create the component in the appropriate remote's `src/tools/` directory
