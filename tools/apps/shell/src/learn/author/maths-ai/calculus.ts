@@ -93,9 +93,9 @@ def d(f, x, h=1e-6):
 print(round(d(lambda x: x**2 * (x + 1), 2), 3))
 print(round(d(lambda x: x / (x + 1), 2), 4))`,
     o: `16.0\n0.1111`,
-    v: compare("Each rule has a shape to remember.", ["Rule", "Worked example", "Value at x = 2"], [
-      ["Product (u·v)′", "u′v + u v′  →  x²(x+1): 2x(x+1) + x² = 3x² + 2x", "16"],
-      ["Quotient (u/v)′", "(u′v − u v′)/v²  →  x/(x+1): 1/(x+1)²", "1/9 ≈ 0.111"],
+    v: compare("Each rule has a shape to remember.", ["Worked example", "Value at x = 2"], [
+      ["Product (u·v)′ = u′v + u v′", "x²(x+1): 2x(x+1) + x² = 3x² + 2x", "16"],
+      ["Quotient (u/v)′ = (u′v − u v′)/v²", "x/(x+1): 1/(x+1)²", "1/9 ≈ 0.111"],
     ]),
   },
   {
@@ -204,7 +204,7 @@ n = 1000
 b = 2
 area = sum((i * b / n) ** 2 * (b / n) for i in range(n))
 print(round(area, 3), round(b ** 3 / 3, 3))`,
-    o: `2.665 2.667`,
+    o: `2.663 2.667`,
     v: plot("Sweep the right edge b and the shaded area grows as b³/3.", { x: [0, 3.5], y: [0, 10], labels: ["x", "y = x²"],
       params: [par("b", "right edge b", 0, 3, 0.1, 2)],
       readout: ["area from 0 to {b} = {b}³ / 3 = {b^3/3:3}"],
@@ -325,7 +325,7 @@ def run(lr, steps=8):
 
 for lr in [0.05, 0.4, 1.0, 1.1]:
     print(lr, run(lr))`,
-    o: `0.05 1.708\n0.4 3.0\n1.0 0.0\n1.1 -9.899`,
+    o: `0.05 1.709\n0.4 3.0\n1.0 0.0\n1.1 -9.899`,
     v: plot("Eight steps from w = 0 for the learning rate you choose.", { x: [-3, 9], y: [0, 40], labels: ["weight w", "loss (w − 3)²"],
       params: [par("eta", "learning rate η", 0.01, 1.2, 0.01, 0.1)],
       defs: [["w0", "0"], ...sigDefs("w", (k) => `w${k - 1}-eta*2*(w${k - 1}-3)`, 8)],
@@ -357,7 +357,7 @@ def descend(x, lr=0.05, steps=200):
     return round(x, 3)
 
 print(descend(1.5), descend(-1.5))`,
-    o: `0.931 -1.067`,
+    o: `0.93 -1.057`,
     v: plot("Same landscape, two starting points, two different valleys.", { x: [-2, 2], y: [-2.5, 4], labels: ["weight x", "loss f(x)"],
       params: [par("x0", "starting point", -2, 2, 0.05, 1.5)],
       defs: [["x_0", "x0"], ...sigDefs("x_", (k) => `x_${k - 1}-0.05*(4*x_${k - 1}^3-4*x_${k - 1}+0.5)`, 50)],
@@ -365,7 +365,8 @@ print(descend(1.5), descend(-1.5))`,
       steps: [
         ["Starting at 1.5 the ball rolls into the nearer, shallower valley (a local minimum).", { x0: 1.5 }],
         ["Starting at −1.5 it finds the deeper valley (the global minimum).", { x0: -1.5 }],
-        ["Starting near the hump at 0.5, a small push decides which valley it falls into.", { x0: 0.5 }],
+        ["Starting at 0.5, just right of the hump near 0.13, it rolls right into the shallow valley.", { x0: 0.5 }],
+        ["Starting at 0.1, just left of the hump, the same rule rolls it left into the deep valley.", { x0: 0.1 }],
       ] }, [
       curve("x^4-2*x^2+0.5*x", { c: "info" }),
       pt("x0", "x0^4-2*x0^2+0.5*x0", { c: "warn", label: "start" }),
@@ -405,10 +406,10 @@ def run(lr, beta, steps=10):
         w -= lr * v
     return round((w - 3) ** 2, 4)
 
-print(run(0.05, 0.0), run(0.05, 0.9))`,
-    o: `1.0638 0.0259`,
+print(run(0.03, 0.0), run(0.03, 0.7))`,
+    o: `2.611 0.0149`,
     v: plot("Same learning rate: momentum (green) reaches a low loss much sooner than plain descent (orange).", { x: [0, 10], y: [0, 9.5], labels: ["step", "loss (w − 3)²"],
-      params: [par("lr", "learning rate", 0.01, 0.3, 0.01, 0.05), par("beta", "momentum β", 0, 0.95, 0.05, 0.9)],
+      params: [par("lr", "learning rate", 0.01, 0.3, 0.01, 0.03), par("beta", "momentum β", 0, 0.95, 0.05, 0.7)],
       defs: [
         ["pw0", "0"], ["mw0", "0"], ["mv0", "0"],
         ...Array.from({ length: 10 }, (_, i): [string, string][] => {
@@ -420,7 +421,7 @@ print(run(0.05, 0.0), run(0.05, 0.9))`,
       steps: [
         ["β = 0: momentum switched off — it is plain gradient descent.", { beta: 0 }],
         ["β = 0.5: a little memory — already faster.", { beta: 0.5 }],
-        ["β = 0.9: the velocity builds and the loss drops far quicker.", { beta: 0.9 }],
+        ["β = 0.7: the velocity builds and the loss drops far quicker. (Push β too high and it overshoots and oscillates — try 0.95.)", { beta: 0.7 }],
       ] }, [
       ...Array.from({ length: 10 }, (_, k) => seg(String(k), `(pw${k}-3)^2`, String(k + 1), `(pw${k + 1}-3)^2`, { c: "warn" })),
       ...Array.from({ length: 10 }, (_, k) => seg(String(k), `(mw${k}-3)^2`, String(k + 1), `(mw${k + 1}-3)^2`, { c: "good" })),

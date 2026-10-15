@@ -76,8 +76,8 @@ export default function AiAtlas() {
                               <ul className="lp-track__stats">
                                 <li><b>{s.stats.concepts}</b> concepts</li>
                                 <li><b>{s.stats.questions}</b> questions</li>
-                                <li><b>{s.stats.drills}</b> predict-the-output</li>
-                                <li><b>{s.stats.codeLab}</b> exercises</li>
+                                <li><b>{s.stats.drills}</b> {(s.labels?.drillsTab ?? "drills").toLowerCase()}</li>
+                                <li><b>{s.stats.codeLab}</b> {(s.labels?.codeTab ?? "exercises").toLowerCase()}</li>
                               </ul>
                             )}
                             <span className="lp-track__cta">Start learning →</span>

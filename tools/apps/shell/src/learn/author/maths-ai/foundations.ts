@@ -1,4 +1,4 @@
-import { L, arrow, bars, cells, circle, compare, curve, flow, hline, layers, line, matmul, par, plot, poly, pt, seg, trace, txt, vline } from "../../visuals/kit.js";
+import { L, arrow, bars, cells, circle, compare, curve, flow, hline, layers, line, matmul, par, plot, poly, pt, seg, trace, vline } from "../../visuals/kit.js";
 import { py, type ConceptDef } from "../build.js";
 
 /* ------------------------------------------------------------------ */
@@ -508,8 +508,9 @@ print(At)`,
     o: `[[1, 4], [2, 5], [3, 6]]`,
     v: cells("Row i of A becomes column i of Aᵀ.", [L("A[0]", ["1", "2", "3"], "pos"), L("A[1]", ["4", "5", "6"], "pos")], [
       ["A is (2 × 3): two rows, three columns."],
-      ["Row 0 of A, [1, 2, 3], becomes column 0 of Aᵀ.", [[0, 0, 2]], [L("Aᵀ[0]", ["1", "4"], "pos"), L("Aᵀ[1]", ["2", "5"], "pos"), L("Aᵀ[2]", ["3", "6"], "pos")]],
-      ["Row 1 of A, [4, 5, 6], becomes column 1 — Aᵀ is (3 × 2).", [[0, 1, 1], [1, 1, 1], [2, 1, 1]]],
+      ["Row 0 of A, [1, 2, 3], is about to become column 0.", [[0, 0, 2]]],
+      ["Aᵀ is (3 × 2): column 0 now holds 1, 2, 3 — the old row 0.", [[0, 0, 0], [1, 0, 0], [2, 0, 0]], [L("Aᵀ[0]", ["1", "4"], "pos"), L("Aᵀ[1]", ["2", "5"], "pos"), L("Aᵀ[2]", ["3", "6"], "pos")]],
+      ["And column 1 holds the old row 1: 4, 5, 6.", [[0, 1, 1], [1, 1, 1], [2, 1, 1]]],
     ]),
   },
   {
@@ -530,7 +531,7 @@ print(q)`,
       steps: [
         ["The identity matrix changes nothing: the square stays put.", { a: 1, b: 0, c: 0, d: 1 }],
         ["Scale x by 2: the first column becomes (2, 0), so the square stretches sideways.", { a: 2, b: 0, c: 0, d: 1 }],
-        ["Rotate 45°: both unit vectors turn, lengths unchanged (determinant 1).", { a: 0.71, b: -0.71, c: 0.71, d: 0.71 }],
+        ["Rotate 45°: both unit vectors turn, lengths unchanged (determinant 1).", { a: 0.7071, b: -0.7071, c: 0.7071, d: 0.7071 }],
         ["Shear: (0, 1) is pushed to (1, 1) — the square leans over.", { a: 1, b: 1, c: 0, d: 1 }],
       ] }, [
       poly([["0", "0"], ["1", "0"], ["1", "1"], ["0", "1"]], { c: "muted", dash: true }),

@@ -3,6 +3,7 @@ import type { VisualMap } from "./visuals/types.js";
 import nodeStats from "./content/nodejs.stats.json";
 import redisStats from "./content/redis.stats.json";
 import pythonAiStats from "./content/python-ai.stats.json";
+import mathsAiStats from "./content/maths-ai.stats.json";
 
 /**
  * Every learning stack the portal knows about. Two sections share one workspace:
@@ -140,7 +141,35 @@ export const stacks: Stack[] = [
     load: () => import("./content/python-ai.js").then((m) => m.content),
     loadVisuals: () => import("./content/python-ai.js").then((m) => m.visuals),
   },
-  { slug: "maths-ai", name: "Maths for AI", section: "ai", stage: "Foundations", icon: "∑", accent: "#c4572f", tagline: "Linear algebra, calculus, probability", blurb: "The maths behind every model — vectors, matrices, derivatives, gradients, probability and statistics, with pictures instead of proofs.", audience: "Anyone who wants to understand, not just call, ML libraries", planned: ["Vectors and matrices", "Derivatives and gradients", "Probability", "Statistics"] },
+  {
+    slug: "maths-ai",
+    name: "Maths for AI",
+    section: "ai",
+    stage: "Foundations",
+    icon: "∑",
+    accent: "#c4572f",
+    tagline: "From slope to gradient descent — watch every formula move",
+    blurb:
+      "Lines and slope, vectors, matrices, statistics, probability, derivatives and the chain rule — each idea as an interactive graph you can drag, tied to how it trains a neural network.",
+    audience: "Anyone who wants to understand ML, not just call its libraries — no advanced maths assumed",
+    labels: {
+      production: "Where it shows up in AI",
+      interview: "Interview angle",
+      drillsTab: "Work it out",
+      drillsIntro: "Short calculations that interviews love. Work each one out first, then open the step-by-step solution.",
+      drillQuestion: "What is the answer?",
+      drillPath: "Step by step",
+      drillFix: "Why",
+      drillPrevent: "Watch out",
+      drillInterview: "Remember",
+      drillDone: "✓ solved",
+      codeTab: "Practice problems",
+      codeIntro: "Build each idea in code. Try it yourself first, then compare with the worked solution.",
+    },
+    stats: mathsAiStats,
+    load: () => import("./content/maths-ai.js").then((m) => m.content),
+    loadVisuals: () => import("./content/maths-ai.js").then((m) => m.visuals),
+  },
   { slug: "numpy-pandas", name: "NumPy and Pandas", section: "ai", stage: "Foundations", icon: "▦", accent: "#2b9a8c", tagline: "Arrays and tables for data", blurb: "Vectorised computation and tabular data wrangling — the tools between Python and models.", audience: "Learners who finished Python for AI", planned: ["ndarray and broadcasting", "DataFrames", "Cleaning and joining", "Plotting"] },
   { slug: "machine-learning", name: "Machine Learning", section: "ai", stage: "Core machine learning", icon: "📈", accent: "#7c5cff", tagline: "From regression to ensembles", blurb: "Supervised and unsupervised learning, features, evaluation, overfitting, and the scikit-learn workflow.", audience: "Learners who finished Python and Maths for AI", planned: ["Regression and classification", "Trees and ensembles", "Evaluation", "Clustering"] },
   { slug: "neural-networks", name: "Neural Networks", section: "ai", stage: "Core machine learning", icon: "🕸", accent: "#d6489a", tagline: "Neurons, layers, backpropagation", blurb: "How a network computes and learns, one neuron and one gradient at a time.", audience: "Learners ready for deep learning", planned: ["Perceptron", "Activation functions", "Backpropagation", "Optimisers"] },

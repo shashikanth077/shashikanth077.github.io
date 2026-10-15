@@ -131,7 +131,7 @@ print(round(within(1), 4), round(within(2), 4), round(within(3), 4))`,
 import statistics
 data = [2, 4, 4, 4, 5, 5, 7, 9]
 print(statistics.pvariance(data), round(statistics.variance(data), 3))`,
-    o: `4.0 4.571`,
+    o: `4 4.571`,
     v: compare("Same formula, but a sample needs a small correction.", ["Population", "Sample"], [
       ["What it is", "everyone you care about", "the part you measured"],
       ["Mean and spread", "μ and σ", "x̄ and s"],

@@ -2,6 +2,11 @@ import { L, bars, cells, curve, flow, hline, line, matmul, par, plot, pt, seg, t
 import { py, type ConceptDef } from "../build.js";
 
 const f = (n: number, d = 3) => n.toFixed(d);
+/** Format like Python's round(): trailing zeros trimmed, but a whole number keeps ".0". */
+const pyr = (n: number, d: number) => {
+  const t = Number(n.toFixed(d)).toString();
+  return t.includes(".") ? t : `${t}.0`;
+};
 
 /* ------------------------------------------------------------------ */
 // Numbers for the single sigmoid neuron: x = 2, w = 0.5, b = 0, target t = 1.
@@ -95,7 +100,7 @@ mx, my = sum(xs) / n, sum(ys) / n
 w = sum((x - mx) * (y - my) for x, y in zip(xs, ys)) / sum((x - mx) ** 2 for x in xs)
 b = my - w * mx
 print(round(w, 3), round(b, 3))`,
-    o: `${f(wBest)} ${f(bBest)}`,
+    o: `${pyr(wBest, 3)} ${pyr(bBest, 3)}`,
     v: plot("Each dashed segment is a residual. The best line makes the squared residuals smallest.", { x: [0, 10], y: [0, 12], labels: ["hours studied x", "score y"],
       params: [par("w", "slope w", 0, 2, 0.05, 0.5), par("b", "intercept b", -2, 4, 0.1, 2)],
       readout: ["line: y = {w}·x + {b}", `mean squared error = {${mseExpr}:3}`],
@@ -156,7 +161,7 @@ print(round(z, 3), round(a, 4), round(E, 4))
 print(round(dE_dw, 4))
 w = w - 0.5 * dE_dw
 print(round(w, 4))`,
-    o: `${f(bz, 3)} ${f(ba, 4)} ${f(bE, 4)}\n${f(dEdw, 4)}\n${f(bw2, 4)}`,
+    o: `${pyr(bz, 3)} ${pyr(ba, 4)} ${pyr(bE, 4)}\n${pyr(dEdw, 4)}\n${pyr(bw2, 4)}`,
     v: trace("Forward pass first; then multiply the local slopes backwards to get the gradient.", py`
 import math
 x, w, b, t = 2, 0.5, 0.0, 1
@@ -177,10 +182,10 @@ print(round(w, 4))`, [
       [6, { dE_da: f(dEda, 4) }, undefined, "Backward, link 1: how the error changes with the output, a − t."],
       [7, { da_dz: f(dadz, 4) }, undefined, "Backward, link 2: the sigmoid's slope, a(1 − a)."],
       [8, { dE_dw: f(dEdw, 4) }, undefined, "Link 3 is ∂z/∂w = x = 2. Multiply all three: −0.2689 × 0.1966 × 2."],
-      [9, undefined, `${f(bz, 3)} ${f(ba, 4)} ${f(bE, 4)}`],
-      [10, undefined, f(dEdw, 4)],
+      [9, undefined, `${pyr(bz, 3)} ${pyr(ba, 4)} ${pyr(bE, 4)}`],
+      [10, undefined, pyr(dEdw, 4)],
       [11, { w: f(bw2, 4) }, undefined, "Gradient descent: w = 0.5 − 0.5 × (−0.1058) ≈ 0.5529 — the output moves toward the target."],
-      [12, undefined, f(bw2, 4)],
+      [12, undefined, pyr(bw2, 4)],
     ]),
   },
   {
@@ -304,7 +309,7 @@ for epoch in range(3):
     w, b = w - lr * gw, b - lr * gb
     loss = sum(((w * x + b) - y) ** 2 for x, y in zip(xs, ys)) / len(xs)
     print(epoch + 1, round(w, 3), round(b, 3), round(loss, 3))`,
-    o: `1 0.7 0.3 7.58\n2 1.126 0.52 3.93\n3 1.399 0.649 2.058`,
+    o: `1 1.133 0.5 5.489\n2 1.638 0.723 1.09\n3 1.862 0.823 0.217`,
     v: flow("Predict, measure, differentiate, update — and round again.", "cycle",
       ["Forward pass|predict ŷ from x|i", "Loss|how wrong is ŷ?|w", "Backward pass|gradients via the chain rule|w", "Update|w ← w − η · gradient|g"],
       [[0, 1], [1, 2], [2, 3], [3, 0, "next batch / epoch"]],
@@ -480,7 +485,7 @@ print(train, val, test)`,
       ["Dataset|1,000 rows|i", "Train|70% — fit the weights|g", "Validation|15% — tune choices|w", "Test|15% — final score, once|b"],
       [[0, 1, "split"], [0, 2, "split"], [0, 3, "split"]],
       undefined,
-      ["Shuffle and split the data before anything else.", "The training set is the only data the weights see.", "The validation set guides decisions: learning rate, model size, early stopping.", "The test set is locked away until the very end for an unbiased estimate."]),
+      ["The training set is the only data the weights see.", "The validation set guides decisions: learning rate, model size, early stopping.", "The test set is locked away until the very end for an unbiased estimate."]),
   },
 ];
 

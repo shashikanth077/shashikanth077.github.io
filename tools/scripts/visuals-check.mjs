@@ -21,6 +21,7 @@ const stacks = [
   { slug: "nodejs", authored: false },
   { slug: "redis", authored: false },
   { slug: "python-ai", authored: true },
+  { slug: "maths-ai", authored: true },
 ];
 const tmp = mkdtempSync(join(tmpdir(), "visuals-"));
 
