@@ -12,7 +12,7 @@
 import { readFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { buildToolHtml } from "./postbuild.mjs";
+import { buildResourceHtml, buildToolHtml } from "./postbuild.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const INDEX = resolve(here, "../apps/shell/index.html");
@@ -64,6 +64,7 @@ const CHECKS = [
 
 const base = await readFile(INDEX, "utf8");
 const html = buildToolHtml(base, route);
+const resourceHtml = buildResourceHtml(base);
 
 let failed = 0;
 for (const [label, check] of CHECKS) {
@@ -78,5 +79,14 @@ for (const [label, check] of CHECKS) {
   console.log(`  ${ok ? "pass" : "FAIL"}  ${label}`);
 }
 
-console.log(`\n  ${failed === 0 ? `${CHECKS.length} checks passed.` : `${failed} of ${CHECKS.length} failed.`}\n`);
+for (const [label, ok] of [
+  ["resource title", /<title>Resource Pool/.test(resourceHtml)],
+  ["resource canonical", resourceHtml.includes('<link rel="canonical" href="https://shashikant-hr.me/tools/resources" />')],
+  ["one resource description", count(resourceHtml, /name="description"/g) === 1],
+]) {
+  if (!ok) failed++;
+  console.log(`  ${ok ? "pass" : "FAIL"}  ${label}`);
+}
+
+console.log(`\n  ${failed === 0 ? `${CHECKS.length + 3} checks passed.` : `${failed} of ${CHECKS.length + 3} failed.`}\n`);
 process.exit(failed === 0 ? 0 : 1);

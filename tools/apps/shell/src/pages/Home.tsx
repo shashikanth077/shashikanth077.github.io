@@ -1,6 +1,7 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { TOOLKIT_META, findTool, groupByToolkit, routerPath, visibleRoutes } from "@devtools/tools-core";
+import { SITE_ORIGIN, TOOLKIT_META, findTool, groupByToolkit, routerPath, visibleRoutes } from "@devtools/tools-core";
 import { ToolSearch } from "../components/ToolSearch.js";
 import type { RootState } from "../store.js";
 
@@ -15,6 +16,11 @@ const TRUST_ITEMS = [
 ];
 
 export default function Home() {
+  useEffect(() => {
+    document.title = "ToolNest — Free, Private Browser Tools";
+    document.querySelector<HTMLMetaElement>('meta[name="description"]')?.setAttribute("content", "Free PDF, image and developer tools that run in your browser. Your files stay on your device.");
+    document.querySelector<HTMLLinkElement>('link[rel="canonical"]')?.setAttribute("href", `${SITE_ORIGIN}/tools/`);
+  }, []);
   const recentSlugs = useSelector((s: RootState) => s.preferences.recentSlugs);
   const recent = recentSlugs
     .map(findTool)
@@ -52,6 +58,12 @@ export default function Home() {
           ))}
         </ul>
       </section>
+
+      <Link to="/resources" className="home-resources">
+        <span className="home-resources__icon" aria-hidden="true">✦</span>
+        <span><strong>Learn and prepare</strong><small>Explore skill guides, learning paths, and interview questions in the resource pool.</small></span>
+        <span className="home-resources__arrow" aria-hidden="true">→</span>
+      </Link>
 
       {recent.length > 0 && (
         <section className="home-section">

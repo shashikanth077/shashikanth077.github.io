@@ -114,6 +114,19 @@ export function buildToolHtml(baseHtml, route) {
   return html;
 }
 
+export function buildResourceHtml(baseHtml) {
+  const title = "Resource Pool — Learning Guides & Interview Prep | ToolNest";
+  const description = "Explore technology learning paths and practice interview questions across frontend, backend, data, cloud, and system design.";
+  const canonical = `${SITE_ORIGIN}/tools/resources`;
+  let html = baseHtml.replace(/<title>[\s\S]*?<\/title>/, `<title>${escapeAttr(title)}</title>`);
+  html = upsert(html, /<meta\s+name="description"[\s\S]*?\/?>/, `<meta name="description" content="${escapeAttr(description)}" />`);
+  html = upsert(html, /<link\s+rel="canonical"[\s\S]*?\/?>/, `<link rel="canonical" href="${canonical}" />`);
+  html = upsert(html, /<meta\s+property="og:title"[\s\S]*?\/?>/, `<meta property="og:title" content="${escapeAttr(title)}" />`);
+  html = upsert(html, /<meta\s+property="og:description"[\s\S]*?\/?>/, `<meta property="og:description" content="${escapeAttr(description)}" />`);
+  html = upsert(html, /<meta\s+property="og:url"[\s\S]*?\/?>/, `<meta property="og:url" content="${canonical}" />`);
+  return html;
+}
+
 async function mergeSitemap(routes) {
   if (!existsSync(SITEMAP)) {
     console.warn("  · out/sitemap.xml not found — skipping sitemap merge.");
@@ -121,21 +134,19 @@ async function mergeSitemap(routes) {
   }
 
   const xml = await readFile(SITEMAP, "utf8");
-  if (xml.includes("/tools/")) {
-    console.log("  · sitemap already lists tool URLs — leaving it alone.");
-    return;
-  }
-
-  const entries = [
-    `  <url>\n    <loc>${SITE_ORIGIN}/tools/</loc>\n    <changefreq>monthly</changefreq>\n    <priority>0.9</priority>\n  </url>`,
-    ...routes.map(
-      (r) =>
-        `  <url>\n    <loc>${SITE_ORIGIN}/tools/${r.slug}</loc>\n    <changefreq>monthly</changefreq>\n    <priority>0.8</priority>\n  </url>`,
-    ),
-  ].join("\n");
-
-  await writeFile(SITEMAP, xml.replace("</urlset>", `${entries}\n</urlset>`), "utf8");
-  console.log(`  · sitemap.xml: added ${routes.length + 1} URLs`);
+  const urls = [`${SITE_ORIGIN}/tools/`, `${SITE_ORIGIN}/tools/resources`, ...routes.map((r) => `${SITE_ORIGIN}/tools/${r.slug}`)];
+  const allowed = new Set(urls);
+  // Remove stale tool URLs (including retired tools) without touching portfolio entries.
+  const cleaned = xml.replace(/<url>[\s\S]*?<\/url>/g, (entry) => {
+    const loc = /<loc>([^<]+)<\/loc>/.exec(entry)?.[1];
+    return loc?.startsWith(`${SITE_ORIGIN}/tools/`) && !allowed.has(loc) ? "" : entry;
+  });
+  const missing = urls.filter((url) => !cleaned.includes(`<loc>${url}</loc>`));
+  const entries = missing.map((url) =>
+    `  <url>\n    <loc>${url}</loc>\n    <changefreq>monthly</changefreq>\n    <priority>${url.endsWith("/tools/") ? "0.9" : "0.8"}</priority>\n  </url>`,
+  ).join("\n");
+  await writeFile(SITEMAP, cleaned.replace("</urlset>", `${entries}\n</urlset>`), "utf8");
+  console.log(`  · sitemap.xml: synced ${urls.length} ToolNest URLs`);
 }
 
 /* ------------------------------------------------------------------ */
@@ -184,6 +195,9 @@ async function main() {
     await mkdir(dir, { recursive: true });
     await writeFile(join(dir, "index.html"), buildToolHtml(baseHtml, route), "utf8");
   }
+  const resourcesDir = join(OUT_TOOLS, "resources");
+  await mkdir(resourcesDir, { recursive: true });
+  await writeFile(join(resourcesDir, "index.html"), buildResourceHtml(baseHtml), "utf8");
   console.log(
     `  · prerendered ${routes.length} tool pages` +
       (hiddenCount > 0 ? ` (${hiddenCount} hidden route${hiddenCount === 1 ? "" : "s"} skipped)` : ""),

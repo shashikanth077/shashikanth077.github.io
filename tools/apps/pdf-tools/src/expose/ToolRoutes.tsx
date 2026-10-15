@@ -34,7 +34,6 @@ const TOOLS: Record<string, ComponentType> = {
   ),
   "compress-pdf": lazy(() => import("../tools/CompressPdf.js")),
   "unlock-pdf": lazy(() => import("../tools/UnlockPdf.js")),
-  "edit-pdf": lazy(() => import("../tools/EditPdf.js")),
   "watermark-pdf": lazy(() => import("../tools/WatermarkPdf.js")),
   "page-numbers-pdf": lazy(() => import("../tools/PageNumbersPdf.js")),
   "header-footer-pdf": lazy(() => import("../tools/HeaderFooterPdf.js")),

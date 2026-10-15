@@ -11,7 +11,7 @@ export default function SplitPdf() {
   const processor = useProcessor();
 
   const [mode, setMode] = useState<Mode>("ranges");
-  const [spec, setSpec] = useState("1-3, 4-6");
+  const [spec, setSpec] = useState("1");
   const [pageCount, setPageCount] = useState<number | null>(null);
 
   const file = list.files[0];
@@ -25,7 +25,10 @@ export default function SplitPdf() {
     void (async () => {
       try {
         const info = await readPdfInfo(await readBytes(file));
-        if (!cancelled) setPageCount(info.pageCount);
+        if (!cancelled) {
+          setPageCount(info.pageCount);
+          setSpec(info.pageCount > 1 ? `1, 2-${info.pageCount}` : "1");
+        }
       } catch {
         if (!cancelled) setPageCount(null);
       }

@@ -64,6 +64,9 @@ export function MobileMenu({ open }: { open: boolean }) {
       </div>
 
       <nav className="mobileMenu__body" aria-label="Tools">
+        <NavLink to="/resources" className="mobileMenu__resources" onClick={() => dispatch(toggleSidebar(false))}>
+          <span aria-hidden="true">✦</span> Resource pool <span aria-hidden="true">↗</span>
+        </NavLink>
         {TOOLKIT_MENUS.map(([toolkit, categories]) => (
           <section className={`mobileMenu__toolkit tk-${toolkit}`} key={toolkit}>
             <h2 className="mobileMenu__toolkitTitle">

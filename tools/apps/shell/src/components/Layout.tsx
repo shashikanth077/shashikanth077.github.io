@@ -20,6 +20,7 @@ export function Layout({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (menuOpen) dispatch(toggleSidebar(false));
+    if (!location.hash) window.scrollTo(0, 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
 
