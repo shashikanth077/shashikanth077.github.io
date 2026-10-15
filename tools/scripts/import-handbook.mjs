@@ -28,11 +28,12 @@ const here = dirname(fileURLToPath(import.meta.url));
 const outDir = resolve(here, "../apps/shell/src/learn/content");
 
 const lines = readFileSync(input, "utf8").split("\n");
-const start = lines.findIndex((l) => l.includes("/* ===== DATA"));
+// Data begins at the first of: `var DOM=` (areas) or a DATA marker — handbooks differ in whether the first block is marked.
+const start = lines.findIndex((l) => /^var DOM\s*=/.test(l) || l.includes("/* ===== DATA"));
 const end = lines.findIndex((l) => l.includes("/* ===== ENGINE"));
 if (start < 0 || end < 0) throw new Error("DATA / ENGINE markers not found — is this a handbook file?");
 
-const names = ["DOM", "CON", "KEEP", "GAP", "REL", "FEAT", "UPCHK", "SC", "INC", "ARCH", "CL", "STG", "SEN", "FRAME", "GLANCE", "LISTS", "STORY", "QA", "MAT"];
+const names = ["DOM", "CON", "KEEP", "GAP", "REL", "FEAT", "UPCHK", "SC", "INC", "ARCH", "CL", "STG", "SEN", "FRAME", "GLANCE", "LISTS", "STORY", "QA", "MAT", "PATD", "RATE_LABELS"];
 const probe = names.map((n) => `typeof ${n} !== "undefined" ? ${n} : undefined`).join(",");
 const raw = vm.runInNewContext(`${lines.slice(start, end).join("\n")}\n;[${probe}]`);
 const d = Object.fromEntries(names.map((n, i) => [n, raw[i]]));
@@ -72,6 +73,18 @@ const content = {
     features: (d.FEAT ?? []).map(([name, since, group, note]) => ({ name, since, group, note })),
     upgradeChecklist: d.UPCHK ?? [],
   })),
+  patterns: maybe(d.PATD, (v) => ({
+    ratingLabels: d.RATE_LABELS ?? [],
+    items: v.map((p) => ({
+      name: p.n,
+      description: p.desc,
+      read: p.read.map(([actor, action]) => ({ actor, action })),
+      write: p.write.map(([actor, action]) => ({ actor, action })),
+      ratings: p.rate,
+      useWhen: p.use,
+      watchOut: p.avoid,
+    })),
+  })),
   interview: {
     stages: (d.STG ?? []).map(([name, checks, prep]) => ({ name, checks, prep })),
     seniority: (d.SEN ?? []).map(([area, mid, senior, staff]) => ({ area, mid, senior, staff })),
@@ -88,6 +101,7 @@ const stats = {
   questions: content.questions.length,
   drills: content.drills?.length ?? 0,
   codeLab: content.codeLab?.length ?? 0,
+  patterns: content.patterns?.items.length ?? 0,
   areas: content.areas.length,
 };
 

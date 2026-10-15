@@ -2,7 +2,7 @@ import type { Stack } from "./catalog.js";
 import type { Progress } from "./progress.js";
 import type { StackContent } from "./types.js";
 
-export type ViewId = "overview" | "learn" | "practice" | "interview" | "updates" | "materials";
+export type ViewId = "overview" | "learn" | "patterns" | "practice" | "interview" | "updates" | "materials";
 
 export interface LearnCtx {
   stack: Stack;

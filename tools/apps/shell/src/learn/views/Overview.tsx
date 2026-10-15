@@ -107,6 +107,11 @@ export function Overview({ ctx }: { ctx: LearnCtx }) {
           <button type="button" className="lp-tile" onClick={() => go("interview", { sub: "bank" })}>
             <strong>Question bank</strong><span>{known} / {data.questions.length} marked known</span>
           </button>
+          {data.patterns && (
+            <button type="button" className="lp-tile" onClick={() => go("patterns")}>
+              <strong>{stack.patternsLabel ?? "Patterns"}</strong><span>{data.patterns.items.length} patterns with step-by-step flows</span>
+            </button>
+          )}
           {data.drills && (
             <button type="button" className="lp-tile" onClick={() => go("practice", { sub: "drills" })}>
               <strong>Production drills</strong><span>{solved} / {data.drills.length} diagnosed</span>

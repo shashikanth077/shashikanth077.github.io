@@ -42,6 +42,19 @@ export interface StackContent {
     features: { name: string; since: string; group: string; note: string }[];
     upgradeChecklist: string[];
   };
+  /** Stack-specific explorer: e.g. the six Redis caching patterns, each with read/write flows and trade-off ratings. */
+  patterns?: {
+    ratingLabels: string[];
+    items: {
+      name: string;
+      description: string;
+      read: { actor: string; action: string }[];
+      write: { actor: string; action: string }[];
+      ratings: number[];
+      useWhen: string;
+      watchOut: string;
+    }[];
+  };
   interview: {
     stages: { name: string; checks: string[]; prep: string[] }[];
     seniority: { area: string; mid: string; senior: string; staff: string }[];
@@ -53,4 +66,4 @@ export interface StackContent {
   materials: { title: string; links: { label: string; url: string }[] }[];
 }
 
-export interface StackStats { concepts: number; questions: number; drills: number; codeLab: number; areas: number }
+export interface StackStats { concepts: number; questions: number; drills: number; codeLab: number; patterns?: number; areas: number }

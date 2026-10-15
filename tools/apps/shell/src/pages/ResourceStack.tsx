@@ -7,6 +7,7 @@ import { plain } from "../learn/Rich.js";
 import type { StackContent } from "../learn/types.js";
 import { Interview } from "../learn/views/Interview.js";
 import { Learn } from "../learn/views/Learn.js";
+import { Patterns } from "../learn/views/Patterns.js";
 import { Overview } from "../learn/views/Overview.js";
 import { Practice } from "../learn/views/Practice.js";
 import { Materials, Updates } from "../learn/views/Reference.js";
@@ -15,6 +16,7 @@ import NotFound from "./NotFound.js";
 const VIEW_LABEL: Record<ViewId, string> = {
   overview: "Overview",
   learn: "Learn",
+  patterns: "Patterns",
   practice: "Practice",
   interview: "Interview kit",
   updates: "What's new",
@@ -82,9 +84,10 @@ export default function ResourceStack() {
   }, [stack]);
 
   const available: ViewId[] = useMemo(
-    () => ["overview", "learn", "practice", "interview", ...(data?.platform ? (["updates"] as const) : []), "materials"].filter(
-      (v) => v !== "practice" || !!(data?.drills || data?.codeLab || data?.architecture),
-    ) as ViewId[],
+    () =>
+      (["overview", "learn", ...(data?.patterns ? ["patterns"] : []), "practice", "interview", ...(data?.platform ? ["updates"] : []), "materials"] as ViewId[]).filter(
+        (v) => v !== "practice" || !!(data?.drills || data?.codeLab || data?.architecture),
+      ),
     [data],
   );
   const requested = params.get("view") as ViewId | null;
@@ -148,7 +151,7 @@ export default function ResourceStack() {
 
       <nav className="lp-tabs" aria-label={`${stack.name} sections`}>
         {available.map((v) => (
-          <button key={v} type="button" aria-current={view === v ? "page" : undefined} onClick={() => go(v)}>{VIEW_LABEL[v]}</button>
+          <button key={v} type="button" aria-current={view === v ? "page" : undefined} onClick={() => go(v)}>{v === "patterns" ? (stack.patternsLabel ?? VIEW_LABEL[v]) : VIEW_LABEL[v]}</button>
         ))}
         {data && done > 0 && (
           <button type="button" className="lp-tabs__reset" onClick={() => window.confirm("Reset all your progress for this stack?") && reset()}>
@@ -164,6 +167,7 @@ export default function ResourceStack() {
         <div className="lp-view" key={view}>
           {view === "overview" && <Overview ctx={ctx} />}
           {view === "learn" && <Learn ctx={ctx} />}
+          {view === "patterns" && <Patterns ctx={ctx} />}
           {view === "practice" && <Practice ctx={ctx} />}
           {view === "interview" && <Interview ctx={ctx} />}
           {view === "updates" && <Updates ctx={ctx} />}

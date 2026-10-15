@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { stacks } from "../learn/catalog.js";
+import { STACK_CATEGORIES, stacks, type StackCategory } from "../learn/catalog.js";
 
 export default function Resources() {
   useEffect(() => {
@@ -12,8 +12,16 @@ export default function Resources() {
     document.querySelector<HTMLLinkElement>('link[rel="canonical"]')?.setAttribute("href", "https://shashikant-hr.me/tools/resources");
   }, []);
 
-  const live = stacks.filter((s) => s.load);
-  const soon = stacks.filter((s) => !s.load);
+  const [text, setText] = useState("");
+  const [category, setCategory] = useState<StackCategory | "All">("All");
+  const matches = useMemo(() => {
+    const term = text.trim().toLowerCase();
+    return stacks.filter(
+      (s) => (category === "All" || s.category === category) && (!term || `${s.name} ${s.tagline} ${s.blurb} ${s.category}`.toLowerCase().includes(term)),
+    );
+  }, [text, category]);
+  const live = matches.filter((s) => s.load);
+  const soon = matches.filter((s) => !s.load);
 
   return (
     <div className="lp">
@@ -32,11 +40,23 @@ export default function Resources() {
 
       <section>
         <div className="lp-head"><div><span className="lp-eyebrow">AVAILABLE NOW</span><h2>Choose your tech stack</h2></div></div>
+        <div className="lp-toolbar lp-gap-bottom">
+          <label className="lp-field lp-field--grow">
+            <span className="lp-sr">Search tech stacks</span>
+            <input type="search" placeholder="Search stacks, e.g. cache, hooks, SQL" value={text} onChange={(e) => setText(e.target.value)} />
+          </label>
+          <div className="lp-chips" role="group" aria-label="Category">
+            {(["All", ...STACK_CATEGORIES] as const).map((c) => (
+              <button key={c} type="button" aria-pressed={category === c} onClick={() => setCategory(c)}>{c}</button>
+            ))}
+          </div>
+        </div>
+        {matches.length === 0 && <div className="lp-empty">No stacks match. Try another word or category.</div>}
         <div className="lp-stacks">
           {live.map((s) => (
             <Link key={s.slug} to={`/resources/${s.slug}`} className="lp-stackcard" style={{ ["--lp-accent" as string]: s.accent }}>
               <span className="lp-stackcard__icon" aria-hidden="true">{s.icon}</span>
-              <h3>{s.name}</h3>
+              <h3>{s.name} <span className="lp-badge lp-badge--quiet">{s.category}</span></h3>
               <p className="lp-stackcard__tag">{s.tagline}</p>
               <p>{s.blurb}</p>
               {s.stats && (
@@ -45,6 +65,7 @@ export default function Resources() {
                   <li><b>{s.stats.questions}</b> questions</li>
                   <li><b>{s.stats.drills}</b> drills</li>
                   <li><b>{s.stats.codeLab}</b> code labs</li>
+                  {!!s.stats.patterns && <li><b>{s.stats.patterns}</b> patterns</li>}
                 </ul>
               )}
               <small>{s.audience}</small>
