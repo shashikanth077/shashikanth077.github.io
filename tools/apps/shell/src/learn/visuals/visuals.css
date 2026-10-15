@@ -164,3 +164,52 @@
 @media (prefers-reduced-motion: reduce) {
   .lp-cells__cell.is-new, .lp-trace__panel li.is-changed { animation: none; }
 }
+
+/* ---------- maths diagrams: plot, bars, matrix multiply ---------- */
+.lp-plot { padding: 0.25rem 0 0.4rem; }
+.lp-plot .lp-svg { padding-top: 0.5rem; }
+.lp-plot__grid { stroke: var(--line); stroke-width: 1; fill: none; }
+.lp-plot__axis { stroke: var(--text-faint); stroke-width: 1.6; fill: none; }
+.lp-plot__tick { fill: var(--text-faint); font: 11px var(--font-mono); }
+.lp-plot__name { fill: var(--text-soft); font: 600 12px var(--font-ui); }
+.c-accent { --c: var(--lp-accent); } .c-good { --c: var(--success); } .c-bad { --c: var(--danger); }
+.c-warn { --c: var(--tk-media); } .c-info { --c: var(--tk-dev); } .c-purple { --c: var(--tk-qr); } .c-muted { --c: var(--text-faint); }
+.lp-plot__curve { stroke: var(--c); stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.lp-plot__curve.is-dash, .lp-plot__curve .is-dash { stroke-dasharray: 7 6; }
+.lp-plot__curve.is-dash { stroke-width: 2.2; }
+.lp-plot__ring { stroke-width: 1.6; opacity: 0.7; }
+.lp-plot__fill { fill: var(--c); fill-opacity: 0.16; stroke: none; }
+.lp-plot__curve.lp-plot__fill { stroke: var(--c); stroke-width: 2.2; }
+.lp-plot__head { fill: var(--c); stroke: none; }
+.lp-plot__pt circle { fill: var(--c); stroke: var(--surface); stroke-width: 2.5; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3)); }
+.lp-plot__pt text, .lp-plot__lab { fill: var(--c, var(--text)); stroke: none; paint-order: stroke; font: 700 12.5px var(--font-ui); }
+.lp-plot__pt text { stroke: var(--surface-alt); stroke-width: 4px; stroke-linejoin: round; }
+.lp-plot__lab { stroke: var(--surface-alt); stroke-width: 4px; stroke-linejoin: round; }
+.lp-plot__curve text { stroke: var(--surface-alt); stroke-width: 4px; fill: var(--c); font: 700 12.5px var(--font-ui); }
+
+.lp-sliders { display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-5); padding: 0.4rem 1rem 0.3rem; }
+.lp-sliders label { display: flex; flex-direction: column; gap: 0.15rem; flex: 1 1 11rem; min-width: 9rem; font: 600 0.78rem var(--font-ui); color: var(--text-soft); }
+.lp-sliders label b { color: var(--lp-accent); font: 700 0.85rem var(--font-mono); margin-left: 0.3rem; }
+.lp-sliders input { accent-color: var(--lp-accent); width: 100%; }
+.lp-readout { margin: 0.5rem 1rem 0.2rem; padding: 0.6rem 0.9rem; border-radius: var(--radius-sm); border-left: 4px solid var(--lp-accent); background: var(--bg-sunken); font: 0.82rem/1.65 var(--font-mono); color: var(--text); overflow-x: auto; white-space: pre-wrap; }
+
+.lp-bars { padding: 0.9rem 0 0.4rem; display: flex; flex-direction: column; gap: 0.15rem; }
+.lp-bars__row { display: flex; align-items: center; gap: var(--space-3); padding: 0.25rem 1rem; }
+.lp-bars__label { flex: none; width: 6.5rem; font: 600 0.82rem var(--font-ui); color: var(--text); }
+.lp-bars__track { flex: 1; height: 1.35rem; border-radius: 6px; background: var(--bg-sunken); border: 1px solid var(--line); overflow: hidden; }
+.lp-bars__track i { display: block; height: 100%; background: var(--tk-dev); transition: width 0.3s ease; }
+.lp-bars__row.is-top .lp-bars__track i { background: var(--lp-accent); }
+.lp-bars__val { flex: none; min-width: 4.2rem; text-align: right; font: 700 0.82rem var(--font-mono); }
+
+.lp-mm { padding: 0.9rem 1rem 0.2rem; }
+.lp-mm__row { display: flex; align-items: center; justify-content: center; gap: var(--space-3); flex-wrap: wrap; }
+.lp-mm__op { font: 300 1.8rem var(--font-ui); color: var(--text-faint); }
+.lp-mm__grid { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; }
+.lp-mm__grid b { font: 700 0.8rem var(--font-mono); color: var(--lp-accent); }
+.lp-mm__grid small { font: 0.65rem var(--font-mono); color: var(--text-faint); }
+.lp-mm__grid table { border-collapse: separate; border-spacing: 3px; min-width: 0; }
+.lp-mm__grid td { min-width: 2.6rem; padding: 0.35rem 0.5rem; text-align: center; border: 1.5px solid var(--line-strong); border-radius: 7px; background: var(--surface); font: 700 0.85rem var(--font-mono); transition: background 0.3s, border-color 0.3s; }
+.lp-mm__grid td.is-hit { background: var(--accent-soft); border-color: var(--lp-accent); }
+.lp-mm__grid td.is-now { background: var(--lp-accent); border-color: var(--lp-accent); color: #fff; }
+.lp-mm__calc { margin: 0.8rem 0 0; padding: 0.55rem 0.8rem; border-radius: var(--radius-sm); background: var(--bg-sunken); text-align: center; overflow-x: auto; }
+@media (max-width: 45rem) { .lp-bars__label { width: 4.6rem; font-size: 0.74rem; } }

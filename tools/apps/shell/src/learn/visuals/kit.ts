@@ -2,7 +2,7 @@
  * Compact authoring helpers — a visual should take a few lines, not a page.
  * Tones: g good, b bad, w warn, i info, p plain (default).
  */
-import type { CellsRow, CellsVisual, CompareVisual, FlowVisual, LanesVisual, LayersVisual, QueueVisual, SequenceVisual, Tone, TraceVisual } from "./types.js";
+import type { BarsVisual, CellsRow, CellsVisual, Hue, MatMulVisual, PlotLayer, PlotParam, PlotVisual, CompareVisual, FlowVisual, LanesVisual, LayersVisual, QueueVisual, SequenceVisual, Tone, TraceVisual } from "./types.js";
 
 const TONES: Record<string, Tone> = { g: "good", b: "bad", w: "warn", i: "info", p: "plain" };
 const tone = (c?: string): Tone | undefined => (c ? TONES[c] : undefined);
@@ -125,4 +125,91 @@ export function cells(takeaway: string, rows: CellsRow[], steps: [string, [numbe
     rows,
     steps: steps.map(([note, hl, r]) => ({ note, ...(hl ? { hl } : {}), ...(r ? { rows: r } : {}) })),
   };
+}
+
+/* ------------------------------------------------------------------ */
+/* Maths diagrams: interactive graphs, bars and matrix multiplication */
+
+/** par("w", "weight w", -3, 3, 0.5, 2) — a slider. */
+export const par = (name: string, label: string, min: number, max: number, step: number, value: number): PlotParam => ({ name, label, min, max, step, value });
+
+interface LayerOpts {
+  c?: Hue;
+  dash?: boolean;
+  label?: string;
+  show?: string;
+  from?: string;
+  to?: string;
+}
+const base = (o: LayerOpts = {}) => ({ ...(o.c ? { color: o.c } : {}), ...(o.dash ? { dash: true } : {}), ...(o.label ? { label: o.label } : {}), ...(o.show ? { show: o.show } : {}) });
+
+/** Layer builders — every argument is a formula string. */
+export const curve = (y: string, o?: LayerOpts): PlotLayer => ({ kind: "curve", y, ...(o?.from ? { from: o.from } : {}), ...(o?.to ? { to: o.to } : {}), ...base(o) });
+export const pt = (x: string, y: string, o?: LayerOpts): PlotLayer => ({ kind: "point", x, y, ...base(o) });
+export const line = (x: string, y: string, slope: string, o?: LayerOpts): PlotLayer => ({ kind: "line", x, y, slope, ...base(o) });
+export const seg = (x1: string, y1: string, x2: string, y2: string, o?: LayerOpts): PlotLayer => ({ kind: "segment", x1, y1, x2, y2, ...base(o) });
+export const arrow = (x1: string, y1: string, x2: string, y2: string, o?: LayerOpts): PlotLayer => ({ kind: "arrow", x1, y1, x2, y2, ...base(o) });
+export const vline = (x: string, o?: LayerOpts): PlotLayer => ({ kind: "vline", x, ...base(o) });
+export const hline = (y: string, o?: LayerOpts): PlotLayer => ({ kind: "hline", y, ...base(o) });
+export const area = (y: string, from: string, to: string, o?: LayerOpts & { base?: string }): PlotLayer => ({ kind: "fill", y, from, to, ...(o?.base ? { base: o.base } : {}), ...base(o) });
+export const circle = (x: string, y: string, r: string, o?: LayerOpts): PlotLayer => ({ kind: "circle", x, y, r, ...base(o) });
+export const poly = (pts: [string, string][], o?: LayerOpts & { fill?: boolean }): PlotLayer => ({ kind: "polygon", pts, ...(o?.fill ? { fill: true } : {}), ...base(o) });
+export const txt = (x: string, y: string, label: string, o?: LayerOpts): PlotLayer => ({ kind: "text", x, y, ...base({ ...o, label }) });
+
+export interface PlotOpts {
+  x: [number, number];
+  y: [number, number];
+  labels?: [string, string];
+  params?: PlotParam[];
+  defs?: [string, string][];
+  readout?: string[];
+  /** [note, { param: value }] — animated guided steps. */
+  steps?: [string, Record<string, number>?][];
+}
+
+/** plot(takeaway, { x: [-4, 4], y: [-5, 5], params: [par(...)] }, [curve(...), pt(...)]) */
+export function plot(takeaway: string, o: PlotOpts, layers: PlotLayer[]): PlotVisual {
+  return {
+    type: "plot",
+    takeaway,
+    xmin: o.x[0],
+    xmax: o.x[1],
+    ymin: o.y[0],
+    ymax: o.y[1],
+    ...(o.labels ? { xlabel: o.labels[0], ylabel: o.labels[1] } : {}),
+    ...(o.params ? { params: o.params } : {}),
+    ...(o.defs ? { defs: o.defs } : {}),
+    ...(o.readout ? { readout: o.readout } : {}),
+    ...(o.steps ? { steps: o.steps.map(([note, set]) => ({ note, ...(set ? { set } : {}) })) } : {}),
+    layers,
+  };
+}
+
+export interface BarsOpts {
+  params?: PlotParam[];
+  defs?: [string, string][];
+  readout?: string[];
+  max?: number;
+  percent?: boolean;
+  steps?: [string, Record<string, number>?][];
+}
+
+/** bars(takeaway, [["label", "formula"], …], { params, defs, percent: true }) */
+export function bars(takeaway: string, items: [string, string][], o: BarsOpts = {}): BarsVisual {
+  return {
+    type: "bars",
+    takeaway,
+    bars: items.map(([label, value]) => ({ label, value })),
+    ...(o.params ? { params: o.params } : {}),
+    ...(o.defs ? { defs: o.defs } : {}),
+    ...(o.readout ? { readout: o.readout } : {}),
+    ...(o.max !== undefined ? { max: o.max } : {}),
+    ...(o.percent ? { percent: true } : {}),
+    ...(o.steps ? { steps: o.steps.map(([note, set]) => ({ note, ...(set ? { set } : {}) })) } : {}),
+  };
+}
+
+/** matmul(takeaway, A, B, ["X", "W", "Z"], bias?) */
+export function matmul(takeaway: string, a: number[][], b: number[][], names?: [string, string, string], bias?: number[]): MatMulVisual {
+  return { type: "matmul", takeaway, a, b, ...(names ? { names } : {}), ...(bias ? { bias } : {}) };
 }

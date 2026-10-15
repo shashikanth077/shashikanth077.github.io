@@ -24,6 +24,43 @@ const stacks = [
 ];
 const tmp = mkdtempSync(join(tmpdir(), "visuals-"));
 
+// The formula evaluator used by the maths diagrams, bundled so we can test every formula at build time.
+await build({ entryPoints: [join(learn, "visuals", "expr.ts")], bundle: true, format: "esm", platform: "node", outfile: join(tmp, "expr.mjs"), logLevel: "silent" });
+const { compile, evalDefs, template } = await import(pathToFileURL(join(tmp, "expr.mjs")).href);
+
+/** Compile and evaluate every formula in a live diagram at its default slider values. */
+function checkLive(stack, id, v) {
+  const params = v.params ?? [];
+  const names = ["x", ...params.map((p) => p.name), ...(v.defs ?? []).map(([n]) => n)];
+  const base = Object.fromEntries(params.map((p) => [p.name, p.value]));
+  let scope = base;
+  const guard = (what, fn) => { try { return fn(); } catch (e) { bad(stack, id, `${what}: ${e.message}`); return undefined; } };
+  guard("defs", () => {
+    const defs = (v.defs ?? []).map(([n, e], i) => [n, compile(e, ["x", ...params.map((p) => p.name), ...(v.defs ?? []).slice(0, i).map(([m]) => m)])]);
+    scope = evalDefs(defs, base);
+  });
+  const ev = (what, e, needFinite = true) => guard(what, () => {
+    const val = compile(e, names)({ ...scope, x: 0.5 });
+    if (needFinite && Number.isNaN(val)) bad(stack, id, `${what} "${e}" is NaN at the default sliders`);
+  });
+  params.forEach((p) => { if (p.value < p.min || p.value > p.max) bad(stack, id, `slider ${p.name} default ${p.value} is outside ${p.min}..${p.max}`); });
+  (v.readout ?? []).forEach((l) => guard("readout", () => template(l, { ...scope, x: 0.5 }, new Map())));
+  (v.steps ?? []).forEach((s, i) => Object.keys(s.set ?? {}).forEach((k) => { if (!params.some((p) => p.name === k)) bad(stack, id, `step ${i + 1} sets unknown slider "${k}"`); }));
+  if (v.type === "bars") v.bars.forEach((b) => ev("bar", b.value));
+  if (v.type === "plot") {
+    for (const l of v.layers) {
+      if (l.show) ev("show", l.show);
+      if (l.label) guard("label", () => template(l.label, { ...scope, x: 0.5 }, new Map()));
+      for (const [k, val] of Object.entries(l)) {
+        if (["kind", "color", "dash", "label", "show", "fill"].includes(k)) continue;
+        if (k === "pts") l.pts.forEach(([a, b]) => { ev("polygon x", a); ev("polygon y", b); });
+        else if (typeof val === "string") ev(`${l.kind}.${k}`, val, l.kind !== "curve");
+      }
+      if (l.kind === "curve") guard("curve", () => compile(l.y, names));
+    }
+  }
+}
+
 const problems = [];
 const bad = (stack, id, msg) => problems.push(`${stack} ${id}: ${msg}`);
 
@@ -51,6 +88,13 @@ function check(stack, id, v) {
       if (v.layers.length < 2) bad(stack, id, "needs at least 2 layers");
       break;
     case "queue":
+      break;
+    case "plot":
+    case "bars":
+      checkLive(stack, id, v);
+      break;
+    case "matmul":
+      if (v.a.some((r) => r.length !== v.b.length)) bad(stack, id, "matmul: columns of A must equal rows of B");
       break;
     case "trace":
       v.steps.forEach((s, i) => { if (!int(s.line - 1, v.code.length)) bad(stack, id, `step ${i + 1} line ${s.line} is outside the ${v.code.length}-line code`); });

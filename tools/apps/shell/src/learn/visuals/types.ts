@@ -118,9 +118,87 @@ export interface CellsVisual extends Base {
   }[];
 }
 
+/** Colour names for plot layers. */
+export type Hue = "accent" | "good" | "bad" | "warn" | "info" | "purple" | "muted";
+
+export interface PlotParam {
+  name: string;
+  label: string;
+  min: number;
+  max: number;
+  step: number;
+  value: number;
+}
+
+interface LayerBase {
+  color?: Hue;
+  dash?: boolean;
+  /** Text next to the element. {expr} placeholders are filled in live. */
+  label?: string;
+  /** Visible only while this expression is positive. */
+  show?: string;
+}
+
+/** Every number is a formula over x, the params and the defs (see expr.ts). */
+export type PlotLayer =
+  | (LayerBase & { kind: "curve"; y: string; from?: string; to?: string })
+  | (LayerBase & { kind: "point"; x: string; y: string })
+  | (LayerBase & { kind: "line"; x: string; y: string; slope: string })
+  | (LayerBase & { kind: "segment"; x1: string; y1: string; x2: string; y2: string })
+  | (LayerBase & { kind: "arrow"; x1: string; y1: string; x2: string; y2: string })
+  | (LayerBase & { kind: "vline"; x: string })
+  | (LayerBase & { kind: "hline"; y: string })
+  | (LayerBase & { kind: "fill"; y: string; from: string; to: string; base?: string })
+  | (LayerBase & { kind: "circle"; x: string; y: string; r: string })
+  | (LayerBase & { kind: "polygon"; pts: [string, string][]; fill?: boolean })
+  | (LayerBase & { kind: "text"; x: string; y: string });
+
+interface Live {
+  /** Sliders the learner can drag. */
+  params?: PlotParam[];
+  /** Intermediate named formulas, evaluated in order. */
+  defs?: [string, string][];
+  /** Lines of text with {expr} / {expr:3} placeholders. */
+  readout?: string[];
+  /** Optional guided steps that move the params (animated), with a caption each. */
+  steps?: { note: string; set?: Record<string, number> }[];
+}
+
+/** An interactive graph: sliders, formulas, and optional guided steps. */
+export interface PlotVisual extends Base, Live {
+  type: "plot";
+  xmin: number;
+  xmax: number;
+  ymin: number;
+  ymax: number;
+  xlabel?: string;
+  ylabel?: string;
+  layers: PlotLayer[];
+}
+
+/** Live bar chart (probabilities, scores, counts). */
+export interface BarsVisual extends Base, Live {
+  type: "bars";
+  bars: { label: string; value: string }[];
+  /** Full-bar value (default 1). */
+  max?: number;
+  /** Show values as percentages. */
+  percent?: boolean;
+}
+
+/** Matrix multiplication one output cell at a time. */
+export interface MatMulVisual extends Base {
+  type: "matmul";
+  a: number[][];
+  b: number[][];
+  names?: [string, string, string];
+  /** Optional bias added to every row of the result. */
+  bias?: number[];
+}
+
 export type Tone = "good" | "bad" | "warn" | "info" | "plain";
 
-export type Visual = SequenceVisual | FlowVisual | LanesVisual | CompareVisual | LayersVisual | QueueVisual | TraceVisual | CellsVisual;
+export type Visual = SequenceVisual | FlowVisual | LanesVisual | CompareVisual | LayersVisual | QueueVisual | TraceVisual | CellsVisual | PlotVisual | BarsVisual | MatMulVisual;
 
 /** concept id (e.g. "async:2") or question id → visual */
 export type VisualMap = Record<string, Visual>;
