@@ -4,6 +4,7 @@ import nodeStats from "./content/nodejs.stats.json";
 import redisStats from "./content/redis.stats.json";
 import pythonAiStats from "./content/python-ai.stats.json";
 import mathsAiStats from "./content/maths-ai.stats.json";
+import numpyStats from "./content/numpy.stats.json";
 
 /**
  * Every learning stack the portal knows about. Two sections share one workspace:
@@ -73,6 +74,22 @@ export const SECTION_META: Record<StackSection, { base: string; label: string; c
 
 export const stackPath = (s: Pick<Stack, "slug" | "section">) => `${SECTION_META[s.section].base}/${s.slug}`;
 
+/** Wording for the "learn to code for AI" tracks (Python, NumPy…). */
+const codeStackLabels: StackLabels = {
+  production: "In AI work",
+  interview: "Interview angle",
+  drillsTab: "Predict the output",
+  drillsIntro: "Read the code, predict what it prints, then step through exactly what Python does. Most Python interview traps live here.",
+  drillQuestion: "What does this print?",
+  drillPath: "Step-by-step trace",
+  drillFix: "Why",
+  drillPrevent: "Watch out",
+  drillInterview: "Remember",
+  drillDone: "✓ predicted",
+  codeTab: "Exercises",
+  codeIntro: "Hands-on exercises and mini-projects. Try each in your own editor first, then open the solution.",
+};
+
 export const stacks: Stack[] = [
   /* ---------------- developer stacks ---------------- */
   {
@@ -123,20 +140,7 @@ export const stacks: Stack[] = [
     blurb:
       "Lists, tuples, dictionaries, functions, classes and file handling — taught with step-by-step execution traces and memory diagrams, and tied to the ML code you will write next.",
     audience: "Beginners starting AI, and developers coming from other languages",
-    labels: {
-      production: "In AI work",
-      interview: "Interview angle",
-      drillsTab: "Predict the output",
-      drillsIntro: "Read the code, predict what it prints, then step through exactly what Python does. Most Python interview traps live here.",
-      drillQuestion: "What does this print?",
-      drillPath: "Step-by-step trace",
-      drillFix: "Why",
-      drillPrevent: "Watch out",
-      drillInterview: "Remember",
-      drillDone: "✓ predicted",
-      codeTab: "Exercises",
-      codeIntro: "Hands-on exercises and mini-projects. Try each in your own editor first, then open the solution.",
-    },
+    labels: codeStackLabels,
     stats: pythonAiStats,
     load: () => import("./content/python-ai.js").then((m) => m.content),
     loadVisuals: () => import("./content/python-ai.js").then((m) => m.visuals),
@@ -170,7 +174,23 @@ export const stacks: Stack[] = [
     load: () => import("./content/maths-ai.js").then((m) => m.content),
     loadVisuals: () => import("./content/maths-ai.js").then((m) => m.visuals),
   },
-  { slug: "numpy-pandas", name: "NumPy and Pandas", section: "ai", stage: "Foundations", icon: "▦", accent: "#2b9a8c", tagline: "Arrays and tables for data", blurb: "Vectorised computation and tabular data wrangling — the tools between Python and models.", audience: "Learners who finished Python for AI", planned: ["ndarray and broadcasting", "DataFrames", "Cleaning and joining", "Plotting"] },
+  {
+    slug: "numpy",
+    name: "NumPy",
+    section: "ai",
+    stage: "Foundations",
+    icon: "▦",
+    accent: "#2b9a8c",
+    tagline: "The array library under every AI framework",
+    blurb:
+      "Arrays, indexing and slicing, broadcasting, axes, reshaping, linear algebra and random data — each shown as moving diagrams of the actual numbers, then applied to images, scaling and a neural-network layer.",
+    audience: "Learners who finished Python for AI, and anyone moving from Python lists to data work",
+    labels: codeStackLabels,
+    stats: numpyStats,
+    load: () => import("./content/numpy.js").then((m) => m.content),
+    loadVisuals: () => import("./content/numpy.js").then((m) => m.visuals),
+  },
+  { slug: "pandas", name: "Pandas", section: "ai", stage: "Foundations", icon: "🐼", accent: "#6a5acd", tagline: "Tables of data, cleaned and combined", blurb: "DataFrames, selecting and filtering, grouping, joins, missing data and preparing datasets for models.", audience: "Learners who finished NumPy", planned: ["DataFrames and Series", "Selecting and filtering", "Group by and joins", "Cleaning messy data"] },
   { slug: "machine-learning", name: "Machine Learning", section: "ai", stage: "Core machine learning", icon: "📈", accent: "#7c5cff", tagline: "From regression to ensembles", blurb: "Supervised and unsupervised learning, features, evaluation, overfitting, and the scikit-learn workflow.", audience: "Learners who finished Python and Maths for AI", planned: ["Regression and classification", "Trees and ensembles", "Evaluation", "Clustering"] },
   { slug: "neural-networks", name: "Neural Networks", section: "ai", stage: "Core machine learning", icon: "🕸", accent: "#d6489a", tagline: "Neurons, layers, backpropagation", blurb: "How a network computes and learns, one neuron and one gradient at a time.", audience: "Learners ready for deep learning", planned: ["Perceptron", "Activation functions", "Backpropagation", "Optimisers"] },
   { slug: "deep-learning", name: "Deep Learning", section: "ai", stage: "Core machine learning", icon: "🧠", accent: "#5a67d8", tagline: "CNNs, RNNs, transformers", blurb: "Convolutions, sequence models, attention and training deep networks in PyTorch.", audience: "Learners who finished neural networks", planned: ["CNNs", "Sequence models", "Attention", "Training at scale"] },

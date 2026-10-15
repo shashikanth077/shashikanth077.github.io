@@ -22,6 +22,7 @@ const stacks = [
   { slug: "redis", authored: false },
   { slug: "python-ai", authored: true },
   { slug: "maths-ai", authored: true },
+  { slug: "numpy", authored: true, generatedOutputs: true },
 ];
 const tmp = mkdtempSync(join(tmpdir(), "visuals-"));
 
@@ -117,7 +118,7 @@ function check(stack, id, v) {
   }
 }
 
-for (const { slug: stack, authored } of stacks) {
+for (const { slug: stack, authored, generatedOutputs } of stacks) {
   let content;
   let visuals;
   if (authored) {
@@ -152,6 +153,13 @@ for (const { slug: stack, authored } of stacks) {
     content.concepts.forEach((c) => { if (!areaIds.has(c.area)) bad(stack, c.id, `unknown area ${c.area}`); });
     content.questions.forEach((q) => { if (!areaIds.has(q.area)) bad(stack, q.id, `question has unknown area ${q.area}`); });
     content.drills?.forEach((d, i) => { if (d.options.filter((o) => o.correct).length !== 1) bad(stack, `drill ${i + 1}`, "must have exactly one correct option"); });
+  }
+
+  if (generatedOutputs) {
+    // Outputs come from running the code (npm run outputs); every example with code must have one.
+    content.concepts.forEach((c) => {
+      if (c.code && c.output === undefined && /print\(/.test(c.code)) bad(stack, c.id, `no generated output — run: npm run outputs -- ${stack}`);
+    });
   }
 
   const missing = content.concepts.filter((c) => !visuals[c.id]);
