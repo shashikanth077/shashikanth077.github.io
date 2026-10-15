@@ -59,6 +59,12 @@ export default function Home() {
         </ul>
       </section>
 
+      <Link to="/ai" className="home-resources home-resources--ai">
+        <span className="home-resources__icon" aria-hidden="true">🧠</span>
+        <span><strong>AI Atlas</strong><small>A visual path from Python and maths to machine learning, deep learning, generative AI and agents.</small></span>
+        <span className="home-resources__arrow" aria-hidden="true">→</span>
+      </Link>
+
       <Link to="/resources" className="home-resources">
         <span className="home-resources__icon" aria-hidden="true">✦</span>
         <span><strong>Learn and prepare</strong><small>Explore skill guides, learning paths, and interview questions in the resource pool.</small></span>

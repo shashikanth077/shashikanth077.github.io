@@ -114,12 +114,12 @@ export function Overview({ ctx }: { ctx: LearnCtx }) {
           )}
           {data.drills && (
             <button type="button" className="lp-tile" onClick={() => go("practice", { sub: "drills" })}>
-              <strong>Production drills</strong><span>{solved} / {data.drills.length} diagnosed</span>
+              <strong>{stack.labels?.drillsTab ?? "Production drills"}</strong><span>{solved} / {data.drills.length} solved</span>
             </button>
           )}
           {data.codeLab && (
             <button type="button" className="lp-tile" onClick={() => go("practice", { sub: "code" })}>
-              <strong>Code lab</strong><span>{data.codeLab.length} utilities to write from memory</span>
+              <strong>{stack.labels?.codeTab ?? "Code lab"}</strong><span>{data.codeLab.length} to write yourself</span>
             </button>
           )}
           <button type="button" className="lp-tile" onClick={() => go("interview", { sub: "cheat" })}>

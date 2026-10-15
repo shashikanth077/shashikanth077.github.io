@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Link, useParams, useSearchParams } from "react-router-dom";
-import { findStack } from "../learn/catalog.js";
+import { Link, Navigate, useLocation, useParams, useSearchParams } from "react-router-dom";
+import { SECTION_META, findStack, stackPath } from "../learn/catalog.js";
 import type { LearnCtx, ViewId } from "../learn/ctx.js";
 import { countDone, useProgress } from "../learn/progress.js";
 import { plain } from "../learn/Rich.js";
@@ -65,6 +65,8 @@ function GlobalSearch({ data, go }: { data: StackContent; go: LearnCtx["go"] }) 
 export default function ResourceStack() {
   const { stack: slug } = useParams();
   const stack = findStack(slug);
+  const location = useLocation();
+  const section = stack ? SECTION_META[stack.section] : SECTION_META.dev;
   const [params, setParams] = useSearchParams();
   const [data, setData] = useState<StackContent | null>(null);
   const [visuals, setVisuals] = useState<VisualMap>({});
@@ -82,11 +84,11 @@ export default function ResourceStack() {
 
   useEffect(() => {
     if (!stack) return;
-    const description = `${stack.name} learning portal: ${stack.blurb}`;
-    document.title = `${stack.name} Learning Portal — Concepts & Interview Prep | ToolNest`;
+    const description = `${stack.name} ${section.label.toLowerCase()}: ${stack.blurb}`;
+    document.title = stack.section === "ai" ? `${stack.name} — AI Atlas | ToolNest` : `${stack.name} Learning Portal — Concepts & Interview Prep | ToolNest`;
     document.querySelector<HTMLMetaElement>('meta[name="description"]')?.setAttribute("content", description);
-    document.querySelector<HTMLLinkElement>('link[rel="canonical"]')?.setAttribute("href", `https://shashikant-hr.me/tools/resources/${stack.slug}`);
-  }, [stack]);
+    document.querySelector<HTMLLinkElement>('link[rel="canonical"]')?.setAttribute("href", `https://shashikant-hr.me/tools${stackPath(stack)}`);
+  }, [stack, section.label]);
 
   const available: ViewId[] = useMemo(
     () =>
@@ -122,15 +124,17 @@ export default function ResourceStack() {
   );
 
   if (!stack) return <NotFound />;
+  // A stack lives under exactly one section; send stale links to the right place.
+  if (!location.pathname.startsWith(stackPath(stack))) return <Navigate to={{ pathname: stackPath(stack), search: location.search }} replace />;
 
   if (!stack.load) {
     return (
       <div className="lp">
-        <div className="lp-crumb"><Link to="/">Tools</Link><span>/</span><Link to="/resources">Learning portal</Link><span>/</span>{stack.name}</div>
+        <div className="lp-crumb"><Link to="/">Tools</Link><span>/</span><Link to={section.base}>{section.crumb}</Link><span>/</span>{stack.name}</div>
         <div className="lp-empty lp-soon">
           <h1>{stack.name} is coming soon</h1>
           <p>{stack.blurb}</p>
-          <Link className="lp-btn lp-btn--primary" to="/resources">Back to the learning portal</Link>
+          <Link className="lp-btn lp-btn--primary" to={section.base}>Back to {section.label}</Link>
         </div>
       </div>
     );
@@ -141,7 +145,7 @@ export default function ResourceStack() {
 
   return (
     <div className="lp" style={{ ["--lp-accent" as string]: stack.accent }}>
-      <div className="lp-crumb"><Link to="/">Tools</Link><span>/</span><Link to="/resources">Learning portal</Link><span>/</span>{stack.name}</div>
+      <div className="lp-crumb"><Link to="/">Tools</Link><span>/</span><Link to={section.base}>{section.crumb}</Link><span>/</span>{stack.name}</div>
 
       <header className="lp-top">
         <div className="lp-top__id">

@@ -64,6 +64,9 @@ export function MobileMenu({ open }: { open: boolean }) {
       </div>
 
       <nav className="mobileMenu__body" aria-label="Tools">
+        <NavLink to="/ai" className="mobileMenu__resources mobileMenu__ai" onClick={() => dispatch(toggleSidebar(false))}>
+          <span aria-hidden="true">✦</span> AI Atlas <span aria-hidden="true">↗</span>
+        </NavLink>
         <NavLink to="/resources" className="mobileMenu__resources" onClick={() => dispatch(toggleSidebar(false))}>
           <span aria-hidden="true">✦</span> Resource pool <span aria-hidden="true">↗</span>
         </NavLink>

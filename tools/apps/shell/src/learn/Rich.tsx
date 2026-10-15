@@ -8,7 +8,7 @@ export function Rich({ text }: { text: string }) {
 
 export const plain = (text: string) => text.replace(/\{\{(.+?)\}\}/g, (_, s: string) => s.trim());
 
-export function CodeBlock({ code, label = "Code" }: { code: string; label?: string }) {
+export function CodeBlock({ code, label = "Code", output }: { code: string; label?: string; output?: string }) {
   return (
     <figure className="lp-code">
       <figcaption>
@@ -16,6 +16,7 @@ export function CodeBlock({ code, label = "Code" }: { code: string; label?: stri
         <CopyButton value={code} />
       </figcaption>
       <pre tabIndex={0}><code>{code}</code></pre>
+      {output && <div className="lp-code__out"><span>Output</span><pre tabIndex={0}>{output}</pre></div>}
     </figure>
   );
 }

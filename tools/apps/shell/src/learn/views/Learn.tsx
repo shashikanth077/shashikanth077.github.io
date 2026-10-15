@@ -7,7 +7,8 @@ import type { Visual } from "../visuals/types.js";
 import { VisualView } from "../visuals/VisualView.js";
 
 export function Learn({ ctx }: { ctx: LearnCtx }) {
-  const { data, progress, toggle, params, setParam, visuals } = ctx;
+  const { data, progress, toggle, params, setParam, visuals, stack } = ctx;
+  const labels = stack.labels ?? {};
   const area = params.get("area") ?? "all";
   const level = Number(params.get("level") ?? 0) as 0 | Level;
   const open = params.get("open");
@@ -87,10 +88,10 @@ export function Learn({ ctx }: { ctx: LearnCtx }) {
                   <div className="lp-concept__body">
                     {visuals[c.id] && <VisualView visual={visuals[c.id] as Visual} key={c.id} />}
                     <p className="lp-concept__summary"><Rich text={c.summary} /></p>
-                    {c.code && <CodeBlock code={c.code} />}
+                    {c.code && <CodeBlock code={c.code} output={c.output} />}
                     <div className="lp-twin">
-                      <section className="lp-callout lp-callout--prod"><h4>In production</h4><p><Rich text={c.production} /></p></section>
-                      <section className="lp-callout lp-callout--int"><h4>How interviewers probe it</h4><p><Rich text={c.interview} /></p></section>
+                      <section className="lp-callout lp-callout--prod"><h4>{labels.production ?? "In production"}</h4><p><Rich text={c.production} /></p></section>
+                      <section className="lp-callout lp-callout--int"><h4>{labels.interview ?? "How interviewers probe it"}</h4><p><Rich text={c.interview} /></p></section>
                     </div>
                     <button type="button" className={`lp-btn${studied ? "" : " lp-btn--primary"}`} onClick={() => toggle("studied", c.id)}>
                       {studied ? "✓ Studied — undo" : "Mark as studied"}

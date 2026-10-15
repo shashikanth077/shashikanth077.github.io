@@ -2,6 +2,7 @@ import { Rich } from "../Rich.js";
 import { CompareDiagram, LanesDiagram, LayersDiagram } from "./Blocks.js";
 import { FlowDiagram, SequenceDiagram } from "./Diagrams.js";
 import { QueueSim } from "./QueueSim.js";
+import { CellsDiagram, TraceDiagram } from "./PythonViews.js";
 import type { Visual } from "./types.js";
 import { useStepper, type Stepper } from "./useStepper.js";
 
@@ -12,6 +13,8 @@ const KIND_LABEL: Record<Visual["type"], string> = {
   compare: "Side by side",
   layers: "The layers",
   queue: "Try it live",
+  trace: "Step through the code",
+  cells: "Memory view",
 };
 
 function stepCount(v: Exclude<Visual, { type: "queue" }>) {
@@ -21,6 +24,8 @@ function stepCount(v: Exclude<Visual, { type: "queue" }>) {
     case "lanes": return v.length;
     case "compare": return v.rows.length;
     case "layers": return v.layers.length;
+    case "trace": return v.steps.length;
+    case "cells": return v.steps.length;
   }
 }
 
@@ -31,6 +36,8 @@ function caption(v: Exclude<Visual, { type: "queue" }>, step: number): string {
     case "lanes": return [...(v.notes ?? [])].reverse().find((n) => n.at <= step)?.text ?? "";
     case "compare": return v.rows[step] ? `${v.rows[step]?.label}` : "";
     case "layers": return v.layers[step]?.detail ?? "";
+    case "trace": return v.steps[step]?.note ?? "";
+    case "cells": return v.steps[step]?.note ?? "";
   }
 }
 
@@ -49,7 +56,7 @@ function Controls({ s }: { s: Stepper }) {
 }
 
 function Stepped({ v }: { v: Exclude<Visual, { type: "queue" }> }) {
-  const interval = v.type === "lanes" ? 750 : v.type === "compare" || v.type === "layers" ? 1200 : 1700;
+  const interval = v.type === "lanes" ? 750 : v.type === "compare" || v.type === "layers" ? 1200 : v.type === "trace" || v.type === "cells" ? 1900 : 1700;
   const s = useStepper(stepCount(v), interval);
   return (
     <>
@@ -58,6 +65,8 @@ function Stepped({ v }: { v: Exclude<Visual, { type: "queue" }> }) {
       {v.type === "lanes" && <LanesDiagram v={v} s={s} />}
       {v.type === "compare" && <CompareDiagram v={v} s={s} />}
       {v.type === "layers" && <LayersDiagram v={v} s={s} />}
+      {v.type === "trace" && <TraceDiagram v={v} s={s} />}
+      {v.type === "cells" && <CellsDiagram v={v} s={s} />}
       <Controls s={s} />
       <p className="lp-vcap" aria-live="polite"><Rich text={caption(v, s.step)} /></p>
     </>

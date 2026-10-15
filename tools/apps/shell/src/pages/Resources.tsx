@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { STACK_CATEGORIES, stacks, type StackCategory } from "../learn/catalog.js";
+import { STACK_CATEGORIES, stackPath, stacks, type StackCategory } from "../learn/catalog.js";
+
+const devStacks = stacks.filter((s) => s.section === "dev");
 
 export default function Resources() {
   useEffect(() => {
@@ -16,7 +18,7 @@ export default function Resources() {
   const [category, setCategory] = useState<StackCategory | "All">("All");
   const matches = useMemo(() => {
     const term = text.trim().toLowerCase();
-    return stacks.filter(
+    return devStacks.filter(
       (s) => (category === "All" || s.category === category) && (!term || `${s.name} ${s.tagline} ${s.blurb} ${s.category}`.toLowerCase().includes(term)),
     );
   }, [text, category]);
@@ -54,7 +56,7 @@ export default function Resources() {
         {matches.length === 0 && <div className="lp-empty">No stacks match. Try another word or category.</div>}
         <div className="lp-stacks">
           {live.map((s) => (
-            <Link key={s.slug} to={`/resources/${s.slug}`} className="lp-stackcard" style={{ ["--lp-accent" as string]: s.accent }}>
+            <Link key={s.slug} to={stackPath(s)} className="lp-stackcard" style={{ ["--lp-accent" as string]: s.accent }}>
               <span className="lp-stackcard__icon" aria-hidden="true">{s.icon}</span>
               <h3>{s.name} <span className="lp-badge lp-badge--quiet">{s.category}</span></h3>
               <p className="lp-stackcard__tag">{s.tagline}</p>

@@ -9,14 +9,19 @@
  * stack so you can see which concepts still have no picture.
  */
 import { build } from "esbuild";
-import { readFileSync, rmSync, mkdtempSync } from "node:fs";
+import { readFileSync, rmSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const learn = resolve(here, "../apps/shell/src/learn");
-const stacks = ["nodejs", "redis"];
+/** Stacks imported from handbook JSON (visuals in visuals/<slug>.ts) vs authored in TypeScript (content/<slug>.ts). */
+const stacks = [
+  { slug: "nodejs", authored: false },
+  { slug: "redis", authored: false },
+  { slug: "python-ai", authored: true },
+];
 const tmp = mkdtempSync(join(tmpdir(), "visuals-"));
 
 const problems = [];
@@ -47,22 +52,63 @@ function check(stack, id, v) {
       break;
     case "queue":
       break;
+    case "trace":
+      v.steps.forEach((s, i) => { if (!int(s.line - 1, v.code.length)) bad(stack, id, `step ${i + 1} line ${s.line} is outside the ${v.code.length}-line code`); });
+      break;
+    case "cells": {
+      let rows = v.rows;
+      v.steps.forEach((s, i) => {
+        rows = s.rows ?? rows;
+        (s.hl ?? []).forEach(([r, from, to]) => {
+          const row = rows[r];
+          if (!row) bad(stack, id, `step ${i + 1} highlights missing row ${r}`);
+          else if (from > to || !int(from, row.cells.length) || !int(to, row.cells.length)) bad(stack, id, `step ${i + 1} highlight ${from}-${to} is outside row "${row.name}" (${row.cells.length} cells)`);
+        });
+      });
+      break;
+    }
     default:
       bad(stack, id, `unknown type ${v.type}`);
   }
 }
 
-for (const stack of stacks) {
-  const out = join(tmp, `${stack}.mjs`);
-  await build({ entryPoints: [join(learn, "visuals", `${stack}.ts`)], bundle: true, format: "esm", platform: "node", outfile: out, logLevel: "silent" });
-  const { visuals } = await import(pathToFileURL(out).href);
-  const content = JSON.parse(readFileSync(join(learn, "content", `${stack}.json`), "utf8"));
+for (const { slug: stack, authored } of stacks) {
+  let content;
+  let visuals;
+  if (authored) {
+    // Authored stacks define content and visuals together in TypeScript.
+    const out = join(tmp, `${stack}.mjs`);
+    await build({ entryPoints: [join(learn, "content", `${stack}.ts`)], bundle: true, format: "esm", platform: "node", outfile: out, logLevel: "silent" });
+    ({ content, visuals } = await import(pathToFileURL(out).href));
+  } else {
+    const out = join(tmp, `${stack}.mjs`);
+    await build({ entryPoints: [join(learn, "visuals", `${stack}.ts`)], bundle: true, format: "esm", platform: "node", outfile: out, logLevel: "silent" });
+    ({ visuals } = await import(pathToFileURL(out).href));
+    content = JSON.parse(readFileSync(join(learn, "content", `${stack}.json`), "utf8"));
+  }
   const ids = new Set(content.concepts.map((c) => c.id));
 
   for (const [id, v] of Object.entries(visuals)) {
     if (!ids.has(id)) bad(stack, id, "no such concept id");
     else check(stack, id, v);
   }
+
+  if (authored) {
+    // Keep the catalog's stats in sync with the authored content.
+    const stats = {
+      concepts: content.concepts.length,
+      questions: content.questions.length,
+      drills: content.drills?.length ?? 0,
+      codeLab: content.codeLab?.length ?? 0,
+      areas: content.areas.length,
+    };
+    writeFileSync(join(learn, "content", `${stack}.stats.json`), JSON.stringify(stats, null, 2) + "\n");
+    const areaIds = new Set(content.areas.map((a) => a.id));
+    content.concepts.forEach((c) => { if (!areaIds.has(c.area)) bad(stack, c.id, `unknown area ${c.area}`); });
+    content.questions.forEach((q) => { if (!areaIds.has(q.area)) bad(stack, q.id, `question has unknown area ${q.area}`); });
+    content.drills?.forEach((d, i) => { if (d.options.filter((o) => o.correct).length !== 1) bad(stack, `drill ${i + 1}`, "must have exactly one correct option"); });
+  }
+
   const missing = content.concepts.filter((c) => !visuals[c.id]);
   const types = {};
   Object.values(visuals).forEach((v) => (types[v.type] = (types[v.type] ?? 0) + 1));

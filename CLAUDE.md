@@ -44,9 +44,16 @@ tools/
 - Shell pages `Resources.tsx` (stack picker) and `ResourceStack.tsx` (workspace); UI in `apps/shell/src/learn/` (`lp-` CSS prefix in `learn.css`)
 - Content is JSON per stack in `learn/content/`, lazy-loaded; progress is localStorage only (`toolnest-learn:<slug>`)
 - **Add a stack**: `node scripts/import-handbook.mjs <handbook.html> <slug>` (from `tools/`), then add/enable the entry in `learn/catalog.ts` (`category`, `stats` + `load`; `patternsLabel` if the handbook has a PATD patterns section, as Redis does). Live: nodejs, redis Prerender + sitemap pick it up via `stacks.json`
-- **Visuals**: every concept has an animated diagram, hand-authored per stack in `learn/visuals/<slug>.ts` (+ `<slug>/*.ts`), keyed by concept id. Types: sequence, flow (row/cycle), lanes, compare, layers, queue (live sim). Use the helpers in `visuals/kit.ts` (`seq`, `flow`, `lanes`, `compare`, `layers`, `queue`). `npm test` runs `scripts/visuals-check.mjs`, which validates specs and lists concepts still missing a diagram — add the stack to its `stacks` array and `loadVisuals` in `catalog.ts`
+- **Visuals**: every concept has an animated diagram, hand-authored per stack in `learn/visuals/<slug>.ts` (+ `<slug>/*.ts`), keyed by concept id. Types: sequence, flow (row/cycle), lanes, compare, layers, queue (live sim), trace, cells. Use the helpers in `visuals/kit.ts` (`seq`, `flow`, `lanes`, `compare`, `layers`, `queue`). `npm test` runs `scripts/visuals-check.mjs`, which validates specs and lists concepts still missing a diagram — add the stack to its `stacks` array and `loadVisuals` in `catalog.ts`
 - Content JSON (`StackContent` in `learn/types.ts`) is the seam for a future backend: swap a stack's `load()` for an API fetch without touching the views
 - Importer expects the handbook's `/* ===== DATA` … `/* ===== ENGINE` JS arrays; missing optional sections are simply hidden
+
+### AI Atlas (`/ai`) — separate menu, same workspace
+- Header/mobile/home entry "AI Atlas" → `pages/AiAtlas.tsx` (roadmap of tracks by stage). A track opens in the same `ResourceStack` workspace at `/ai/<slug>`; `Stack.section` ("dev" | "ai") in `learn/catalog.ts` decides the base path (`stackPath()`); roadmap order = `AI_STAGES`
+- Tracks with no `load` render as "coming soon" cards using `planned` topics. Planned: maths-ai, numpy-pandas, machine-learning, neural-networks, deep-learning, generative-ai, agentic-ai
+- `Stack.labels` re-words the workspace per stack (e.g. Python for AI: "In AI work", "Predict the output")
+- **Hand-authored tracks** (not imported): write `learn/author/<slug>/*.ts` using `author/build.ts` (`ConceptDef` = concept + its diagram together; `py` tag keeps backslashes in Python code), assemble in `learn/content/<slug>.ts`, add to `stacks` in `scripts/visuals-check.mjs`. `npm test` validates diagrams and rewrites `<slug>.stats.json`
+- Extra diagram types for code: `trace` (line-by-line execution with variables/output) and `cells` (list/tuple/dict/string boxes with indexes, slicing highlights)
 
 ### Adding a new tool
 1. Define the route in `libs/tools-core/src/routes.ts` (slug, name, toolkit, category, remote)

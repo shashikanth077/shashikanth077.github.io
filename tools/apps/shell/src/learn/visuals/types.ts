@@ -81,9 +81,46 @@ export interface QueueVisual extends Base {
   overflow: "drop" | "block";
 }
 
+/** Python-tutor style execution trace: code lines, variables and printed output. */
+export interface TraceVisual extends Base {
+  type: "trace";
+  code: string[];
+  steps: {
+    /** 1-based line being executed. */
+    line: number;
+    /** Variables created or changed by this line (merged into the running state). */
+    set?: Record<string, string>;
+    /** Text printed by this line. */
+    out?: string;
+    note?: string;
+  }[];
+}
+
+export interface CellsRow {
+  name: string;
+  kind: "list" | "tuple" | "dict" | "string" | "plain";
+  /** Dict cells are "key|value". */
+  cells: string[];
+  /** Show positions under each cell. */
+  index: "pos" | "posneg" | "none";
+}
+
+/** Boxes in a row (list, tuple, dict, string) with indexes; steps highlight ranges or replace rows. */
+export interface CellsVisual extends Base {
+  type: "cells";
+  rows: CellsRow[];
+  steps: {
+    note: string;
+    /** [rowIndex, fromCell, toCell] inclusive ranges to highlight. */
+    hl?: [number, number, number][];
+    /** Replacement rows from this step on (e.g. after append). */
+    rows?: CellsRow[];
+  }[];
+}
+
 export type Tone = "good" | "bad" | "warn" | "info" | "plain";
 
-export type Visual = SequenceVisual | FlowVisual | LanesVisual | CompareVisual | LayersVisual | QueueVisual;
+export type Visual = SequenceVisual | FlowVisual | LanesVisual | CompareVisual | LayersVisual | QueueVisual | TraceVisual | CellsVisual;
 
 /** concept id (e.g. "async:2") or question id → visual */
 export type VisualMap = Record<string, Visual>;

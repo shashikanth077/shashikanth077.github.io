@@ -746,3 +746,10 @@
   text-decoration: none;
 }
 .shell-footer__links a:hover { color: var(--accent); }
+
+/* AI Atlas entry points */
+.shell-header__ai { color: var(--tk-qr); background: var(--tk-qr-soft); }
+.shell-header__ai:hover, .shell-header__ai.active { outline-color: var(--tk-qr); }
+.mobileMenu__ai { color: var(--tk-qr); background: var(--tk-qr-soft); border-color: var(--tk-qr); margin-bottom: 0; }
+.home-resources--ai { background: var(--tk-qr-soft); border-color: var(--tk-qr); margin-bottom: var(--space-3); }
+.home-resources--ai .home-resources__icon, .home-resources--ai .home-resources__arrow { color: var(--tk-qr); }

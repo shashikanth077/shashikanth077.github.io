@@ -14,6 +14,8 @@ export interface Concept {
   production: string;
   interview: string;
   code?: string;
+  /** What the code prints, shown in an output panel under it. */
+  output?: string;
 }
 
 export interface Question { id: string; area: string; level: Level; q: string; a: string }
@@ -21,6 +23,8 @@ export interface Question { id: string; area: string; level: Level; q: string; a
 export interface Drill {
   title: string;
   context: string;
+  /** Optional code shown under the context (predict-the-output style drills). */
+  code?: string;
   symptoms: string[];
   options: { text: string; correct: boolean; why: string }[];
   path: string[];

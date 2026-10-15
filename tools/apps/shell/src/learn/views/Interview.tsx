@@ -234,11 +234,13 @@ function Cheat({ ctx }: { ctx: LearnCtx }) {
 }
 
 export function Interview({ ctx }: { ctx: LearnCtx }) {
-  const { params, setParam } = ctx;
+  const { params, setParam, data } = ctx;
+  const iv = data.interview;
+  const hasPlaybook = iv.stages.length + iv.seniority.length + iv.frameworks.length + iv.stories.length > 0;
   const tabs = [
     { id: "bank", label: "Question bank" },
     { id: "mock", label: "Mock interview" },
-    { id: "playbook", label: "Playbook" },
+    ...(hasPlaybook ? [{ id: "playbook", label: "Playbook" }] : []),
     { id: "cheat", label: "Cheat sheet" },
   ];
   const sub = tabs.find((t) => t.id === params.get("sub"))?.id ?? "bank";

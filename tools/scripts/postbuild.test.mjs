@@ -65,7 +65,9 @@ const CHECKS = [
 const base = await readFile(INDEX, "utf8");
 const html = buildToolHtml(base, route);
 const resourceHtml = buildResourceHtml(base);
-const stackHtml = buildResourceHtml(base, { slug: "nodejs", name: "Node.js", blurb: "Runtime & APIs." });
+const stackHtml = buildResourceHtml(base, { slug: "nodejs", name: "Node.js", blurb: "Runtime & APIs.", section: "dev" });
+const aiHomeHtml = buildResourceHtml(base, undefined, "ai");
+const aiStackHtml = buildResourceHtml(base, { slug: "python-ai", name: "Python for AI", blurb: "Lists & more.", section: "ai" });
 
 let failed = 0;
 for (const [label, check] of CHECKS) {
@@ -82,6 +84,10 @@ for (const [label, check] of CHECKS) {
 
 for (const [label, ok] of [
   ["resource title", /<title>Learning Portal/.test(resourceHtml)],
+  ["ai home title", /<title>AI Atlas/.test(aiHomeHtml)],
+  ["ai home canonical", aiHomeHtml.includes('<link rel="canonical" href="https://shashikant-hr.me/tools/ai" />')],
+  ["ai stack canonical", aiStackHtml.includes('<link rel="canonical" href="https://shashikant-hr.me/tools/ai/python-ai" />')],
+  ["ai stack title", /<title>Python for AI — AI Atlas/.test(aiStackHtml)],
   ["stack title", /<title>Node\.js Learning Portal/.test(stackHtml)],
   ["stack canonical", stackHtml.includes('<link rel="canonical" href="https://shashikant-hr.me/tools/resources/nodejs" />')],
   ["resource canonical", resourceHtml.includes('<link rel="canonical" href="https://shashikant-hr.me/tools/resources" />')],

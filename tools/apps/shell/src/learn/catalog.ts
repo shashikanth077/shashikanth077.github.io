@@ -2,38 +2,82 @@ import type { StackContent, StackStats } from "./types.js";
 import type { VisualMap } from "./visuals/types.js";
 import nodeStats from "./content/nodejs.stats.json";
 import redisStats from "./content/redis.stats.json";
+import pythonAiStats from "./content/python-ai.stats.json";
 
 /**
- * Every learning stack the portal knows about. To add one:
- *   1. node scripts/import-handbook.mjs <handbook.html> <slug>
- *   2. add an entry here with status "live", `stats` and a `load` that imports the JSON
- * Stacks without `load` render as "coming soon" cards.
+ * Every learning stack the portal knows about. Two sections share one workspace:
+ *   - "dev": developer stacks under /resources (Node.js, Redis, …)
+ *   - "ai":  the AI Atlas under /ai (Python for AI, Maths, ML, …)
+ *
+ * To add a stack:
+ *   - from a handbook HTML:  node scripts/import-handbook.mjs <handbook.html> <slug>
+ *   - or author it by hand:  learn/author/ (see CLAUDE.md)
+ * then add an entry here with `stats` and `load`. Entries without `load` render as "coming soon".
  */
+export type StackSection = "dev" | "ai";
+
 export type StackCategory = "Backend" | "Frontend" | "Database" | "Language";
 export const STACK_CATEGORIES: StackCategory[] = ["Backend", "Frontend", "Database", "Language"];
+
+/** Order of the AI Atlas roadmap. */
+export const AI_STAGES = ["Foundations", "Core machine learning", "Modern AI"] as const;
+export type AiStage = (typeof AI_STAGES)[number];
+
+/** Wording that differs between stacks (defaults suit the developer stacks). */
+export interface StackLabels {
+  /** Callout on each concept, default "In production". */
+  production?: string;
+  /** Callout on each concept, default "How interviewers probe it". */
+  interview?: string;
+  drillsTab?: string;
+  drillsIntro?: string;
+  drillQuestion?: string;
+  drillPath?: string;
+  drillFix?: string;
+  drillPrevent?: string;
+  drillInterview?: string;
+  drillDone?: string;
+  codeTab?: string;
+  codeIntro?: string;
+}
 
 export interface Stack {
   slug: string;
   name: string;
-  category: StackCategory;
+  section: StackSection;
+  category?: StackCategory;
+  /** AI Atlas only: which roadmap stage the track belongs to. */
+  stage?: AiStage;
   /** Tab label for the stack-specific explorer (content.patterns), e.g. "Caching patterns". */
   patternsLabel?: string;
+  labels?: StackLabels;
   icon: string;
   /** CSS colour for the card/workspace accent. */
   accent: string;
   tagline: string;
   blurb: string;
   audience: string;
+  /** Planned topics, shown on "coming soon" cards. */
+  planned?: string[];
   stats?: StackStats;
   load?: () => Promise<StackContent>;
   /** Hand-authored animated explanations, keyed by concept id (see learn/visuals/). */
   loadVisuals?: () => Promise<VisualMap>;
 }
 
+export const SECTION_META: Record<StackSection, { base: string; label: string; crumb: string }> = {
+  dev: { base: "/resources", label: "Learning portal", crumb: "Learning portal" },
+  ai: { base: "/ai", label: "AI Atlas", crumb: "AI Atlas" },
+};
+
+export const stackPath = (s: Pick<Stack, "slug" | "section">) => `${SECTION_META[s.section].base}/${s.slug}`;
+
 export const stacks: Stack[] = [
+  /* ---------------- developer stacks ---------------- */
   {
     slug: "nodejs",
     name: "Node.js",
+    section: "dev",
     category: "Backend",
     icon: "⬢",
     accent: "#3d9a50",
@@ -48,6 +92,7 @@ export const stacks: Stack[] = [
   {
     slug: "redis",
     name: "Redis",
+    section: "dev",
     category: "Database",
     patternsLabel: "Caching patterns",
     icon: "◆",
@@ -60,10 +105,48 @@ export const stacks: Stack[] = [
     load: () => import("./content/redis.json").then((m) => m.default as unknown as StackContent),
     loadVisuals: () => import("./visuals/redis.js").then((m) => m.visuals),
   },
-  { slug: "react", name: "React", category: "Frontend", icon: "⚛", accent: "#2f9ec4", tagline: "Components, hooks, rendering", blurb: "Rendering model, state, effects, performance and testing.", audience: "Frontend developers" },
-  { slug: "redux", name: "Redux", category: "Frontend", icon: "◈", accent: "#7e57c2", tagline: "State management that scales", blurb: "Redux Toolkit, RTK Query, normalisation and async patterns.", audience: "React developers" },
-  { slug: "javascript", name: "JavaScript", category: "Language", icon: "JS", accent: "#d4a017", tagline: "The language under everything", blurb: "Closures, async, the event loop, modules and modern syntax.", audience: "Every web developer" },
-  { slug: "mysql", name: "MySQL", category: "Database", icon: "▤", accent: "#2b7a9e", tagline: "Relational design and tuning", blurb: "Schema design, indexing, transactions, query plans and replication.", audience: "Backend developers" },
+  { slug: "react", name: "React", section: "dev", category: "Frontend", icon: "⚛", accent: "#2f9ec4", tagline: "Components, hooks, rendering", blurb: "Rendering model, state, effects, performance and testing.", audience: "Frontend developers" },
+  { slug: "redux", name: "Redux", section: "dev", category: "Frontend", icon: "◈", accent: "#7e57c2", tagline: "State management that scales", blurb: "Redux Toolkit, RTK Query, normalisation and async patterns.", audience: "React developers" },
+  { slug: "javascript", name: "JavaScript", section: "dev", category: "Language", icon: "JS", accent: "#d4a017", tagline: "The language under everything", blurb: "Closures, async, the event loop, modules and modern syntax.", audience: "Every web developer" },
+  { slug: "mysql", name: "MySQL", section: "dev", category: "Database", icon: "▤", accent: "#2b7a9e", tagline: "Relational design and tuning", blurb: "Schema design, indexing, transactions, query plans and replication.", audience: "Backend developers" },
+
+  /* ---------------- AI Atlas ---------------- */
+  {
+    slug: "python-ai",
+    name: "Python for AI",
+    section: "ai",
+    stage: "Foundations",
+    icon: "🐍",
+    accent: "#3b82c4",
+    tagline: "The Python every AI engineer uses daily",
+    blurb:
+      "Lists, tuples, dictionaries, functions, classes and file handling — taught with step-by-step execution traces and memory diagrams, and tied to the ML code you will write next.",
+    audience: "Beginners starting AI, and developers coming from other languages",
+    labels: {
+      production: "In AI work",
+      interview: "Interview angle",
+      drillsTab: "Predict the output",
+      drillsIntro: "Read the code, predict what it prints, then step through exactly what Python does. Most Python interview traps live here.",
+      drillQuestion: "What does this print?",
+      drillPath: "Step-by-step trace",
+      drillFix: "Why",
+      drillPrevent: "Watch out",
+      drillInterview: "Remember",
+      drillDone: "✓ predicted",
+      codeTab: "Exercises",
+      codeIntro: "Hands-on exercises and mini-projects. Try each in your own editor first, then open the solution.",
+    },
+    stats: pythonAiStats,
+    load: () => import("./content/python-ai.js").then((m) => m.content),
+    loadVisuals: () => import("./content/python-ai.js").then((m) => m.visuals),
+  },
+  { slug: "maths-ai", name: "Maths for AI", section: "ai", stage: "Foundations", icon: "∑", accent: "#c4572f", tagline: "Linear algebra, calculus, probability", blurb: "The maths behind every model — vectors, matrices, derivatives, gradients, probability and statistics, with pictures instead of proofs.", audience: "Anyone who wants to understand, not just call, ML libraries", planned: ["Vectors and matrices", "Derivatives and gradients", "Probability", "Statistics"] },
+  { slug: "numpy-pandas", name: "NumPy and Pandas", section: "ai", stage: "Foundations", icon: "▦", accent: "#2b9a8c", tagline: "Arrays and tables for data", blurb: "Vectorised computation and tabular data wrangling — the tools between Python and models.", audience: "Learners who finished Python for AI", planned: ["ndarray and broadcasting", "DataFrames", "Cleaning and joining", "Plotting"] },
+  { slug: "machine-learning", name: "Machine Learning", section: "ai", stage: "Core machine learning", icon: "📈", accent: "#7c5cff", tagline: "From regression to ensembles", blurb: "Supervised and unsupervised learning, features, evaluation, overfitting, and the scikit-learn workflow.", audience: "Learners who finished Python and Maths for AI", planned: ["Regression and classification", "Trees and ensembles", "Evaluation", "Clustering"] },
+  { slug: "neural-networks", name: "Neural Networks", section: "ai", stage: "Core machine learning", icon: "🕸", accent: "#d6489a", tagline: "Neurons, layers, backpropagation", blurb: "How a network computes and learns, one neuron and one gradient at a time.", audience: "Learners ready for deep learning", planned: ["Perceptron", "Activation functions", "Backpropagation", "Optimisers"] },
+  { slug: "deep-learning", name: "Deep Learning", section: "ai", stage: "Core machine learning", icon: "🧠", accent: "#5a67d8", tagline: "CNNs, RNNs, transformers", blurb: "Convolutions, sequence models, attention and training deep networks in PyTorch.", audience: "Learners who finished neural networks", planned: ["CNNs", "Sequence models", "Attention", "Training at scale"] },
+  { slug: "generative-ai", name: "Generative AI", section: "ai", stage: "Modern AI", icon: "✨", accent: "#e0841f", tagline: "LLMs, prompting, RAG", blurb: "How large language models work, how to prompt them, retrieval-augmented generation and evaluation.", audience: "Developers building with LLMs", planned: ["Tokens and embeddings", "Transformers", "Prompting and RAG", "Fine-tuning"] },
+  { slug: "agentic-ai", name: "Agentic AI", section: "ai", stage: "Modern AI", icon: "🤖", accent: "#18a3a3", tagline: "Tools, planning, multi-agent systems", blurb: "Agent loops, tool use, memory, planning and guardrails for systems that act.", audience: "Developers building agents", planned: ["Tool calling", "Planning and memory", "Multi-agent patterns", "Safety and evals"] },
 ];
 
 export const findStack = (slug: string | undefined) => stacks.find((s) => s.slug === slug);

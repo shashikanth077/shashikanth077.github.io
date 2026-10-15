@@ -5,6 +5,7 @@ import type { Drill } from "../types.js";
 import { SubTabs } from "../SubTabs.js";
 
 function DrillCard({ drill, id, ctx }: { drill: Drill; id: string; ctx: LearnCtx }) {
+  const labels = ctx.stack.labels ?? {};
   const [picked, setPicked] = useState<number | null>(null);
   const answered = picked !== null;
   const solved = !!ctx.progress.solved[id];
@@ -18,12 +19,13 @@ function DrillCard({ drill, id, ctx }: { drill: Drill; id: string; ctx: LearnCtx
   return (
     <article className={`lp-card lp-drill${solved ? " is-done" : ""}`}>
       <header>
-        <h3>{drill.title}{solved && <span className="lp-badge">✓ diagnosed</span>}</h3>
+        <h3>{drill.title}{solved && <span className="lp-badge">{labels.drillDone ?? "✓ diagnosed"}</span>}</h3>
         <p><Rich text={drill.context} /></p>
       </header>
-      <ul className="lp-symptoms">{drill.symptoms.map((s) => <li key={s}><Rich text={s} /></li>)}</ul>
-      <p className="lp-label">What is the most likely cause?</p>
-      <div className="lp-options" role="group" aria-label="Choose the most likely cause">
+      {drill.code && <CodeBlock code={drill.code} label="python" />}
+      {drill.symptoms.length > 0 && <ul className="lp-symptoms">{drill.symptoms.map((s) => <li key={s}><Rich text={s} /></li>)}</ul>}
+      <p className="lp-label">{labels.drillQuestion ?? "What is the most likely cause?"}</p>
+      <div className="lp-options" role="group" aria-label={labels.drillQuestion ?? "Choose the most likely cause"}>
         {drill.options.map((o, i) => {
           const state = !answered ? "" : o.correct ? " is-right" : picked === i ? " is-wrong" : "";
           return (
@@ -39,13 +41,13 @@ function DrillCard({ drill, id, ctx }: { drill: Drill; id: string; ctx: LearnCtx
       </div>
       {answered && (
         <div className="lp-reveal">
-          <h4>Diagnosis path</h4>
+          <h4>{labels.drillPath ?? "Diagnosis path"}</h4>
           <ol>{drill.path.map((p) => <li key={p}><Rich text={p} /></li>)}</ol>
           <div className="lp-twin">
-            <section className="lp-callout lp-callout--prod"><h4>The fix</h4><p><Rich text={drill.fix} /></p></section>
-            <section className="lp-callout"><h4>Prevent it</h4><p><Rich text={drill.prevent} /></p></section>
+            <section className="lp-callout lp-callout--prod"><h4>{labels.drillFix ?? "The fix"}</h4><p><Rich text={drill.fix} /></p></section>
+            <section className="lp-callout"><h4>{labels.drillPrevent ?? "Prevent it"}</h4><p><Rich text={drill.prevent} /></p></section>
           </div>
-          <section className="lp-callout lp-callout--int"><h4>Say this in the interview</h4><p><Rich text={drill.interview} /></p></section>
+          <section className="lp-callout lp-callout--int"><h4>{labels.drillInterview ?? "Say this in the interview"}</h4><p><Rich text={drill.interview} /></p></section>
           <button type="button" className="lp-btn" onClick={() => setPicked(null)}>Try again</button>
         </div>
       )}
@@ -54,10 +56,10 @@ function DrillCard({ drill, id, ctx }: { drill: Drill; id: string; ctx: LearnCtx
 }
 
 export function Practice({ ctx }: { ctx: LearnCtx }) {
-  const { data, params, setParam } = ctx;
+  const { data, params, setParam, stack } = ctx;
   const tabs = [
-    ...(data.drills ? [{ id: "drills", label: `Production drills (${data.drills.length})` }] : []),
-    ...(data.codeLab ? [{ id: "code", label: `Code lab (${data.codeLab.length})` }] : []),
+    ...(data.drills ? [{ id: "drills", label: `${stack.labels?.drillsTab ?? "Production drills"} (${data.drills.length})` }] : []),
+    ...(data.codeLab ? [{ id: "code", label: `${stack.labels?.codeTab ?? "Code lab"} (${data.codeLab.length})` }] : []),
     ...(data.architecture ? [{ id: "system", label: "System map" }] : []),
   ];
   const sub = tabs.find((t) => t.id === params.get("sub"))?.id ?? tabs[0]?.id;
@@ -69,7 +71,7 @@ export function Practice({ ctx }: { ctx: LearnCtx }) {
 
       {sub === "drills" && data.drills && (
         <>
-          <p className="lp-muted lp-lead">Senior interviews often start with a symptom, not a question. Pick the most likely cause, then read the diagnosis path and how to talk about it.</p>
+          <p className="lp-muted lp-lead">{stack.labels?.drillsIntro ?? "Senior interviews often start with a symptom, not a question. Pick the most likely cause, then read the diagnosis path and how to talk about it."}</p>
           {data.drills.map((d, i) => <DrillCard key={d.title} drill={d} id={`d${i}`} ctx={ctx} />)}
           {data.incidents && (
             <>
@@ -84,7 +86,7 @@ export function Practice({ ctx }: { ctx: LearnCtx }) {
 
       {sub === "code" && data.codeLab && (
         <>
-          <p className="lp-muted lp-lead">Utilities that show up in live-coding rounds and real codebases. Write each from memory first, then open the solution.</p>
+          <p className="lp-muted lp-lead">{stack.labels?.codeIntro ?? "Utilities that show up in live-coding rounds and real codebases. Write each from memory first, then open the solution."}</p>
           {data.codeLab.map((c, i) => (
             <article key={c.title} className="lp-card">
               <h3>{c.title}</h3>

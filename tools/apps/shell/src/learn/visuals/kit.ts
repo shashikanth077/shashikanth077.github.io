@@ -2,10 +2,10 @@
  * Compact authoring helpers — a visual should take a few lines, not a page.
  * Tones: g good, b bad, w warn, i info, p plain (default).
  */
-import type { CompareVisual, FlowVisual, LanesVisual, LayersVisual, QueueVisual, SequenceVisual, Tone } from "./types.js";
+import type { CellsRow, CellsVisual, CompareVisual, FlowVisual, LanesVisual, LayersVisual, QueueVisual, SequenceVisual, Tone, TraceVisual } from "./types.js";
 
-const T: Record<string, Tone> = { g: "good", b: "bad", w: "warn", i: "info", p: "plain" };
-const tone = (c?: string): Tone | undefined => (c ? T[c] : undefined);
+const TONES: Record<string, Tone> = { g: "good", b: "bad", w: "warn", i: "info", p: "plain" };
+const tone = (c?: string): Tone | undefined => (c ? TONES[c] : undefined);
 
 /** seq(takeaway, actors, [from, to, label, note?, flags?]) — flags: "r" reply, "b" bad. */
 export function seq(takeaway: string, actors: string[], steps: [number, number, string, string?, string?][]): SequenceVisual {
@@ -94,4 +94,35 @@ export function layers(takeaway: string, items: string[], direction?: string): L
 /** queue(takeaway, { producer, queue, worker, arrival, service, workers, capacity, overflow }) */
 export function queue(takeaway: string, o: Omit<QueueVisual, "type" | "takeaway">): QueueVisual {
   return { type: "queue", takeaway, ...o };
+}
+
+/**
+ * trace(takeaway, code, [[line, { var: "value" }, "printed text", "note"], …])
+ * `code` is the multi-line source; lines are numbered from 1.
+ */
+export function trace(takeaway: string, code: string, steps: [number, Record<string, string>?, string?, string?][]): TraceVisual {
+  return {
+    type: "trace",
+    takeaway,
+    code: code.replace(/^\n/, "").replace(/\n$/, "").split("\n"),
+    steps: steps.map(([line, set, out, note]) => ({ line, ...(set ? { set } : {}), ...(out ? { out } : {}), ...(note ? { note } : {}) })),
+  };
+}
+
+const row = (kind: CellsRow["kind"], name: string, cells: string[], index: CellsRow["index"]): CellsRow => ({ name, kind, cells, index });
+/** Row builders for cells(): list, tuple, dict ("key|value"), string, plain values. */
+export const L = (name: string, cells: string[], index: CellsRow["index"] = "posneg") => row("list", name, cells, index);
+export const T = (name: string, cells: string[], index: CellsRow["index"] = "posneg") => row("tuple", name, cells, index);
+export const D = (name: string, cells: string[]) => row("dict", name, cells, "none");
+export const S = (name: string, text: string, index: CellsRow["index"] = "posneg") => row("string", name, [...text], index);
+export const P = (name: string, cells: string[]) => row("plain", name, cells, "none");
+
+/** cells(takeaway, rows, [[note, [[row, from, to]], replacementRows?], …]) */
+export function cells(takeaway: string, rows: CellsRow[], steps: [string, [number, number, number][]?, CellsRow[]?][]): CellsVisual {
+  return {
+    type: "cells",
+    takeaway,
+    rows,
+    steps: steps.map(([note, hl, r]) => ({ note, ...(hl ? { hl } : {}), ...(r ? { rows: r } : {}) })),
+  };
 }

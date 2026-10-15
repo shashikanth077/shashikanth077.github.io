@@ -37,7 +37,7 @@ function emitStacksJson(): Plugin {
     name: "devtools:emit-stacks-json",
     apply: "build",
     generateBundle() {
-      const live = stacks.filter((s) => s.load).map(({ slug, name, tagline, blurb }) => ({ slug, name, tagline, blurb }));
+      const live = stacks.filter((s) => s.load).map(({ slug, name, tagline, blurb, section }) => ({ slug, name, tagline, blurb, section }));
       this.emitFile({ type: "asset", fileName: "stacks.json", source: JSON.stringify(live, null, 2) });
     },
   };
