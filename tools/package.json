@@ -26,7 +26,7 @@
     "build:shell": "npm run build --workspace @devtools/shell",
     "//assemble": "NOT named 'postbuild' — npm would then run it twice, once explicitly from `build` and once via its implicit post-<script> lifecycle hook.",
     "assemble": "node scripts/postbuild.mjs",
-    "test": "node scripts/postbuild.test.mjs",
+    "test": "node scripts/postbuild.test.mjs && node scripts/visuals-check.mjs",
     "typecheck": "tsc -p tsconfig.json"
   },
   "devDependencies": {

@@ -3,9 +3,11 @@ import type { LearnCtx } from "../ctx.js";
 import { countDone } from "../progress.js";
 import { CodeBlock, Rich, plain } from "../Rich.js";
 import { LEVEL_LABEL, type Level } from "../types.js";
+import type { Visual } from "../visuals/types.js";
+import { VisualView } from "../visuals/VisualView.js";
 
 export function Learn({ ctx }: { ctx: LearnCtx }) {
-  const { data, progress, toggle, params, setParam } = ctx;
+  const { data, progress, toggle, params, setParam, visuals } = ctx;
   const area = params.get("area") ?? "all";
   const level = Number(params.get("level") ?? 0) as 0 | Level;
   const open = params.get("open");
@@ -83,6 +85,7 @@ export function Learn({ ctx }: { ctx: LearnCtx }) {
                 </header>
                 {isOpen && (
                   <div className="lp-concept__body">
+                    {visuals[c.id] && <VisualView visual={visuals[c.id] as Visual} key={c.id} />}
                     <p className="lp-concept__summary"><Rich text={c.summary} /></p>
                     {c.code && <CodeBlock code={c.code} />}
                     <div className="lp-twin">

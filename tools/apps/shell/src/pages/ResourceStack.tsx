@@ -5,6 +5,7 @@ import type { LearnCtx, ViewId } from "../learn/ctx.js";
 import { countDone, useProgress } from "../learn/progress.js";
 import { plain } from "../learn/Rich.js";
 import type { StackContent } from "../learn/types.js";
+import type { VisualMap } from "../learn/visuals/types.js";
 import { Interview } from "../learn/views/Interview.js";
 import { Learn } from "../learn/views/Learn.js";
 import { Patterns } from "../learn/views/Patterns.js";
@@ -66,13 +67,17 @@ export default function ResourceStack() {
   const stack = findStack(slug);
   const [params, setParams] = useSearchParams();
   const [data, setData] = useState<StackContent | null>(null);
+  const [visuals, setVisuals] = useState<VisualMap>({});
   const [failed, setFailed] = useState(false);
   const { progress, toggle, reset } = useProgress(stack?.slug ?? "");
 
   useEffect(() => {
     setData(null);
     setFailed(false);
+    setVisuals({});
     stack?.load?.().then(setData).catch(() => setFailed(true));
+    // Diagrams are an enhancement: a failure here must not block the text content.
+    stack?.loadVisuals?.().then(setVisuals).catch(() => undefined);
   }, [stack]);
 
   useEffect(() => {
@@ -131,7 +136,7 @@ export default function ResourceStack() {
     );
   }
 
-  const ctx: LearnCtx | null = data ? { stack, data, progress, toggle, go, params, setParam } : null;
+  const ctx: LearnCtx | null = data ? { stack, data, visuals, progress, toggle, go, params, setParam } : null;
   const done = data ? countDone(progress.studied, data.concepts.map((c) => c.id)) : 0;
 
   return (

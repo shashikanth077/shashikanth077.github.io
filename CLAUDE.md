@@ -44,6 +44,7 @@ tools/
 - Shell pages `Resources.tsx` (stack picker) and `ResourceStack.tsx` (workspace); UI in `apps/shell/src/learn/` (`lp-` CSS prefix in `learn.css`)
 - Content is JSON per stack in `learn/content/`, lazy-loaded; progress is localStorage only (`toolnest-learn:<slug>`)
 - **Add a stack**: `node scripts/import-handbook.mjs <handbook.html> <slug>` (from `tools/`), then add/enable the entry in `learn/catalog.ts` (`category`, `stats` + `load`; `patternsLabel` if the handbook has a PATD patterns section, as Redis does). Live: nodejs, redis Prerender + sitemap pick it up via `stacks.json`
+- **Visuals**: every concept has an animated diagram, hand-authored per stack in `learn/visuals/<slug>.ts` (+ `<slug>/*.ts`), keyed by concept id. Types: sequence, flow (row/cycle), lanes, compare, layers, queue (live sim). Use the helpers in `visuals/kit.ts` (`seq`, `flow`, `lanes`, `compare`, `layers`, `queue`). `npm test` runs `scripts/visuals-check.mjs`, which validates specs and lists concepts still missing a diagram — add the stack to its `stacks` array and `loadVisuals` in `catalog.ts`
 - Content JSON (`StackContent` in `learn/types.ts`) is the seam for a future backend: swap a stack's `load()` for an API fetch without touching the views
 - Importer expects the handbook's `/* ===== DATA` … `/* ===== ENGINE` JS arrays; missing optional sections are simply hidden
 

@@ -1,0 +1,110 @@
+/* Animated visual explanations (prefix lp-). Colours come from shared tokens. */
+.tone-good { --tone: var(--success); --tone-soft: var(--success-soft); }
+.tone-bad { --tone: var(--danger); --tone-soft: var(--danger-soft); }
+.tone-warn { --tone: var(--warning); --tone-soft: var(--warning-soft); }
+.tone-info { --tone: var(--tk-dev); --tone-soft: var(--tk-dev-soft); }
+.tone-plain { --tone: var(--line-strong); --tone-soft: var(--surface); }
+
+.lp-visual { margin: 0; padding: 0; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface-alt); overflow: hidden; }
+.lp-visual > figcaption { display: flex; justify-content: space-between; gap: var(--space-3); padding: 0.55rem 1rem; border-bottom: 1px solid var(--line); background: var(--bg-sunken); color: var(--text-faint); font: 700 0.68rem var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; }
+.lp-visual__kind { color: var(--lp-accent); }
+.lp-visual__take { margin: 0; padding: 0.8rem 1rem; border-top: 1px solid var(--line); background: var(--accent-soft); font-size: 0.9rem; line-height: 1.55; color: var(--text); }
+.lp-visual .lp-svg { display: block; width: 100%; height: auto; max-height: 30rem; padding: 0.75rem 0.5rem 0; }
+.lp-vctl { display: flex; align-items: center; gap: var(--space-2); padding: 0.6rem 1rem; }
+.lp-vctl .lp-btn { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
+.lp-vctl__n { color: var(--text-faint); font: 600 0.75rem var(--font-mono); margin-left: 0.4rem; }
+.lp-vctl__bar { flex: 1; min-width: 3rem; }
+.lp-vcap { min-height: 3.1em; margin: 0; padding: 0 1rem 0.8rem; font-size: 0.92rem; line-height: 1.55; color: var(--text); }
+
+.lp-token { fill: var(--lp-accent); stroke: var(--surface); stroke-width: 2; filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.35)); }
+
+/* sequence */
+.lp-seq__life { stroke: var(--line-strong); stroke-dasharray: 4 5; }
+.lp-seq__actor { fill: var(--surface); stroke: var(--line-strong); stroke-width: 1.5; transition: fill 0.3s, stroke 0.3s; }
+.lp-seq__actor.is-active { fill: var(--accent-soft); stroke: var(--lp-accent); }
+.lp-seq__name { fill: var(--text); font: 700 13px var(--font-ui); }
+.lp-seq__msg { color: var(--text-faint); opacity: 0.6; transition: opacity 0.3s; }
+.lp-seq__msg line, .lp-seq__msg path { stroke: currentColor; stroke-width: 2; }
+.lp-seq__msg.is-reply line, .lp-seq__msg.is-reply path { stroke-dasharray: 6 4; }
+.lp-seq__head { fill: currentColor; }
+.lp-seq__label { fill: currentColor; font: 600 12px var(--font-ui); paint-order: stroke; stroke: var(--surface-alt); stroke-width: 5px; stroke-linejoin: round; }
+.lp-seq__msg.is-now { color: var(--lp-accent); opacity: 1; }
+.lp-seq__msg.is-bad { color: var(--danger); }
+.lp-seq__msg.is-now .lp-seq__label { font-weight: 800; }
+
+/* flow */
+.lp-flow__edge { color: var(--line-strong); }
+.lp-flow__edge path { stroke: currentColor; stroke-width: 2; }
+.lp-flow__edge.is-on { color: var(--lp-accent); }
+.lp-flow__edge.is-now path { stroke-width: 3; }
+.lp-flow__arrow { fill: var(--line-strong); }
+.lp-flow__arrow.is-on { fill: var(--lp-accent); }
+.lp-flow__label { fill: var(--text-soft); font: 600 11.5px var(--font-ui); paint-order: stroke; stroke: var(--surface-alt); stroke-width: 5px; stroke-linejoin: round; }
+.lp-flow__node rect { fill: var(--tone-soft); stroke: var(--tone); stroke-width: 1.5; transition: stroke-width 0.25s; }
+.lp-flow__node.is-seen rect { stroke-width: 2; }
+.lp-flow__node.is-active rect { stroke: var(--lp-accent); stroke-width: 3.5; }
+.lp-flow__title { fill: var(--text); font: 700 13px var(--font-ui); }
+.lp-flow__sub { fill: var(--text-soft); font: 500 11px var(--font-ui); }
+
+/* lanes */
+.lp-lanes { padding: 0.9rem 1rem 0.3rem; display: flex; flex-direction: column; gap: 0.5rem; }
+.lp-lanes__axis { display: flex; margin-left: 6.5rem; font: 600 0.62rem var(--font-mono); color: var(--text-faint); }
+.lp-lanes__axis span { text-align: center; opacity: 0.4; }
+.lp-lanes__axis span.is-on { opacity: 1; color: var(--lp-accent); }
+.lp-lanes__row { display: flex; align-items: center; gap: 0.5rem; }
+.lp-lanes__row > b { flex: none; width: 6rem; font-size: 0.76rem; line-height: 1.25; color: var(--text-soft); }
+.lp-lanes__track { position: relative; flex: 1; height: 2.1rem; border-radius: 8px; background: var(--bg-sunken); border: 1px solid var(--line); overflow: hidden; }
+.lp-lanes__track i { position: absolute; top: 3px; bottom: 3px; display: flex; align-items: center; padding: 0 0.4rem; border-radius: 5px; background: var(--tone); color: #fff; font: 700 0.68rem var(--font-ui); font-style: normal; overflow: hidden; white-space: nowrap; transition: width 0.6s linear; }
+.lp-lanes__track i span { overflow: hidden; text-overflow: ellipsis; }
+.lp-lanes__track i.is-live { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--tone); }
+.lp-lanes__head { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--text); opacity: 0.35; transition: left 0.6s linear; }
+
+/* compare */
+.lp-cmp { margin: 0.9rem 1rem 0; background: var(--surface); }
+.lp-cmp table { min-width: 0; }
+.lp-cmp td, .lp-cmp th { font-size: 0.84rem; }
+.lp-cmp tr { transition: opacity 0.4s; }
+.lp-cmp tr.is-hidden { opacity: 0.12; }
+.lp-cmp .is-pick { background: var(--accent-soft); }
+.lp-cmp thead .is-pick { color: var(--lp-accent); }
+
+/* layers */
+.lp-layers { padding: 0.9rem 1rem 0.3rem; display: flex; gap: var(--space-3); }
+.lp-layers__dir { display: flex; flex-direction: column; align-items: center; justify-content: space-between; color: var(--text-faint); font: 700 0.65rem var(--font-mono); text-transform: uppercase; }
+.lp-layers__dir span { writing-mode: vertical-rl; }
+.lp-layers ol { flex: 1; display: flex; flex-direction: column; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.lp-layers li { display: flex; gap: var(--space-4); align-items: baseline; padding: 0.7rem 1rem; border: 1.5px solid var(--line); border-left: 5px solid var(--tone, var(--line)); border-radius: var(--radius-sm); background: var(--surface); opacity: 0.55; transition: all 0.35s; }
+.lp-layers li b { flex: none; min-width: 8rem; font-size: 0.9rem; }
+.lp-layers li span { font-size: 0.82rem; color: var(--text-soft); line-height: 1.45; }
+.lp-layers li.is-past { opacity: 0.85; }
+.lp-layers li.is-now { opacity: 1; border-color: var(--lp-accent); border-left-color: var(--lp-accent); background: var(--accent-soft); transform: translateX(6px); box-shadow: var(--shadow-md); }
+
+/* queue sim */
+.lp-qsim { padding: 1rem; display: flex; flex-direction: column; gap: var(--space-3); }
+.lp-qsim__stage { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; justify-content: center; }
+.lp-qsim__arrow { color: var(--text-faint); font-size: 1.4rem; }
+.lp-qsim__box, .lp-qsim__queue, .lp-qsim__worker { display: flex; flex-direction: column; gap: 0.35rem; padding: 0.7rem 0.9rem; border: 1.5px solid var(--line-strong); border-radius: var(--radius-sm); background: var(--surface); font-size: 0.82rem; }
+.lp-qsim__box small, .lp-qsim__queue small { color: var(--text-faint); }
+.lp-qsim__box.is-blocked { border-color: var(--warning); background: var(--warning-soft); }
+.lp-qsim__slots { display: flex; flex-wrap: wrap; gap: 3px; max-width: 14rem; }
+.lp-qsim__slots i { width: 1rem; height: 1.2rem; border-radius: 3px; background: var(--bg-sunken); border: 1px solid var(--line-strong); }
+.lp-qsim__slots i.on { background: var(--lp-accent); border-color: var(--lp-accent); }
+.lp-qsim__workers { display: flex; flex-direction: column; gap: 6px; }
+.lp-qsim__worker { flex-direction: row; align-items: center; gap: 0.6rem; padding: 0.4rem 0.7rem; min-width: 11rem; }
+.lp-qsim__worker .lp-bar { flex: 1; }
+.lp-qsim__status { padding: 0.55rem 0.8rem; border-left: 4px solid var(--tone); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; background: var(--tone-soft); font-size: 0.86rem; font-weight: 600; }
+.lp-qsim__ctl { display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: center; font-size: 0.8rem; color: var(--text-soft); }
+.lp-qsim__ctl label { display: flex; flex-direction: column; gap: 0.2rem; }
+.lp-qsim__ctl input { accent-color: var(--lp-accent); width: 9rem; }
+.lp-qsim__stats { margin-left: auto; }
+.lp-qsim .lp-btn { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
+
+@media (max-width: 45rem) {
+  .lp-layers li { flex-direction: column; gap: 0.2rem; }
+  .lp-layers li b { min-width: 0; }
+  .lp-lanes__row > b { width: 4.2rem; font-size: 0.68rem; }
+  .lp-lanes__axis { margin-left: 4.7rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lp-layers li, .lp-lanes__track i, .lp-lanes__head, .lp-cmp tr { transition: none; }
+}

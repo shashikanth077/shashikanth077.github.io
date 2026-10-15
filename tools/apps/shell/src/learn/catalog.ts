@@ -1,4 +1,5 @@
 import type { StackContent, StackStats } from "./types.js";
+import type { VisualMap } from "./visuals/types.js";
 import nodeStats from "./content/nodejs.stats.json";
 import redisStats from "./content/redis.stats.json";
 
@@ -25,6 +26,8 @@ export interface Stack {
   audience: string;
   stats?: StackStats;
   load?: () => Promise<StackContent>;
+  /** Hand-authored animated explanations, keyed by concept id (see learn/visuals/). */
+  loadVisuals?: () => Promise<VisualMap>;
 }
 
 export const stacks: Stack[] = [
@@ -40,6 +43,7 @@ export const stacks: Stack[] = [
     audience: "Backend and full-stack developers, junior to staff",
     stats: nodeStats,
     load: () => import("./content/nodejs.json").then((m) => m.default as unknown as StackContent),
+    loadVisuals: () => import("./visuals/nodejs.js").then((m) => m.visuals),
   },
   {
     slug: "redis",
@@ -54,6 +58,7 @@ export const stacks: Stack[] = [
     audience: "Backend developers and anyone designing for scale",
     stats: redisStats,
     load: () => import("./content/redis.json").then((m) => m.default as unknown as StackContent),
+    loadVisuals: () => import("./visuals/redis.js").then((m) => m.visuals),
   },
   { slug: "react", name: "React", category: "Frontend", icon: "⚛", accent: "#2f9ec4", tagline: "Components, hooks, rendering", blurb: "Rendering model, state, effects, performance and testing.", audience: "Frontend developers" },
   { slug: "redux", name: "Redux", category: "Frontend", icon: "◈", accent: "#7e57c2", tagline: "State management that scales", blurb: "Redux Toolkit, RTK Query, normalisation and async patterns.", audience: "React developers" },
