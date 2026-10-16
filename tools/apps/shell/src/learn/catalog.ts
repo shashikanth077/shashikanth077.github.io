@@ -7,6 +7,7 @@ import mathsAiStats from "./content/maths-ai.stats.json";
 import numpyStats from "./content/numpy.stats.json";
 import matplotlibStats from "./content/matplotlib.stats.json";
 import pandasStats from "./content/pandas.stats.json";
+import sklearnStats from "./content/scikit-learn.stats.json";
 
 /**
  * Every learning stack the portal knows about. Two sections share one workspace:
@@ -224,7 +225,23 @@ export const stacks: Stack[] = [
     load: () => import("./content/pandas.js").then((m) => m.content),
     loadVisuals: () => import("./content/pandas.js").then((m) => m.visuals),
   },
-  { slug: "machine-learning", name: "Machine Learning", section: "ai", stage: "Core machine learning", icon: "📈", accent: "#7c5cff", tagline: "From regression to ensembles", blurb: "Supervised and unsupervised learning, features, evaluation, overfitting, and the scikit-learn workflow.", audience: "Learners who finished Python and Maths for AI", planned: ["Regression and classification", "Trees and ensembles", "Evaluation", "Clustering"] },
+  {
+    slug: "scikit-learn",
+    name: "scikit-learn",
+    section: "ai",
+    stage: "Core machine learning",
+    icon: "🧪",
+    accent: "#e0832f",
+    tagline: "Your first real models: fit, predict, evaluate",
+    blurb:
+      "The estimator API, train/test splits, scaling and encoding, regression, classification, evaluation, cross-validation, clustering and PCA — each idea as a diagram you can drag, built around leak-free pipelines.",
+    audience: "Learners who finished NumPy and pandas, and anyone moving from analysis to modelling",
+    labels: codeStackLabels,
+    stats: sklearnStats,
+    load: () => import("./content/scikit-learn.js").then((m) => m.content),
+    loadVisuals: () => import("./content/scikit-learn.js").then((m) => m.visuals),
+  },
+  { slug: "machine-learning", name: "Machine Learning", section: "ai", stage: "Core machine learning", icon: "📈", accent: "#7c5cff", tagline: "From regression to ensembles", blurb: "The ideas behind the models: bias and variance, loss functions, gradient descent, regularisation, ensembles and how to think about evaluation.", audience: "Learners who finished Python and Maths for AI", planned: ["Regression and classification", "Trees and ensembles", "Evaluation", "Clustering"] },
   { slug: "neural-networks", name: "Neural Networks", section: "ai", stage: "Core machine learning", icon: "🕸", accent: "#d6489a", tagline: "Neurons, layers, backpropagation", blurb: "How a network computes and learns, one neuron and one gradient at a time.", audience: "Learners ready for deep learning", planned: ["Perceptron", "Activation functions", "Backpropagation", "Optimisers"] },
   { slug: "deep-learning", name: "Deep Learning", section: "ai", stage: "Core machine learning", icon: "🧠", accent: "#5a67d8", tagline: "CNNs, RNNs, transformers", blurb: "Convolutions, sequence models, attention and training deep networks in PyTorch.", audience: "Learners who finished neural networks", planned: ["CNNs", "Sequence models", "Attention", "Training at scale"] },
   { slug: "generative-ai", name: "Generative AI", section: "ai", stage: "Modern AI", icon: "✨", accent: "#e0841f", tagline: "LLMs, prompting, RAG", blurb: "How large language models work, how to prompt them, retrieval-augmented generation and evaluation.", audience: "Developers building with LLMs", planned: ["Tokens and embeddings", "Transformers", "Prompting and RAG", "Fine-tuning"] },
