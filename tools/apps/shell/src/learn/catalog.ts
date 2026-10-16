@@ -10,6 +10,7 @@ import pandasStats from "./content/pandas.stats.json";
 import sklearnStats from "./content/scikit-learn.stats.json";
 import mlStats from "./content/machine-learning.stats.json";
 import agenticStats from "./content/agentic-ai.stats.json";
+import claudeStats from "./content/building-with-claude.stats.json";
 import cvStats from "./content/computer-vision.stats.json";
 import genaiStats from "./content/generative-ai.stats.json";
 import nlpStats from "./content/nlp.stats.json";
@@ -481,7 +482,36 @@ export const stacks: Stack[] = [
     load: () => import("./content/agentic-ai.js").then((m) => m.content),
     loadVisuals: () => import("./content/agentic-ai.js").then((m) => m.visuals),
   },
-  { slug: "building-with-llms", name: "Building with Claude and GitHub Models", section: "ai", stage: "Modern AI", icon: "🛠", accent: "#d9731a", tagline: "Using Claude and GitHub Models in development and research", blurb: "Calling models from code, prompting, tool use, caching, evaluation, and using them as coding and research assistants.", audience: "Developers and researchers using LLM APIs", planned: ["Claude API", "GitHub Models", "Coding assistants", "Research workflows"] },
+  {
+    slug: "building-with-claude",
+    name: "Building with Claude and GitHub Copilot",
+    section: "ai",
+    stage: "Modern AI",
+    icon: "🛠",
+    accent: "#d9731a",
+    tagline: "The Claude API, Claude Code, Copilot agents, skills and sub-agents",
+    blurb:
+      "The Messages API, models and cost, streaming, tool use, prompt caching and batches; SDKs and platforms; Claude Code with CLAUDE.md, skills, subagents and hooks; GitHub Copilot instructions, prompt files, custom agents, handoffs, sub-agents and Agent Skills; why GitHub Models was retired and how to stay portable; and using assistants in development and research. Facts checked against the official documentation.",
+    audience: "Developers who finished Generative AI and Agentic AI and want to build with Claude and configure coding assistants",
+    labels: {
+      production: "In real projects",
+      interview: "Exam and interview angle",
+      drillsTab: "Work it out",
+      drillsIntro: "Short calculations and file checks that exams and interviews love. Work each one out first, then open the step-by-step solution.",
+      drillQuestion: "What is the answer?",
+      drillPath: "Step by step",
+      drillFix: "Why",
+      drillPrevent: "Watch out",
+      drillInterview: "Remember",
+      drillDone: "✓ solved",
+      codeTab: "Practice problems",
+      codeIntro: "Build each idea in plain Python — requests, scripted responses and file validators. Try it yourself first, then compare with the worked solution.",
+    },
+    stats: claudeStats,
+    load: () => import("./content/building-with-claude.js").then((m) => m.content),
+    loadVisuals: () => import("./content/building-with-claude.js").then((m) => m.visuals),
+  },
+  { slug: "langchain-langgraph-rag", name: "LangChain, LangGraph and Vector Databases", section: "ai", stage: "Modern AI", icon: "🕸", accent: "#2f8f6b", tagline: "RAG pipelines, graph-based agents and vector stores", blurb: "How LangChain composes models, retrievers and tools; how LangGraph models agents as stateful graphs with checkpoints; and how vector databases index embeddings for retrieval-augmented generation.", audience: "Developers who finished Generative AI and Agentic AI", planned: ["LangChain building blocks", "Vector databases and indexes", "RAG pipelines", "LangGraph agents and state"] },
 ];
 
 export const findStack = (slug: string | undefined) => stacks.find((s) => s.slug === slug);
