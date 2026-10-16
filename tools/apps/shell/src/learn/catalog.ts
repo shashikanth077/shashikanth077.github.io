@@ -9,6 +9,7 @@ import matplotlibStats from "./content/matplotlib.stats.json";
 import pandasStats from "./content/pandas.stats.json";
 import sklearnStats from "./content/scikit-learn.stats.json";
 import mlStats from "./content/machine-learning.stats.json";
+import nnStats from "./content/neural-networks.stats.json";
 
 /**
  * Every learning stack the portal knows about. Two sections share one workspace:
@@ -271,8 +272,36 @@ export const stacks: Stack[] = [
     load: () => import("./content/machine-learning.js").then((m) => m.content),
     loadVisuals: () => import("./content/machine-learning.js").then((m) => m.visuals),
   },
-  { slug: "neural-networks", name: "Neural Networks", section: "ai", stage: "Core machine learning", icon: "🕸", accent: "#d6489a", tagline: "Neurons, layers, backpropagation", blurb: "How a network computes and learns, one neuron and one gradient at a time.", audience: "Learners ready for deep learning", planned: ["Perceptron", "Activation functions", "Backpropagation", "Optimisers"] },
-  { slug: "deep-learning", name: "Deep Learning", section: "ai", stage: "Core machine learning", icon: "🧠", accent: "#5a67d8", tagline: "CNNs, RNNs, transformers", blurb: "Convolutions, sequence models, attention and training deep networks in PyTorch.", audience: "Learners who finished neural networks", planned: ["CNNs", "Sequence models", "Attention", "Training at scale"] },
+  {
+    slug: "neural-networks",
+    name: "Neural Networks",
+    section: "ai",
+    stage: "Core machine learning",
+    icon: "🕸",
+    accent: "#d6489a",
+    tagline: "Neurons, backpropagation, regularization, CNNs, RNNs, attention and GANs",
+    blurb:
+      "One neuron to a whole network: activations, losses, gradient descent and backpropagation by hand, optimisers, overfitting and regularization, evaluation metrics, MNIST, CNNs, RNN/LSTM/GRU, attention, autoencoders, VAEs and GANs — every worked example as a diagram that moves and code that really ran.",
+    audience: "Learners who finished Python, NumPy and Machine Learning, and students preparing for neural-network exams",
+    labels: {
+      production: "Good to know",
+      interview: "Exam and interview angle",
+      drillsTab: "Work it out",
+      drillsIntro: "Short calculations that exams and interviews love. Work each one out first, then open the step-by-step solution.",
+      drillQuestion: "What is the answer?",
+      drillPath: "Step by step",
+      drillFix: "Why",
+      drillPrevent: "Watch out",
+      drillInterview: "Remember",
+      drillDone: "✓ solved",
+      codeTab: "Practice problems",
+      codeIntro: "Build each idea from scratch in NumPy. Try it yourself first, then compare with the worked solution.",
+    },
+    stats: nnStats,
+    load: () => import("./content/neural-networks.js").then((m) => m.content),
+    loadVisuals: () => import("./content/neural-networks.js").then((m) => m.visuals),
+  },
+  { slug: "deep-learning", name: "Deep Learning", section: "ai", stage: "Core machine learning", icon: "🧠", accent: "#5a67d8", tagline: "CNNs, RNNs, transformers", blurb: "Beyond the basics: deeper architectures, transformers, transfer learning and training at scale in PyTorch.", audience: "Learners who finished neural networks", planned: ["Transformers", "Transfer learning", "Training at scale", "PyTorch"] },
   { slug: "generative-ai", name: "Generative AI", section: "ai", stage: "Modern AI", icon: "✨", accent: "#e0841f", tagline: "LLMs, prompting, RAG", blurb: "How large language models work, how to prompt them, retrieval-augmented generation and evaluation.", audience: "Developers building with LLMs", planned: ["Tokens and embeddings", "Transformers", "Prompting and RAG", "Fine-tuning"] },
   { slug: "agentic-ai", name: "Agentic AI", section: "ai", stage: "Modern AI", icon: "🤖", accent: "#18a3a3", tagline: "Tools, planning, multi-agent systems", blurb: "Agent loops, tool use, memory, planning and guardrails for systems that act.", audience: "Developers building agents", planned: ["Tool calling", "Planning and memory", "Multi-agent patterns", "Safety and evals"] },
 ];
