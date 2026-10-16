@@ -12,6 +12,7 @@ import "@devtools/ui/components.css";
 import "@devtools/ui/files.css";
 import "./shell.css";
 import "./learn/learn.css";
+import "./learn/atlas.css";
 import "./learn/visuals/visuals.css";
 
 /**

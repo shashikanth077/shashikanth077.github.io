@@ -35,7 +35,7 @@ export type StackCategory = "Backend" | "Frontend" | "Database" | "Language";
 export const STACK_CATEGORIES: StackCategory[] = ["Backend", "Frontend", "Database", "Language"];
 
 /** Order of the AI Atlas roadmap. */
-export const AI_STAGES = ["Foundations", "Core machine learning", "Modern AI"] as const;
+export const AI_STAGES = ["Foundations", "Core machine learning", "Modern AI", "Real-world projects"] as const;
 export type AiStage = (typeof AI_STAGES)[number];
 
 /** Wording that differs between stacks (defaults suit the developer stacks). */
@@ -540,6 +540,18 @@ export const stacks: Stack[] = [
     stats: langStats,
     load: () => import("./content/langchain-langgraph-rag.js").then((m) => m.content),
     loadVisuals: () => import("./content/langchain-langgraph-rag.js").then((m) => m.visuals),
+  },
+  {
+    slug: "real-time-ai-projects",
+    name: "Real-time AI Project Scenarios",
+    section: "ai",
+    stage: "Real-world projects",
+    icon: "🚀",
+    accent: "#e0523f",
+    tagline: "End-to-end scenarios: fraud detection, RAG assistants, voice, vision and agents",
+    blurb: "Hands-on, end-to-end scenarios that put the tracks together: requirements, architecture, data and features, model, evaluation, latency and cost budgets, deployment and monitoring.",
+    audience: "Learners who finished the core tracks and want to see how real systems are built",
+    planned: ["Fraud detection", "Support assistant (RAG)", "Predictive maintenance", "Live recommendations", "Document intelligence", "Voice assistant", "Visual inspection", "Agentic IT-ops copilot"],
   },
 ];
 
