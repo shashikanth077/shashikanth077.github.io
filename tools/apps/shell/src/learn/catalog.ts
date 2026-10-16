@@ -11,6 +11,7 @@ import sklearnStats from "./content/scikit-learn.stats.json";
 import mlStats from "./content/machine-learning.stats.json";
 import agenticStats from "./content/agentic-ai.stats.json";
 import claudeStats from "./content/building-with-claude.stats.json";
+import langStats from "./content/langchain-langgraph-rag.stats.json";
 import cvStats from "./content/computer-vision.stats.json";
 import genaiStats from "./content/generative-ai.stats.json";
 import nlpStats from "./content/nlp.stats.json";
@@ -511,7 +512,35 @@ export const stacks: Stack[] = [
     load: () => import("./content/building-with-claude.js").then((m) => m.content),
     loadVisuals: () => import("./content/building-with-claude.js").then((m) => m.visuals),
   },
-  { slug: "langchain-langgraph-rag", name: "LangChain, LangGraph and Vector Databases", section: "ai", stage: "Modern AI", icon: "🕸", accent: "#2f8f6b", tagline: "RAG pipelines, graph-based agents and vector stores", blurb: "How LangChain composes models, retrievers and tools; how LangGraph models agents as stateful graphs with checkpoints; and how vector databases index embeddings for retrieval-augmented generation.", audience: "Developers who finished Generative AI and Agentic AI", planned: ["LangChain building blocks", "Vector databases and indexes", "RAG pipelines", "LangGraph agents and state"] },
+  {
+    slug: "langchain-langgraph-rag",
+    name: "LangChain, LangGraph and Vector Databases",
+    section: "ai",
+    stage: "Modern AI",
+    icon: "🕸",
+    accent: "#2f8f6b",
+    tagline: "RAG pipelines, graph-based agents and vector stores",
+    blurb:
+      "How LangChain composes models, tools, retrievers and middleware; how vector databases index embeddings (exact search, IVF, HNSW, quantisation, filtering, pgvector); RAG pipelines from chunking to evaluation; and LangGraph agents as stateful graphs with reducers, checkpointers, interrupts and memory. The mechanics run offline in small stand-ins that mirror the real interfaces.",
+    audience: "Developers who finished Generative AI and Agentic AI and want to build RAG systems and graph-based agents",
+    labels: {
+      production: "In real projects",
+      interview: "Exam and interview angle",
+      drillsTab: "Work it out",
+      drillsIntro: "Short calculations that exams and interviews love. Work each one out first, then open the step-by-step solution.",
+      drillQuestion: "What is the answer?",
+      drillPath: "Step by step",
+      drillFix: "Why",
+      drillPrevent: "Watch out",
+      drillInterview: "Remember",
+      drillDone: "✓ solved",
+      codeTab: "Practice problems",
+      codeIntro: "Build each idea in plain Python — a vector store, a splitter, a state graph. Try it yourself first, then compare with the worked solution.",
+    },
+    stats: langStats,
+    load: () => import("./content/langchain-langgraph-rag.js").then((m) => m.content),
+    loadVisuals: () => import("./content/langchain-langgraph-rag.js").then((m) => m.visuals),
+  },
 ];
 
 export const findStack = (slug: string | undefined) => stacks.find((s) => s.slug === slug);
