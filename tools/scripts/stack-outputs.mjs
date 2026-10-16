@@ -37,7 +37,7 @@ const { content } = await import(pathToFileURL(bundle).href);
 function run(code) {
   const dir = mkdtempSync(join(tmp, "run-"));
   writeFileSync(join(dir, "s.py"), code);
-  const r = spawnSync("python", ["-X", "utf8", "s.py"], { cwd: dir, encoding: "utf8" });
+  const r = spawnSync("python", ["-X", "utf8", "s.py"], { cwd: dir, encoding: "utf8", env: { ...process.env, MPLBACKEND: "Agg" } });
   return { ok: r.status === 0, out: (r.stdout ?? "").replace(/\r\n/g, "\n").trimEnd(), err: (r.stderr ?? "").trim().split("\n").slice(-3).join(" | ") };
 }
 

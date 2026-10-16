@@ -50,10 +50,10 @@ tools/
 
 ### AI Atlas (`/ai`) — separate menu, same workspace
 - Header/mobile/home entry "AI Atlas" → `pages/AiAtlas.tsx` (roadmap of tracks by stage). A track opens in the same `ResourceStack` workspace at `/ai/<slug>`; `Stack.section` ("dev" | "ai") in `learn/catalog.ts` decides the base path (`stackPath()`); roadmap order = `AI_STAGES`
-- Live: python-ai, maths-ai, numpy. Tracks with no `load` render as "coming soon" cards using `planned` topics: pandas, machine-learning, neural-networks, deep-learning, generative-ai, agentic-ai
+- Live: python-ai, maths-ai, numpy, matplotlib. Tracks with no `load` render as "coming soon" cards using `planned` topics: pandas, machine-learning, neural-networks, deep-learning, generative-ai, agentic-ai
 - `Stack.labels` re-words the workspace per stack (e.g. Python for AI: "In AI work", "Predict the output")
 - **Hand-authored tracks** (not imported): write `learn/author/<slug>/*.ts` using `author/build.ts` (`ConceptDef` = concept + its diagram together; `py` tag keeps backslashes in Python code), assemble in `learn/content/<slug>.ts`, add to `stacks` in `scripts/visuals-check.mjs`. `npm test` validates diagrams and rewrites `<slug>.stats.json`
-- **Generated outputs** (library tracks like NumPy): the Output panels are NOT typed by hand — `npm run outputs -- <slug>` runs every example with real Python/NumPy and writes `content/<slug>.outputs.json` (also runs all drills/exercises); `npm test` fails if one is missing. Re-run after editing any example code
+- **Generated outputs** (library tracks like NumPy and Matplotlib; the runner sets `MPLBACKEND=Agg`, so chart code runs headless and only `print()` output is captured): the Output panels are NOT typed by hand — `npm run outputs -- <slug>` runs every example with real Python/NumPy and writes `content/<slug>.outputs.json` (also runs all drills/exercises); `npm test` fails if one is missing. Re-run after editing any example code
 - **Maths diagrams** (`plot`, `bars`, `matmul`): every number is a formula string (`visuals/expr.ts`, a safe evaluator — no eval) over `x`, slider `params` and `defs`; guided `steps` glide the sliders. `npm test` compiles and evaluates every formula, so a typo fails the build, not the learner. Verify any Python outputs you write by running them
 - Extra diagram types for code: `trace` (line-by-line execution with variables/output) and `cells` (list/tuple/dict/string boxes with indexes, slicing highlights)
 

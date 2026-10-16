@@ -5,6 +5,7 @@ import redisStats from "./content/redis.stats.json";
 import pythonAiStats from "./content/python-ai.stats.json";
 import mathsAiStats from "./content/maths-ai.stats.json";
 import numpyStats from "./content/numpy.stats.json";
+import matplotlibStats from "./content/matplotlib.stats.json";
 
 /**
  * Every learning stack the portal knows about. Two sections share one workspace:
@@ -189,6 +190,22 @@ export const stacks: Stack[] = [
     stats: numpyStats,
     load: () => import("./content/numpy.js").then((m) => m.content),
     loadVisuals: () => import("./content/numpy.js").then((m) => m.visuals),
+  },
+  {
+    slug: "matplotlib",
+    name: "Matplotlib",
+    section: "ai",
+    stage: "Foundations",
+    icon: "📊",
+    accent: "#e07a2f",
+    tagline: "See your data: charts you can read and trust",
+    blurb:
+      "Line, bar, scatter, histogram, box and pie charts, subplots, heatmaps and learning curves — each built step by step with sliders you can drag, then applied to NumPy, pandas and model diagnostics.",
+    audience: "Learners who finished NumPy, and anyone who needs to explain data visually",
+    labels: codeStackLabels,
+    stats: matplotlibStats,
+    load: () => import("./content/matplotlib.js").then((m) => m.content),
+    loadVisuals: () => import("./content/matplotlib.js").then((m) => m.visuals),
   },
   { slug: "pandas", name: "Pandas", section: "ai", stage: "Foundations", icon: "🐼", accent: "#6a5acd", tagline: "Tables of data, cleaned and combined", blurb: "DataFrames, selecting and filtering, grouping, joins, missing data and preparing datasets for models.", audience: "Learners who finished NumPy", planned: ["DataFrames and Series", "Selecting and filtering", "Group by and joins", "Cleaning messy data"] },
   { slug: "machine-learning", name: "Machine Learning", section: "ai", stage: "Core machine learning", icon: "📈", accent: "#7c5cff", tagline: "From regression to ensembles", blurb: "Supervised and unsupervised learning, features, evaluation, overfitting, and the scikit-learn workflow.", audience: "Learners who finished Python and Maths for AI", planned: ["Regression and classification", "Trees and ensembles", "Evaluation", "Clustering"] },

@@ -23,6 +23,7 @@ const stacks = [
   { slug: "python-ai", authored: true },
   { slug: "maths-ai", authored: true },
   { slug: "numpy", authored: true, generatedOutputs: true },
+  { slug: "matplotlib", authored: true, generatedOutputs: true },
 ];
 const tmp = mkdtempSync(join(tmpdir(), "visuals-"));
 
