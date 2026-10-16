@@ -32,6 +32,7 @@ const stacks = [
   { slug: "reinforcement-learning", authored: true, generatedOutputs: true },
   { slug: "computer-vision", authored: true, generatedOutputs: true },
   { slug: "speech-processing", authored: true, generatedOutputs: true },
+  { slug: "generative-ai", authored: true, generatedOutputs: true },
 ];
 const tmp = mkdtempSync(join(tmpdir(), "visuals-"));
 
