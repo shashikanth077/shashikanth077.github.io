@@ -9,6 +9,7 @@ import matplotlibStats from "./content/matplotlib.stats.json";
 import pandasStats from "./content/pandas.stats.json";
 import sklearnStats from "./content/scikit-learn.stats.json";
 import mlStats from "./content/machine-learning.stats.json";
+import cvStats from "./content/computer-vision.stats.json";
 import nlpStats from "./content/nlp.stats.json";
 import rlStats from "./content/reinforcement-learning.stats.json";
 import nnStats from "./content/neural-networks.stats.json";
@@ -361,7 +362,35 @@ export const stacks: Stack[] = [
     load: () => import("./content/reinforcement-learning.js").then((m) => m.content),
     loadVisuals: () => import("./content/reinforcement-learning.js").then((m) => m.visuals),
   },
-  { slug: "computer-vision", name: "Computer Vision", section: "ai", stage: "Modern AI", icon: "👁", accent: "#4a7bd0", tagline: "Images, detection, segmentation", blurb: "Image processing, CNN classifiers, detection, segmentation and vision transformers.", audience: "Learners who finished neural networks", planned: ["Image processing", "Detection", "Segmentation", "Vision transformers"] },
+  {
+    slug: "computer-vision",
+    name: "Computer Vision",
+    section: "ai",
+    stage: "Modern AI",
+    icon: "👁",
+    accent: "#4a7bd0",
+    tagline: "From pixels and filters to detection, segmentation and vision transformers",
+    blurb:
+      "Images as arrays, histograms and noise, convolution, blur, median and edge filters, thresholding and morphology, geometry and cameras, corners and features, CNN classifiers, object detection with IoU, NMS and mAP, U-Net segmentation, vision transformers, CLIP, optical flow and tracking — every worked calculation as a diagram that moves and code that really ran.",
+    audience: "Learners who finished Python, NumPy and Neural Networks, and students taking a computer-vision course",
+    labels: {
+      production: "In real systems",
+      interview: "Exam and interview angle",
+      drillsTab: "Work it out",
+      drillsIntro: "Short calculations that exams and interviews love. Work each one out first, then open the step-by-step solution.",
+      drillQuestion: "What is the answer?",
+      drillPath: "Step by step",
+      drillFix: "Why",
+      drillPrevent: "Watch out",
+      drillInterview: "Remember",
+      drillDone: "✓ solved",
+      codeTab: "Practice problems",
+      codeIntro: "Build each idea from scratch in NumPy. Try it yourself first, then compare with the worked solution.",
+    },
+    stats: cvStats,
+    load: () => import("./content/computer-vision.js").then((m) => m.content),
+    loadVisuals: () => import("./content/computer-vision.js").then((m) => m.visuals),
+  },
   { slug: "speech-processing", name: "Speech Processing", section: "ai", stage: "Modern AI", icon: "🎙", accent: "#8a5fd0", tagline: "Audio, recognition, synthesis", blurb: "Signals and spectrograms, speech recognition, speaker features and text-to-speech.", audience: "Learners who finished neural networks", planned: ["Spectrograms", "Speech recognition", "Text-to-speech", "Speaker features"] },
   { slug: "generative-ai", name: "Generative AI", section: "ai", stage: "Modern AI", icon: "✨", accent: "#e0841f", tagline: "LLMs, prompting, RAG", blurb: "How large language models work, how to prompt them, retrieval-augmented generation and evaluation.", audience: "Developers building with LLMs", planned: ["Tokens and embeddings", "Transformers", "Prompting and RAG", "Fine-tuning"] },
   { slug: "agentic-ai", name: "Agentic AI", section: "ai", stage: "Modern AI", icon: "🤖", accent: "#18a3a3", tagline: "Tools, planning, multi-agent systems", blurb: "Agent loops, tool use, memory, planning and guardrails for systems that act.", audience: "Developers building agents", planned: ["Tool calling", "Planning and memory", "Multi-agent patterns", "Safety and evals"] },

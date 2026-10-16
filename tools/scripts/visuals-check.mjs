@@ -30,6 +30,7 @@ const stacks = [
   { slug: "neural-networks", authored: true, generatedOutputs: true },
   { slug: "nlp", authored: true, generatedOutputs: true },
   { slug: "reinforcement-learning", authored: true, generatedOutputs: true },
+  { slug: "computer-vision", authored: true, generatedOutputs: true },
 ];
 const tmp = mkdtempSync(join(tmpdir(), "visuals-"));
 
