@@ -9,6 +9,7 @@ import matplotlibStats from "./content/matplotlib.stats.json";
 import pandasStats from "./content/pandas.stats.json";
 import sklearnStats from "./content/scikit-learn.stats.json";
 import mlStats from "./content/machine-learning.stats.json";
+import agenticStats from "./content/agentic-ai.stats.json";
 import cvStats from "./content/computer-vision.stats.json";
 import genaiStats from "./content/generative-ai.stats.json";
 import nlpStats from "./content/nlp.stats.json";
@@ -451,7 +452,35 @@ export const stacks: Stack[] = [
     load: () => import("./content/generative-ai.js").then((m) => m.content),
     loadVisuals: () => import("./content/generative-ai.js").then((m) => m.visuals),
   },
-  { slug: "agentic-ai", name: "Agentic AI", section: "ai", stage: "Modern AI", icon: "🤖", accent: "#18a3a3", tagline: "Tools, planning, multi-agent systems", blurb: "Agent loops, tool use, memory, planning and guardrails for systems that act.", audience: "Developers building agents", planned: ["Tool calling", "Planning and memory", "Multi-agent patterns", "Safety and evals"] },
+  {
+    slug: "agentic-ai",
+    name: "Agentic AI",
+    section: "ai",
+    stage: "Modern AI",
+    icon: "🤖",
+    accent: "#18a3a3",
+    tagline: "Tools, planning, memory, multi-agent systems and safe control",
+    blurb:
+      "Agent loops and tool calling, the Model Context Protocol, ReAct, planning and reflection, memory and state, multi-agent patterns, evaluation (task success, pass^k, trajectories), prompt injection, approvals, sandboxes, budgets and durable execution — every calculation as a diagram that moves and a scripted agent you can actually run.",
+    audience: "Developers who finished Generative AI and want to build, evaluate and safely ship agents",
+    labels: {
+      production: "In real systems",
+      interview: "Exam and interview angle",
+      drillsTab: "Work it out",
+      drillsIntro: "Short calculations that exams and interviews love. Work each one out first, then open the step-by-step solution.",
+      drillQuestion: "What is the answer?",
+      drillPath: "Step by step",
+      drillFix: "Why",
+      drillPrevent: "Watch out",
+      drillInterview: "Remember",
+      drillDone: "✓ solved",
+      codeTab: "Practice problems",
+      codeIntro: "Build each idea from scratch in plain Python. Try it yourself first, then compare with the worked solution.",
+    },
+    stats: agenticStats,
+    load: () => import("./content/agentic-ai.js").then((m) => m.content),
+    loadVisuals: () => import("./content/agentic-ai.js").then((m) => m.visuals),
+  },
   { slug: "building-with-llms", name: "Building with Claude and GitHub Models", section: "ai", stage: "Modern AI", icon: "🛠", accent: "#d9731a", tagline: "Using Claude and GitHub Models in development and research", blurb: "Calling models from code, prompting, tool use, caching, evaluation, and using them as coding and research assistants.", audience: "Developers and researchers using LLM APIs", planned: ["Claude API", "GitHub Models", "Coding assistants", "Research workflows"] },
 ];
 
