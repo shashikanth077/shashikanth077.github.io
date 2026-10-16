@@ -28,6 +28,7 @@ const stacks = [
   { slug: "scikit-learn", authored: true },
   { slug: "machine-learning", authored: true, generatedOutputs: true },
   { slug: "neural-networks", authored: true, generatedOutputs: true },
+  { slug: "nlp", authored: true, generatedOutputs: true },
 ];
 const tmp = mkdtempSync(join(tmpdir(), "visuals-"));
 

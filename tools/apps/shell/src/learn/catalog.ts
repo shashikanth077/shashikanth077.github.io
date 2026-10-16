@@ -9,6 +9,7 @@ import matplotlibStats from "./content/matplotlib.stats.json";
 import pandasStats from "./content/pandas.stats.json";
 import sklearnStats from "./content/scikit-learn.stats.json";
 import mlStats from "./content/machine-learning.stats.json";
+import nlpStats from "./content/nlp.stats.json";
 import nnStats from "./content/neural-networks.stats.json";
 
 /**
@@ -301,9 +302,41 @@ export const stacks: Stack[] = [
     load: () => import("./content/neural-networks.js").then((m) => m.content),
     loadVisuals: () => import("./content/neural-networks.js").then((m) => m.visuals),
   },
-  { slug: "deep-learning", name: "Deep Learning", section: "ai", stage: "Core machine learning", icon: "🧠", accent: "#5a67d8", tagline: "CNNs, RNNs, transformers", blurb: "Beyond the basics: deeper architectures, transformers, transfer learning and training at scale in PyTorch.", audience: "Learners who finished neural networks", planned: ["Transformers", "Transfer learning", "Training at scale", "PyTorch"] },
+  {
+    slug: "nlp",
+    name: "Natural Language Processing",
+    section: "ai",
+    stage: "Modern AI",
+    icon: "💬",
+    accent: "#2f8f6b",
+    tagline: "From raw text to search, classifiers, taggers, language models and dialog",
+    blurb:
+      "Text sources and retrieval, preprocessing and tokenization, bag-of-words, TF-IDF and embeddings, sentiment and text classification, part-of-speech tagging and named entities, sequence labeling, language models, sequence-to-sequence, question answering and dialog systems — every worked example as a diagram that moves and code that really ran.",
+    audience: "Learners who finished Python, NumPy, Machine Learning and Neural Networks, and students taking an NLP course",
+    labels: {
+      production: "In real systems",
+      interview: "Exam and interview angle",
+      drillsTab: "Work it out",
+      drillsIntro: "Short calculations that exams and interviews love. Work each one out first, then open the step-by-step solution.",
+      drillQuestion: "What is the answer?",
+      drillPath: "Step by step",
+      drillFix: "Why",
+      drillPrevent: "Watch out",
+      drillInterview: "Remember",
+      drillDone: "✓ solved",
+      codeTab: "Practice problems",
+      codeIntro: "Build each idea from scratch in NumPy and plain Python. Try it yourself first, then compare with the worked solution.",
+    },
+    stats: nlpStats,
+    load: () => import("./content/nlp.js").then((m) => m.content),
+    loadVisuals: () => import("./content/nlp.js").then((m) => m.visuals),
+  },
+  { slug: "reinforcement-learning", name: "Reinforcement Learning", section: "ai", stage: "Modern AI", icon: "🎮", accent: "#c2452d", tagline: "Agents, rewards, value functions, policies", blurb: "Markov decision processes, Bellman equations, Q-learning, policy gradients and deep RL, learned by stepping through small worlds.", audience: "Learners who finished neural networks", planned: ["Rewards and returns", "Q-learning", "Policy gradients", "Deep RL"] },
+  { slug: "computer-vision", name: "Computer Vision", section: "ai", stage: "Modern AI", icon: "👁", accent: "#4a7bd0", tagline: "Images, detection, segmentation", blurb: "Image processing, CNN classifiers, detection, segmentation and vision transformers.", audience: "Learners who finished neural networks", planned: ["Image processing", "Detection", "Segmentation", "Vision transformers"] },
+  { slug: "speech-processing", name: "Speech Processing", section: "ai", stage: "Modern AI", icon: "🎙", accent: "#8a5fd0", tagline: "Audio, recognition, synthesis", blurb: "Signals and spectrograms, speech recognition, speaker features and text-to-speech.", audience: "Learners who finished neural networks", planned: ["Spectrograms", "Speech recognition", "Text-to-speech", "Speaker features"] },
   { slug: "generative-ai", name: "Generative AI", section: "ai", stage: "Modern AI", icon: "✨", accent: "#e0841f", tagline: "LLMs, prompting, RAG", blurb: "How large language models work, how to prompt them, retrieval-augmented generation and evaluation.", audience: "Developers building with LLMs", planned: ["Tokens and embeddings", "Transformers", "Prompting and RAG", "Fine-tuning"] },
   { slug: "agentic-ai", name: "Agentic AI", section: "ai", stage: "Modern AI", icon: "🤖", accent: "#18a3a3", tagline: "Tools, planning, multi-agent systems", blurb: "Agent loops, tool use, memory, planning and guardrails for systems that act.", audience: "Developers building agents", planned: ["Tool calling", "Planning and memory", "Multi-agent patterns", "Safety and evals"] },
+  { slug: "building-with-llms", name: "Building with Claude and GitHub Models", section: "ai", stage: "Modern AI", icon: "🛠", accent: "#d9731a", tagline: "Using Claude and GitHub Models in development and research", blurb: "Calling models from code, prompting, tool use, caching, evaluation, and using them as coding and research assistants.", audience: "Developers and researchers using LLM APIs", planned: ["Claude API", "GitHub Models", "Coding assistants", "Research workflows"] },
 ];
 
 export const findStack = (slug: string | undefined) => stacks.find((s) => s.slug === slug);
