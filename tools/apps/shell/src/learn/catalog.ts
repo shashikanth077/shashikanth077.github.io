@@ -6,6 +6,7 @@ import pythonAiStats from "./content/python-ai.stats.json";
 import mathsAiStats from "./content/maths-ai.stats.json";
 import numpyStats from "./content/numpy.stats.json";
 import matplotlibStats from "./content/matplotlib.stats.json";
+import pandasStats from "./content/pandas.stats.json";
 
 /**
  * Every learning stack the portal knows about. Two sections share one workspace:
@@ -207,7 +208,22 @@ export const stacks: Stack[] = [
     load: () => import("./content/matplotlib.js").then((m) => m.content),
     loadVisuals: () => import("./content/matplotlib.js").then((m) => m.visuals),
   },
-  { slug: "pandas", name: "Pandas", section: "ai", stage: "Foundations", icon: "🐼", accent: "#6a5acd", tagline: "Tables of data, cleaned and combined", blurb: "DataFrames, selecting and filtering, grouping, joins, missing data and preparing datasets for models.", audience: "Learners who finished NumPy", planned: ["DataFrames and Series", "Selecting and filtering", "Group by and joins", "Cleaning messy data"] },
+  {
+    slug: "pandas",
+    name: "Pandas",
+    section: "ai",
+    stage: "Foundations",
+    icon: "🐼",
+    accent: "#6a5acd",
+    tagline: "Tables of data, cleaned, joined and ready for models",
+    blurb:
+      "DataFrames, selecting and filtering, cleaning, group-by, joins, time series and preparing features for machine learning — each step shown on a small table you can watch change.",
+    audience: "Learners who finished NumPy, and anyone who works with spreadsheets or CSV files",
+    labels: codeStackLabels,
+    stats: pandasStats,
+    load: () => import("./content/pandas.js").then((m) => m.content),
+    loadVisuals: () => import("./content/pandas.js").then((m) => m.visuals),
+  },
   { slug: "machine-learning", name: "Machine Learning", section: "ai", stage: "Core machine learning", icon: "📈", accent: "#7c5cff", tagline: "From regression to ensembles", blurb: "Supervised and unsupervised learning, features, evaluation, overfitting, and the scikit-learn workflow.", audience: "Learners who finished Python and Maths for AI", planned: ["Regression and classification", "Trees and ensembles", "Evaluation", "Clustering"] },
   { slug: "neural-networks", name: "Neural Networks", section: "ai", stage: "Core machine learning", icon: "🕸", accent: "#d6489a", tagline: "Neurons, layers, backpropagation", blurb: "How a network computes and learns, one neuron and one gradient at a time.", audience: "Learners ready for deep learning", planned: ["Perceptron", "Activation functions", "Backpropagation", "Optimisers"] },
   { slug: "deep-learning", name: "Deep Learning", section: "ai", stage: "Core machine learning", icon: "🧠", accent: "#5a67d8", tagline: "CNNs, RNNs, transformers", blurb: "Convolutions, sequence models, attention and training deep networks in PyTorch.", audience: "Learners who finished neural networks", planned: ["CNNs", "Sequence models", "Attention", "Training at scale"] },
