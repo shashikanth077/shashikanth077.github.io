@@ -18,18 +18,20 @@ import nlpStats from "./content/nlp.stats.json";
 import rlStats from "./content/reinforcement-learning.stats.json";
 import speechStats from "./content/speech-processing.stats.json";
 import nnStats from "./content/neural-networks.stats.json";
+import awsStats from "./content/aws.stats.json";
 
 /**
- * Every learning stack the portal knows about. Two sections share one workspace:
- *   - "dev": developer stacks under /resources (Node.js, Redis, …)
- *   - "ai":  the AI Atlas under /ai (Python for AI, Maths, ML, …)
+ * Every learning stack the portal knows about. Three sections share one workspace:
+ *   - "dev":   developer stacks under /resources (Node.js, Redis, …)
+ *   - "ai":    the AI Atlas under /ai (Python for AI, Maths, ML, …)
+ *   - "cloud": the Cloud Lab under /cloud (AWS, Azure)
  *
  * To add a stack:
  *   - from a handbook HTML:  node scripts/import-handbook.mjs <handbook.html> <slug>
  *   - or author it by hand:  learn/author/ (see CLAUDE.md)
  * then add an entry here with `stats` and `load`. Entries without `load` render as "coming soon".
  */
-export type StackSection = "dev" | "ai";
+export type StackSection = "dev" | "ai" | "cloud";
 
 export type StackCategory = "Backend" | "Frontend" | "Database" | "Language";
 export const STACK_CATEGORIES: StackCategory[] = ["Backend", "Frontend", "Database", "Language"];
@@ -83,7 +85,12 @@ export interface Stack {
 export const SECTION_META: Record<StackSection, { base: string; label: string; crumb: string }> = {
   dev: { base: "/resources", label: "Learning portal", crumb: "Learning portal" },
   ai: { base: "/ai", label: "AI Atlas", crumb: "AI Atlas" },
+  cloud: { base: "/cloud", label: "Cloud Lab", crumb: "Cloud Lab" },
 };
+
+/** Page title per section (stack pages); keeps the shell and the prerender in step. */
+export const stackTitle = (s: Pick<Stack, "name" | "section">) =>
+  s.section === "ai" ? `${s.name} — AI Atlas | ToolNest` : s.section === "cloud" ? `${s.name} — Cloud Lab | ToolNest` : `${s.name} Learning Portal — Concepts & Interview Prep | ToolNest`;
 
 export const stackPath = (s: Pick<Stack, "slug" | "section">) => `${SECTION_META[s.section].base}/${s.slug}`;
 
@@ -552,6 +559,47 @@ export const stacks: Stack[] = [
     blurb: "Hands-on, end-to-end scenarios that put the tracks together: requirements, architecture, data and features, model, evaluation, latency and cost budgets, deployment and monitoring.",
     audience: "Learners who finished the core tracks and want to see how real systems are built",
     planned: ["Fraud detection", "Support assistant (RAG)", "Predictive maintenance", "Live recommendations", "Document intelligence", "Voice assistant", "Visual inspection", "Agentic IT-ops copilot"],
+  },
+
+  /* ---------------- Cloud Lab ---------------- */
+  {
+    slug: "aws",
+    name: "AWS for Developers and AI Developers",
+    section: "cloud",
+    icon: "☁",
+    accent: "#e07000",
+    tagline: "Build and run a React + Node + MySQL app on AWS — then add AI with Bedrock",
+    blurb:
+      "One app (ShopNest: React, Node.js/Express, MySQL) taken from a laptop to production on AWS: accounts and IAM, VPC networking, EC2, containers on Fargate, Lambda event and web functions, S3, RDS and Aurora, DynamoDB, caching, queues and events, CDK and CI/CD, observability, cost and disaster recovery — then AI with Bedrock, Knowledge Bases, Guardrails, agents and ready-made AI services. Every concept has an interactive lab: clickable architecture maps, an IAM policy evaluator, a subnet planner and a scaling simulator.",
+    audience: "Web developers (Node/React/SQL) and AI developers who want to build, deploy and run real applications on AWS",
+    labels: {
+      production: "On AWS in production",
+      interview: "Interview and certification angle",
+      drillsTab: "Design scenarios",
+      drillsIntro: "Real situations from running ShopNest on AWS. Decide what you would do, then open the reasoning.",
+      drillQuestion: "What would you do?",
+      drillPath: "Reasoning",
+      drillFix: "Why",
+      drillPrevent: "Watch out",
+      drillInterview: "Remember",
+      drillDone: "✓ decided",
+      codeTab: "Hands-on labs",
+      codeIntro: "Step-by-step labs that build ShopNest on AWS with the CLI, the CDK (TypeScript) and Node.js. Run them in your own account with a budget alert set — and delete what you create.",
+    },
+    stats: awsStats,
+    load: () => import("./content/aws.js").then((m) => m.content),
+    loadVisuals: () => import("./content/aws.js").then((m) => m.visuals),
+  },
+  {
+    slug: "azure",
+    name: "Azure for Developers and AI Developers",
+    section: "cloud",
+    icon: "🔷",
+    accent: "#0f6cbd",
+    tagline: "The same ShopNest app on Microsoft Azure, plus Azure OpenAI and AI Search",
+    blurb: "ShopNest again — React, Node.js and MySQL — on Azure: Entra ID and RBAC, virtual networks, App Service and Container Apps, Azure Functions, Blob Storage, Azure Database for MySQL, Service Bus and Event Grid, Bicep and GitHub Actions, Monitor, and AI with Azure OpenAI and AI Search. Every topic mapped side by side to its AWS equivalent.",
+    audience: "Developers who know (or are learning) AWS and need Azure too",
+    planned: ["Entra ID and RBAC", "VNets and private endpoints", "App Service and Container Apps", "Azure Functions", "Blob Storage and Azure Database for MySQL", "Service Bus and Event Grid", "Bicep and GitHub Actions", "Azure Monitor", "Azure OpenAI, AI Search and agents", "AWS ↔ Azure mapping"],
   },
 ];
 

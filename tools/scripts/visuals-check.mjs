@@ -36,12 +36,17 @@ const stacks = [
   { slug: "agentic-ai", authored: true, generatedOutputs: true },
   { slug: "building-with-claude", authored: true, generatedOutputs: true },
   { slug: "langchain-langgraph-rag", authored: true, generatedOutputs: true },
+  { slug: "aws", authored: true },
 ];
 const tmp = mkdtempSync(join(tmpdir(), "visuals-"));
 
 // The formula evaluator used by the maths diagrams, bundled so we can test every formula at build time.
 await build({ entryPoints: [join(learn, "visuals", "expr.ts")], bundle: true, format: "esm", platform: "node", outfile: join(tmp, "expr.mjs"), logLevel: "silent" });
 const { compile, evalDefs, template } = await import(pathToFileURL(join(tmp, "expr.mjs")).href);
+
+// The cloud lab logic (IAM evaluation, CIDR maths, scaling sim), so every lab is exercised at build time.
+await build({ entryPoints: [join(learn, "visuals", "cloud.ts")], bundle: true, format: "esm", platform: "node", outfile: join(tmp, "cloud.mjs"), logLevel: "silent" });
+const cloud = await import(pathToFileURL(join(tmp, "cloud.mjs")).href);
 
 /** Compile and evaluate every formula in a live diagram at its default slider values. */
 function checkLive(stack, id, v) {
@@ -126,6 +131,47 @@ function check(stack, id, v) {
       });
       break;
     }
+    case "arch": {
+      const ids = new Set();
+      v.nodes.forEach((n) => {
+        if (ids.has(n.id)) bad(stack, id, `arch: duplicate node id ${n.id}`);
+        ids.add(n.id);
+        if (!int(n.x, v.cols) || !int(n.y, v.rows)) bad(stack, id, `arch: node ${n.id} at ${n.x},${n.y} is outside the ${v.cols}x${v.rows} grid`);
+      });
+      const cells = new Set();
+      v.nodes.forEach((n) => { const k = `${n.x},${n.y}`; if (cells.has(k)) bad(stack, id, `arch: two nodes share cell ${k}`); cells.add(k); });
+      v.edges.forEach(([a, b]) => { if (!ids.has(a) || !ids.has(b)) bad(stack, id, `arch: edge ${a}→${b} names a missing node`); });
+      (v.groups ?? []).forEach((g) => { if (g.x < 0 || g.y < 0 || g.x + g.w > v.cols || g.y + g.h > v.rows) bad(stack, id, `arch: group "${g.label}" runs off the grid`); });
+      if (!v.flows.length) bad(stack, id, "arch: needs at least one flow");
+      v.flows.forEach((f) => {
+        if (!f.steps.length) bad(stack, id, `arch: flow "${f.name}" has no steps`);
+        f.steps.forEach((st, i) => { if (!ids.has(st.from) || !ids.has(st.to)) bad(stack, id, `arch: flow "${f.name}" step ${i + 1} names a missing node`); });
+      });
+      break;
+    }
+    case "iam": {
+      if (!v.requests.length) bad(stack, id, "iam: no requests");
+      const kinds = ["identity", "resource", "boundary", "scp", "session"];
+      v.policies.forEach((p) => { if (!kinds.includes(p.kind)) bad(stack, id, `iam: unknown policy kind ${p.kind}`); });
+      const on = v.policies.map((p) => p.on !== false);
+      const results = v.requests.map((r) => cloud.evaluateIam(v, on, r.action, r.resource).allowed);
+      // A lab where every request gets the same answer teaches nothing.
+      if (results.length > 1 && results.every((x) => x === results[0])) bad(stack, id, `iam: every request is ${results[0] ? "allowed" : "denied"} by default — mix them`);
+      break;
+    }
+    case "cidr": {
+      if (v.vpcPrefix < 16 || v.vpcPrefix > 28 || v.subnetPrefix < v.vpcPrefix || v.subnetPrefix > 28) bad(stack, id, "cidr: VPC must be /16../28 and subnets no bigger than the VPC");
+      if (!v.tiers.length) bad(stack, id, "cidr: no tiers");
+      try { cloud.planSubnets(v.base, v.vpcPrefix, v.subnetPrefix, v.azs, v.tiers); } catch (e) { bad(stack, id, `cidr: ${e.message}`); }
+      break;
+    }
+    case "scale": {
+      if (!v.pattern.length) bad(stack, id, "scale: empty traffic pattern");
+      if (v.min > v.max || v.min < 1) bad(stack, id, "scale: need 1 <= min <= max");
+      const ticks = cloud.simulateScaling(v, v.target, v.min, v.max, v.warmup);
+      if (ticks.some((t) => !Number.isFinite(t.ready))) bad(stack, id, "scale: simulation produced NaN");
+      break;
+    }
     default:
       bad(stack, id, `unknown type ${v.type}`);
   }
@@ -180,6 +226,31 @@ for (const { slug: stack, authored, generatedOutputs } of stacks) {
   Object.values(visuals).forEach((v) => (types[v.type] = (types[v.type] ?? 0) + 1));
   console.log(`${stack}: ${content.concepts.length - missing.length}/${content.concepts.length} concepts have a visual`, types);
   missing.forEach((c) => console.log(`  missing: ${c.id}  ${c.title}`));
+}
+
+// Unit checks for the cloud lab logic (numbers verified by hand).
+{
+  const eq = (label, got, want) => { if (JSON.stringify(got) !== JSON.stringify(want)) problems.push(`cloud logic ${label}: got ${JSON.stringify(got)}, want ${JSON.stringify(want)}`); };
+  const p = cloud.planSubnets("10.0.0.0", 16, 24, 2, ["Public", "App"]);
+  eq("subnet cidrs", p.subnets.map((x) => x.cidr), ["10.0.0.0/24", "10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]);
+  eq("usable /24", p.usable, 251);
+  eq("first host", p.subnets[0].first, "10.0.0.4");
+  eq("last host", p.subnets[0].last, "10.0.0.254");
+  eq("available /20 in /16", cloud.planSubnets("10.0.0.0", 16, 20, 1, ["a"]).available, 16);
+  eq("base aligns", cloud.planSubnets("172.16.5.9", 16, 24, 1, ["a"]).vpc, "172.16.0.0/16");
+  const pol = { policies: [
+    { name: "id", kind: "identity", statements: [{ effect: "Allow", actions: ["s3:*"], resources: ["*"] }] },
+    { name: "deny", kind: "identity", statements: [{ effect: "Deny", actions: ["s3:DeleteObject"], resources: ["*"] }] },
+    { name: "bound", kind: "boundary", statements: [{ effect: "Allow", actions: ["s3:Get*", "s3:Put*", "s3:DeleteObject"], resources: ["*"] }] },
+  ] };
+  eq("iam allow", cloud.evaluateIam(pol, [true, true, true], "s3:GetObject", "arn:aws:s3:::b/k").allowed, true);
+  eq("iam explicit deny", cloud.evaluateIam(pol, [true, true, true], "s3:DeleteObject", "arn:aws:s3:::b/k").allowed, false);
+  eq("iam boundary blocks", cloud.evaluateIam(pol, [true, true, true], "s3:ListBucket", "arn:aws:s3:::b").allowed, false);
+  eq("iam no boundary", cloud.evaluateIam(pol, [true, true, false], "s3:ListBucket", "arn:aws:s3:::b").allowed, true);
+  eq("iam case-insensitive action", cloud.evaluateIam(pol, [true, false, false], "S3:getobject", "x").allowed, true);
+  const sim = cloud.simulateScaling({ capacityPer: 100, pattern: [100, 400, 400, 400, 400] }, 50, 1, 10, 2);
+  eq("scale desired", sim.map((t) => t.desired), [2, 8, 8, 8, 8]);
+  eq("scale ready", sim.map((t) => t.ready), [1, 1, 2, 8, 8]);
 }
 
 rmSync(tmp, { recursive: true, force: true });

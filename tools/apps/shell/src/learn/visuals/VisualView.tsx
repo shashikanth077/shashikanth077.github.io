@@ -3,6 +3,7 @@ import { CompareDiagram, LanesDiagram, LayersDiagram } from "./Blocks.js";
 import { FlowDiagram, SequenceDiagram } from "./Diagrams.js";
 import { BarsDiagram, MatMulDiagram, PlotDiagram } from "./MathViews.js";
 import { CellsDiagram, TraceDiagram } from "./PythonViews.js";
+import { ArchDiagram, CidrLab, IamLab, ScaleLab } from "./CloudLabs.js";
 import { QueueSim } from "./QueueSim.js";
 import type { Visual } from "./types.js";
 import { useStepper, type Stepper } from "./useStepper.js";
@@ -19,9 +20,35 @@ const KIND_LABEL: Record<Visual["type"], string> = {
   plot: "Interactive graph",
   bars: "Try it live",
   matmul: "Multiply step by step",
+  arch: "Architecture map",
+  iam: "Policy lab",
+  cidr: "Subnet planner",
+  scale: "Scaling lab",
 };
 
-type Stepped = Exclude<Visual, { type: "queue" }>;
+/** Self-driving labs: they bring their own controls (no shared step player). */
+type Lab = Extract<Visual, { type: "queue" | "arch" | "iam" | "cidr" | "scale" }>;
+const isLab = (v: Visual): v is Lab => v.type === "queue" || v.type === "arch" || v.type === "iam" || v.type === "cidr" || v.type === "scale";
+
+const LAB_HINT: Record<Lab["type"], string> = {
+  queue: "Visual explanation",
+  arch: "Pick a flow · click a service",
+  iam: "Toggle policies · pick a request",
+  cidr: "Drag the sliders",
+  scale: "Drag the sliders",
+};
+
+function LabView({ v }: { v: Lab }) {
+  switch (v.type) {
+    case "queue": return <QueueSim v={v} />;
+    case "arch": return <ArchDiagram v={v} />;
+    case "iam": return <IamLab v={v} />;
+    case "cidr": return <CidrLab v={v} />;
+    case "scale": return <ScaleLab v={v} />;
+  }
+}
+
+type Stepped = Exclude<Visual, Lab>;
 
 /** Number of steps; 0 means "no guided steps" (a live-only diagram: sliders, no player). */
 function stepCount(v: Stepped) {
@@ -95,8 +122,8 @@ export function VisualView({ visual }: { visual: Visual }) {
   const live = (visual.type === "plot" || visual.type === "bars") && !visual.steps?.length;
   return (
     <figure className="lp-visual">
-      <figcaption><span className="lp-visual__kind">▶ {KIND_LABEL[visual.type]}</span><span>{live ? "Drag the sliders" : "Visual explanation"}</span></figcaption>
-      {visual.type === "queue" ? <QueueSim v={visual} /> : <SteppedView v={visual} />}
+      <figcaption><span className="lp-visual__kind">▶ {KIND_LABEL[visual.type]}</span><span>{isLab(visual) ? LAB_HINT[visual.type] : live ? "Drag the sliders" : "Visual explanation"}</span></figcaption>
+      {isLab(visual) ? <LabView v={visual} /> : <SteppedView v={visual} />}
       <p className="lp-visual__take"><b>Remember:</b> <Rich text={visual.takeaway} /></p>
     </figure>
   );

@@ -198,7 +198,85 @@ export interface MatMulVisual extends Base {
 
 export type Tone = "good" | "bad" | "warn" | "info" | "plain";
 
-export type Visual = SequenceVisual | FlowVisual | LanesVisual | CompareVisual | LayersVisual | QueueVisual | TraceVisual | CellsVisual | PlotVisual | BarsVisual | MatMulVisual;
+/* ---------------- cloud labs (Cloud Lab tracks) ---------------- */
+
+/** Colour family of a cloud service box. */
+export type ArchKind = "client" | "edge" | "net" | "compute" | "data" | "int" | "sec" | "ops" | "ai";
+
+export interface ArchNode {
+  id: string;
+  label: string;
+  sub?: string;
+  /** One emoji or short glyph. */
+  icon: string;
+  /** Grid cell (0-based column / row). */
+  x: number;
+  y: number;
+  kind: ArchKind;
+  /** Shown when the learner clicks the box. */
+  info: string;
+}
+
+/**
+ * Clickable architecture map: services on a grid, optional boundaries (VPC,
+ * subnets, AZs), and named request flows that animate hop by hop.
+ */
+export interface ArchVisual extends Base {
+  type: "arch";
+  cols: number;
+  rows: number;
+  nodes: ArchNode[];
+  edges: [from: string, to: string, label?: string][];
+  /** Boxes drawn behind the nodes, in grid units (x, y, w, h). */
+  groups?: { label: string; x: number; y: number; w: number; h: number; tone?: "region" | "vpc" | "public" | "private" | "az" | "account" }[];
+  flows: { name: string; steps: { from: string; to: string; note: string; bad?: boolean }[] }[];
+}
+
+export interface IamStatement { effect: "Allow" | "Deny"; actions: string[]; resources: string[] }
+
+/**
+ * IAM policy evaluator: toggle policies on and off, pick a request and watch the
+ * same-account evaluation order decide (explicit deny → SCP → identity / resource
+ * allow → permissions boundary → session policy).
+ */
+export interface IamVisual extends Base {
+  type: "iam";
+  /** Who is asking, e.g. "role/shopnest-api (task role)". */
+  principal: string;
+  requests: { label: string; action: string; resource: string }[];
+  policies: { name: string; kind: "identity" | "resource" | "boundary" | "scp" | "session"; on?: boolean; statements: IamStatement[] }[];
+}
+
+/** VPC subnet planner: sliders for the VPC and subnet prefix and number of AZs. */
+export interface CidrVisual extends Base {
+  type: "cidr";
+  /** First address of the VPC, e.g. "10.0.0.0". */
+  base: string;
+  vpcPrefix: number;
+  subnetPrefix: number;
+  azs: number;
+  /** Subnet tiers, one subnet per tier per AZ, e.g. ["Public", "App", "Data"]. */
+  tiers: string[];
+}
+
+/** Auto scaling simulator: a traffic curve, target tracking and warm-up time. */
+export interface ScaleVisual extends Base {
+  type: "scale";
+  /** What gets added, e.g. "EC2 instance", "Fargate task". */
+  unit: string;
+  /** Requests per second one unit serves at 100 % utilisation. */
+  capacityPer: number;
+  /** Target utilisation in percent. */
+  target: number;
+  min: number;
+  max: number;
+  /** Ticks before a new unit can serve traffic. */
+  warmup: number;
+  /** Requests per second at each tick (one tick = one minute). */
+  pattern: number[];
+}
+
+export type Visual = SequenceVisual | FlowVisual | LanesVisual | CompareVisual | LayersVisual | QueueVisual | TraceVisual | CellsVisual | PlotVisual | BarsVisual | MatMulVisual | ArchVisual | IamVisual | CidrVisual | ScaleVisual;
 
 /** concept id (e.g. "async:2") or question id → visual */
 export type VisualMap = Record<string, Visual>;

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, Navigate, useLocation, useParams, useSearchParams } from "react-router-dom";
-import { SECTION_META, findStack, stackPath } from "../learn/catalog.js";
+import { SECTION_META, findStack, stackPath, stackTitle } from "../learn/catalog.js";
 import type { LearnCtx, ViewId } from "../learn/ctx.js";
 import { countDone, useProgress } from "../learn/progress.js";
 import { plain } from "../learn/Rich.js";
@@ -85,7 +85,7 @@ export default function ResourceStack() {
   useEffect(() => {
     if (!stack) return;
     const description = `${stack.name} ${section.label.toLowerCase()}: ${stack.blurb}`;
-    document.title = stack.section === "ai" ? `${stack.name} — AI Atlas | ToolNest` : `${stack.name} Learning Portal — Concepts & Interview Prep | ToolNest`;
+    document.title = stackTitle(stack);
     document.querySelector<HTMLMetaElement>('meta[name="description"]')?.setAttribute("content", description);
     document.querySelector<HTMLLinkElement>('link[rel="canonical"]')?.setAttribute("href", `https://shashikant-hr.me/tools${stackPath(stack)}`);
   }, [stack, section.label]);

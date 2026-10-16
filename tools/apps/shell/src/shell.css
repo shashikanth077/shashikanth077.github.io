@@ -62,6 +62,12 @@
 }
 .shell-header__resources:hover, .shell-header__resources.active { outline: 1px solid var(--accent); }
 @media (min-width: 80rem) { .shell-header__resources { display: inline-flex; } }
+/* Three section links (Resources, AI Atlas, Cloud Lab) beside six toolkit menus:
+   tighten spacing until the viewport has room to spare. */
+@media (min-width: 80rem) and (max-width: 95.99rem) {
+  .shell-header { gap: var(--space-2); }
+  .shell-header__resources { padding: 0.5rem 0.55rem; }
+}
 
 .shell-brand {
   display: inline-flex;
@@ -753,3 +759,13 @@
 .mobileMenu__ai { color: var(--tk-qr); background: var(--tk-qr-soft); border-color: var(--tk-qr); margin-bottom: 0; }
 .home-resources--ai { background: var(--tk-qr-soft); border-color: var(--tk-qr); margin-bottom: var(--space-3); }
 .home-resources--ai .home-resources__icon, .home-resources--ai .home-resources__arrow { color: var(--tk-qr); }
+
+/* Cloud Lab entry points (AWS orange) */
+:root { --cloud-ink: #b85a00; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --cloud-ink: #ffa04d; } }
+:root[data-theme="dark"] { --cloud-ink: #ffa04d; }
+.shell-header__cloud { color: var(--cloud-ink); background: rgba(224, 112, 0, 0.12); }
+.shell-header__cloud:hover, .shell-header__cloud.active { outline-color: #e07000; }
+.mobileMenu__cloud { color: var(--cloud-ink); background: rgba(224, 112, 0, 0.12); border-color: #e07000; margin-bottom: 0; }
+.home-resources--cloud { background: rgba(224, 112, 0, 0.1); border-color: #e07000; margin-bottom: var(--space-3); }
+.home-resources--cloud .home-resources__icon, .home-resources--cloud .home-resources__arrow { color: #e07000; }

@@ -128,6 +128,9 @@ export function Header() {
       <NavLink to="/ai" className="shell-header__resources shell-header__ai" onClick={() => setOpenMenu(null)}>
         <span aria-hidden="true">✦</span> AI Atlas
       </NavLink>
+      <NavLink to="/cloud" className="shell-header__resources shell-header__cloud" onClick={() => setOpenMenu(null)}>
+        <span aria-hidden="true">☁</span> Cloud Lab
+      </NavLink>
 
       <div className="shell-header__search">
         <ToolSearch variant="header" placeholder="Search tools…" />

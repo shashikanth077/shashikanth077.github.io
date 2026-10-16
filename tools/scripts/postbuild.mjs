@@ -114,28 +114,41 @@ export function buildToolHtml(baseHtml, route) {
   return html;
 }
 
+/** Learning sections: URL base and landing-page metadata. Stack pages use `title(stack)`. */
+const SECTIONS = {
+  dev: {
+    base: "resources",
+    title: (s) => `${s.name} Learning Portal — Concepts & Interview Prep | ToolNest`,
+    desc: (s) => `${s.name} learning portal: ${s.blurb}`,
+    home: ["Learning Portal — Concepts & Interview Prep by Tech Stack | ToolNest", "Pick a tech stack and learn it properly: concept library with production and interview angles, drills, code labs, question bank and mock interviews."],
+  },
+  ai: {
+    base: "ai",
+    title: (s) => `${s.name} — AI Atlas | ToolNest`,
+    desc: (s) => `${s.name} in the AI Atlas: ${s.blurb}`,
+    home: ["AI Atlas — Learn AI Visually, from Python to Agents | ToolNest", "A visual learning path for AI: Python, maths, machine learning, neural networks, deep learning, generative AI and agentic AI — animated diagrams, code traces and interview prep."],
+  },
+  cloud: {
+    base: "cloud",
+    title: (s) => `${s.name} — Cloud Lab | ToolNest`,
+    desc: (s) => `${s.name} in the Cloud Lab: ${s.blurb}`,
+    home: ["Cloud Lab — Learn AWS Interactively with a Real App | ToolNest", "Learn AWS by building a React + Node.js + MySQL app: clickable architecture maps, an IAM policy lab, a VPC subnet planner, a scaling simulator, serverless, DevOps and AI on AWS with Bedrock."],
+  },
+};
+export const sectionBase = (section) => (SECTIONS[section] ?? SECTIONS.dev).base;
+
 /**
  * Prerendered metadata for the learning pages:
  *   /resources and /resources/<stack>   (developer stacks)
  *   /ai and /ai/<stack>                 (AI Atlas)
- * Pass `section: "ai"` for the AI pages; omit `stack` for a section landing page.
+ *   /cloud and /cloud/<stack>           (Cloud Lab)
+ * Pass `section` for a section landing page (omit `stack`).
  */
 export function buildResourceHtml(baseHtml, stack, section = stack?.section ?? "dev") {
-  const ai = section === "ai";
-  const base = ai ? "ai" : "resources";
-  const title = stack
-    ? ai
-      ? `${stack.name} — AI Atlas | ToolNest`
-      : `${stack.name} Learning Portal — Concepts & Interview Prep | ToolNest`
-    : ai
-      ? "AI Atlas — Learn AI Visually, from Python to Agents | ToolNest"
-      : "Learning Portal — Concepts & Interview Prep by Tech Stack | ToolNest";
-  const description = stack
-    ? `${stack.name} ${ai ? "in the AI Atlas" : "learning portal"}: ${stack.blurb}`
-    : ai
-      ? "A visual learning path for AI: Python, maths, machine learning, neural networks, deep learning, generative AI and agentic AI — animated diagrams, code traces and interview prep."
-      : "Pick a tech stack and learn it properly: concept library with production and interview angles, drills, code labs, question bank and mock interviews.";
-  const canonical = `${SITE_ORIGIN}/tools/${base}${stack ? `/${stack.slug}` : ""}`;
+  const meta = SECTIONS[section] ?? SECTIONS.dev;
+  const title = stack ? meta.title(stack) : meta.home[0];
+  const description = stack ? meta.desc(stack) : meta.home[1];
+  const canonical = `${SITE_ORIGIN}/tools/${meta.base}${stack ? `/${stack.slug}` : ""}`;
   let html = baseHtml.replace(/<title>[\s\S]*?<\/title>/, `<title>${escapeAttr(title)}</title>`);
   html = upsert(html, /<meta\s+name="description"[\s\S]*?\/?>/, `<meta name="description" content="${escapeAttr(description)}" />`);
   html = upsert(html, /<link\s+rel="canonical"[\s\S]*?\/?>/, `<link rel="canonical" href="${canonical}" />`);
@@ -152,7 +165,7 @@ async function mergeSitemap(routes, stacks) {
   }
 
   const xml = await readFile(SITEMAP, "utf8");
-  const urls = [`${SITE_ORIGIN}/tools/`, `${SITE_ORIGIN}/tools/resources`, `${SITE_ORIGIN}/tools/ai`, ...stacks.map((s) => `${SITE_ORIGIN}/tools/${s.section === "ai" ? "ai" : "resources"}/${s.slug}`), ...routes.map((r) => `${SITE_ORIGIN}/tools/${r.slug}`)];
+  const urls = [`${SITE_ORIGIN}/tools/`, ...Object.values(SECTIONS).map((m) => `${SITE_ORIGIN}/tools/${m.base}`), ...stacks.map((s) => `${SITE_ORIGIN}/tools/${sectionBase(s.section)}/${s.slug}`), ...routes.map((r) => `${SITE_ORIGIN}/tools/${r.slug}`)];
   const allowed = new Set(urls);
   // Remove stale tool URLs (including retired tools) without touching portfolio entries.
   const cleaned = xml.replace(/<url>[\s\S]*?<\/url>/g, (entry) => {
@@ -214,20 +227,16 @@ async function main() {
     await mkdir(dir, { recursive: true });
     await writeFile(join(dir, "index.html"), buildToolHtml(baseHtml, route), "utf8");
   }
-  const resourcesDir = join(OUT_TOOLS, "resources");
-  await mkdir(resourcesDir, { recursive: true });
-  await writeFile(join(resourcesDir, "index.html"), buildResourceHtml(baseHtml), "utf8");
-
-  // One prerendered page per live learning stack (GitHub Pages has no SPA fallback),
-  // under /resources for developer stacks and /ai for the AI Atlas.
+  // One prerendered page per section landing and per live learning stack (GitHub Pages has no SPA fallback).
   const stacksFile = join(SHELL_DIST, "stacks.json");
   if (!existsSync(stacksFile)) fail(`${stacksFile} missing — the shell's emit-stacks plugin did not run.`);
   const stacks = JSON.parse(await readFile(stacksFile, "utf8"));
-  const aiDir = join(OUT_TOOLS, "ai");
-  await mkdir(aiDir, { recursive: true });
-  await writeFile(join(aiDir, "index.html"), buildResourceHtml(baseHtml, undefined, "ai"), "utf8");
+  for (const [section, meta] of Object.entries(SECTIONS)) {
+    await mkdir(join(OUT_TOOLS, meta.base), { recursive: true });
+    await writeFile(join(OUT_TOOLS, meta.base, "index.html"), buildResourceHtml(baseHtml, undefined, section), "utf8");
+  }
   for (const stack of stacks) {
-    const dir = join(stack.section === "ai" ? aiDir : resourcesDir, stack.slug);
+    const dir = join(OUT_TOOLS, sectionBase(stack.section), stack.slug);
     await mkdir(dir, { recursive: true });
     await writeFile(join(dir, "index.html"), buildResourceHtml(baseHtml, stack), "utf8");
   }

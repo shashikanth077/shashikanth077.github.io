@@ -65,6 +65,12 @@ export default function Home() {
         <span className="home-resources__arrow" aria-hidden="true">→</span>
       </Link>
 
+      <Link to="/cloud" className="home-resources home-resources--cloud">
+        <span className="home-resources__icon" aria-hidden="true">☁</span>
+        <span><strong>Cloud Lab</strong><small>Learn AWS hands-on with a real React + Node + MySQL app: clickable architectures, policy and scaling labs, and AI on AWS.</small></span>
+        <span className="home-resources__arrow" aria-hidden="true">→</span>
+      </Link>
+
       <Link to="/resources" className="home-resources">
         <span className="home-resources__icon" aria-hidden="true">✦</span>
         <span><strong>Learn and prepare</strong><small>Explore skill guides, learning paths, and interview questions in the resource pool.</small></span>
