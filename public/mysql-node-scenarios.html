@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MySQL + Node.js Scenario Quiz</title>
+<meta name="description" content="Interactive scenario-based MySQL and Node.js questions for full-stack developers.">
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#16181d;--mute:#5d6572;--line:#dfe3ea;--brand:#2563eb;--ok:#15803d;--okbg:#dcfce7;--bad:#b91c1c;--badbg:#fee2e2;--code:#0f172a;--codeink:#e2e8f0}
+@media (prefers-color-scheme:dark){:root{--bg:#0e1116;--card:#171b22;--ink:#e8ebf0;--mute:#9aa4b2;--line:#2a313c;--brand:#6ea0ff;--ok:#4ade80;--okbg:#12301f;--bad:#f87171;--badbg:#3a1618;--code:#0a0d12;--codeink:#e2e8f0}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.wrap{max-width:860px;margin:0 auto;padding:24px 16px 80px}
+h1{font-size:1.6rem;margin:0 0 4px}
+.sub{color:var(--mute);margin:0 0 18px}
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);margin-bottom:16px}
+.stats{display:flex;gap:14px;flex-wrap:wrap;align-items:center;font-size:.92rem;margin-bottom:8px}
+.stats b{font-size:1.05rem}
+.meter{flex:1;min-width:120px;height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+.meter i{display:block;height:100%;width:0;background:var(--brand);transition:width .3s}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:4px 12px;font-size:.85rem;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--brand);color:#fff;border-color:var(--brand)}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:6px 12px;font-size:.88rem;cursor:pointer}
+.btn:hover{border-color:var(--brand)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:16px}
+.meta{display:flex;gap:8px;flex-wrap:wrap;font-size:.75rem;margin-bottom:6px}
+.tag{padding:2px 8px;border-radius:99px;border:1px solid var(--line);color:var(--mute)}
+.lv-Easy{color:var(--ok)}.lv-Medium{color:#b45309}.lv-Hard{color:var(--bad)}
+.card h2{font-size:1.1rem;margin:0 0 8px}
+.sc{margin:0 0 10px}
+.q{font-weight:600;margin:12px 0 8px}
+pre{background:var(--code);color:var(--codeink);padding:12px 14px;border-radius:8px;overflow:auto;font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;margin:8px 0}
+.opt{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:8px;padding:9px 12px;margin:6px 0;font:inherit;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--brand)}
+.opt:disabled{cursor:default}
+.opt.right{background:var(--okbg);border-color:var(--ok)}
+.opt.wrong{background:var(--badbg);border-color:var(--bad)}
+.ex{display:none;border-left:4px solid var(--brand);padding:6px 12px;margin-top:12px;background:var(--bg);border-radius:0 8px 8px 0}
+.ex.on{display:block}
+.ex p{margin:6px 0}
+.row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.hint{display:none;color:var(--mute);font-size:.9rem;margin-top:6px}
+.hint.on{display:block}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.9em;background:var(--bg);padding:1px 5px;border-radius:4px}
+pre code{background:none;padding:0}
+.empty{text-align:center;color:var(--mute);padding:40px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>MySQL + Node.js scenario quiz</h1>
+  <p class="sub">Real production situations for full-stack developers. Pick an answer, then read why. Progress is saved in your browser.</p>
+
+  <div class="bar">
+    <div class="stats">
+      <span>Answered <b id="sAns">0</b>/<span id="sTot">0</span></span>
+      <span>Correct <b id="sOk">0</b></span>
+      <div class="meter"><i id="mt"></i></div>
+      <button class="btn" id="reset">Reset</button>
+    </div>
+    <div class="chips" id="cats" aria-label="Category"></div>
+    <div class="chips" id="lvls" aria-label="Level" style="margin-top:6px"></div>
+  </div>
+
+  <div id="list"></div>
+</div>
+
+<script>
+const Q = [
+{id:"txn",cat:"Transactions",lv:"Easy",title:"Money transfer goes half-way",
+ sc:"A transfer endpoint debits account A, then the server crashes (or the credit query throws) before crediting account B. Customers see money vanish.",
+ code:`await pool.query('UPDATE accounts SET bal = bal - ? WHERE id = ?', [amt, a]);
+await pool.query('UPDATE accounts SET bal = bal + ? WHERE id = ?', [amt, b]);`,
+ q:"What is the correct fix?",
+ o:["Wrap both in try/catch and retry the second query","Get ONE connection from the pool, run BEGIN ... COMMIT on it, and ROLLBACK on error","Use Promise.all so both run at the same time","Add an index on accounts.id"],
+ a:1,
+ why:"A transaction is bound to a single connection. pool.query() may use a different connection per call, so BEGIN/COMMIT would not even cover both statements. Check out a connection, run everything on it, rollback on any error, and always release in finally.",
+ fix:`const conn = await pool.getConnection();
+try {
+  await conn.beginTransaction();
+  await conn.query('UPDATE accounts SET bal = bal - ? WHERE id = ? AND bal >= ?', [amt, a, amt]);
+  await conn.query('UPDATE accounts SET bal = bal + ? WHERE id = ?', [amt, b]);
+  await conn.commit();
+} catch (e) {
+  await conn.rollback();
+  throw e;
+} finally {
+  conn.release();
+}`},
+
+{id:"seat",cat:"Concurrency",lv:"Medium",title:"Two users book the same seat",
+ sc:"Ticketing app: the API runs SELECT to check that seat 12A is free, then INSERTs a booking. Under load two customers both get a success for 12A.",
+ code:`const [rows] = await conn.query('SELECT * FROM seats WHERE id = ? AND booked = 0', [id]);
+if (rows.length) await conn.query('UPDATE seats SET booked = 1, user_id = ? WHERE id = ?', [uid, id]);`,
+ q:"Which fix removes the race with the least complexity?",
+ o:["Check twice before updating","Use SELECT ... FOR UPDATE inside a transaction (or a single conditional UPDATE and check affectedRows)","Add a JavaScript Mutex in the Node process","Lower the pool size to 1"],
+ a:1,
+ why:"Check-then-act is racy across requests and across multiple Node instances, so an in-process mutex does not help once you scale out. Let the database arbitrate: lock the row with FOR UPDATE, or do UPDATE seats SET booked=1 WHERE id=? AND booked=0 and treat affectedRows = 0 as 'already taken'.",
+ fix:`const [r] = await pool.query(
+  'UPDATE seats SET booked = 1, user_id = ? WHERE id = ? AND booked = 0', [uid, id]);
+if (r.affectedRows === 0) return res.status(409).json({ error: 'Seat taken' });`},
+
+{id:"idx",cat:"Performance",lv:"Medium",title:"Order history page takes 6 seconds",
+ sc:"GET /orders loads a customer's latest orders from a table with 20M rows. There is only a primary key on id.",
+ code:`SELECT id, total, created_at FROM orders
+WHERE user_id = ? ORDER BY created_at DESC LIMIT 20;`,
+ q:"Best index for this query?",
+ o:["INDEX (created_at)","INDEX (user_id)","INDEX (user_id, created_at)","Separate indexes on user_id and created_at"],
+ a:2,
+ why:"A composite index with the equality column first and the sort column second lets MySQL jump to the user and read rows already in order, with no filesort. Verify with EXPLAIN: you want type=ref, key=your index and no 'Using filesort'.",
+ fix:`ALTER TABLE orders ADD INDEX idx_user_created (user_id, created_at);
+EXPLAIN SELECT id, total, created_at FROM orders
+WHERE user_id = 42 ORDER BY created_at DESC LIMIT 20;`},
+
+{id:"page",cat:"Performance",lv:"Medium",title:"Infinite scroll gets slower on every page",
+ sc:"Your feed uses LIMIT 20 OFFSET n. Page 1 is instant, page 5000 takes seconds and the DB CPU spikes.",
+ q:"Why, and what do you change?",
+ o:["MySQL must read and discard n rows each time; switch to keyset (cursor) pagination","The Node event loop is blocked; use worker threads","LIMIT is ignored beyond 1000 rows; raise max_allowed_packet","OFFSET needs a FULLTEXT index"],
+ a:0,
+ why:"OFFSET n scans n rows and throws them away. Keyset pagination remembers the last seen key and asks for rows after it, so cost stays flat. Use a deterministic tie-breaker (id) so rows with the same timestamp are not skipped.",
+ fix:`SELECT id, title, created_at FROM posts
+WHERE (created_at, id) < (?, ?)
+ORDER BY created_at DESC, id DESC
+LIMIT 20;
+-- return { items, nextCursor: { created_at, id } } to the client`},
+
+{id:"sqli",cat:"Security",lv:"Easy",title:"Search box leaks the users table",
+ sc:"A teammate builds the query with a template string. A tester types  ' OR 1=1 --  and gets every user back.",
+ code:`const sql = "SELECT * FROM users WHERE name = '" + req.query.name + "'";
+const [rows] = await pool.query(sql);`,
+ q:"What is the right fix?",
+ o:["Strip single quotes from the input","Use placeholders: pool.execute('... WHERE name = ?', [name])","Escape the input only on the frontend","Run the API as the MySQL root user so errors are clearer"],
+ a:1,
+ why:"Placeholders send the SQL text and the values separately, so input is never parsed as SQL. Blacklisting characters always has gaps. Also give the app a least-privilege MySQL user, never root.",
+ fix:`const [rows] = await pool.execute(
+  'SELECT id, name FROM users WHERE name = ?', [req.query.name]);`},
+
+{id:"sort",cat:"Security",lv:"Hard",title:"Dynamic sort column",
+ sc:"The API lets clients choose sorting: /products?sort=price&dir=desc. You cannot pass a column name as a ? placeholder (it would become a quoted string).",
+ q:"How do you do this safely?",
+ o:["Use ? for the column name anyway","Whitelist allowed columns/directions in code and interpolate only the matched constant","Escape the value with mysql.escape and concatenate","Sort in JavaScript after loading all rows"],
+ a:1,
+ why:"Identifiers cannot be parameterised, so map user input to a fixed allow-list and insert only your own constants. Never concatenate raw input. (Sorting all rows in JS defeats pagination and wastes memory.)",
+ fix:`const COLS = { price: 'price', name: 'name', newest: 'created_at' };
+const col = COLS[req.query.sort] ?? 'created_at';
+const dir = req.query.dir === 'asc' ? 'ASC' : 'DESC';
+const [rows] = await pool.execute(
+  'SELECT id, name, price FROM products ORDER BY ' + col + ' ' + dir + ' LIMIT ?',
+  [String(limit)]);`},
+
+{id:"leak",cat:"Pooling",lv:"Medium",title:"API hangs after a few hours",
+ sc:"The app works, then every request times out waiting for a connection. MySQL shows few active queries. Logs show occasional validation errors.",
+ code:`const conn = await pool.getConnection();
+const [u] = await conn.query('SELECT * FROM users WHERE id = ?', [id]);
+if (!u.length) throw new Error('not found');   // <- early exit
+conn.release();`,
+ q:"What is the root cause?",
+ o:["MySQL wait_timeout is too high","The connection is not released when the function throws, so the pool leaks until exhausted","The pool size is too large","Queries must be awaited twice"],
+ a:1,
+ why:"Every exit path must release. Use try/finally so release runs on success and on errors. For single statements prefer pool.query(), which acquires and releases for you.",
+ fix:`const conn = await pool.getConnection();
+try {
+  const [u] = await conn.query('SELECT * FROM users WHERE id = ?', [id]);
+  if (!u.length) throw new Error('not found');
+  return u[0];
+} finally {
+  conn.release();
+}`},
+
+{id:"n1",cat:"Performance",lv:"Easy",title:"Dashboard fires 301 queries",
+ sc:"GET /authors returns 100 authors with their books. Code loops over authors and runs SELECT * FROM books WHERE author_id = ? for each.",
+ q:"What is the standard fix?",
+ o:["Cache each query for 1 second","Fetch all books in one query with WHERE author_id IN (...) (or a JOIN) and group in memory","Use setTimeout to spread the queries","Increase the pool size to 100"],
+ a:1,
+ why:"This is the N+1 problem. One round-trip per row multiplies network latency. Batch with IN (...) or JOIN; for GraphQL use a DataLoader to batch automatically.",
+ fix:`const ids = authors.map(a => a.id);
+const [books] = await pool.query('SELECT * FROM books WHERE author_id IN (?)', [ids]);
+const byAuthor = Map.groupBy(books, b => b.author_id);
+authors.forEach(a => (a.books = byAuthor.get(a.id) ?? []));`},
+
+{id:"dup",cat:"Concurrency",lv:"Easy",title:"Duplicate accounts on double-click",
+ sc:"Signup checks 'SELECT id FROM users WHERE email=?', then INSERTs. A user double-clicks Submit and two rows with the same email appear.",
+ q:"What guarantees uniqueness?",
+ o:["A faster SELECT","A UNIQUE index on email, and catch ER_DUP_ENTRY (errno 1062) to return 409","Disable the button in the frontend only","Wait 100 ms before inserting"],
+ a:1,
+ why:"Only the database can enforce uniqueness under concurrency. Frontend disabling is a nicety, not a guarantee. Keep the pre-check if you like, but the constraint is the source of truth.",
+ fix:`ALTER TABLE users ADD UNIQUE KEY uq_users_email (email);
+
+try { await pool.execute('INSERT INTO users (email, name) VALUES (?, ?)', [email, name]); }
+catch (e) {
+  if (e.code === 'ER_DUP_ENTRY') return res.status(409).json({ error: 'Email already registered' });
+  throw e;
+}`},
+
+{id:"idem",cat:"Reliability",lv:"Hard",title:"Payment webhook delivered twice",
+ sc:"The payment provider retries webhooks. Your handler credits the wallet each time, so some users get double credit.",
+ q:"How do you make the handler idempotent?",
+ o:["Ignore webhooks older than 5 seconds","Store the event id in a table with a UNIQUE key, in the same transaction as the credit; skip if the insert is a duplicate","Keep processed ids in a Node array","Return 500 so the provider stops retrying"],
+ a:1,
+ why:"An in-memory set disappears on restart and is not shared between instances. Recording the event id and applying the effect in one transaction makes 'exactly once effect' even with 'at least once' delivery.",
+ fix:`await conn.beginTransaction();
+const [r] = await conn.query('INSERT IGNORE INTO processed_events (event_id) VALUES (?)', [evt.id]);
+if (r.affectedRows === 0) { await conn.rollback(); return res.sendStatus(200); } // already done
+await conn.query('UPDATE wallets SET bal = bal + ? WHERE user_id = ?', [evt.amount, evt.userId]);
+await conn.commit();
+res.sendStatus(200);`},
+
+{id:"dead",cat:"Concurrency",lv:"Hard",title:"Random 'Deadlock found' errors",
+ sc:"Two concurrent transfers (A to B and B to A) sometimes fail with ER_LOCK_DEADLOCK (1213).",
+ q:"Which approach is correct?",
+ o:["Deadlocks mean MySQL is broken; switch to MyISAM","Lock rows in a consistent order (e.g. lowest id first), keep transactions short, and retry on 1213","Increase innodb_lock_wait_timeout to 10 minutes","Remove the transaction"],
+ a:1,
+ why:"Deadlocks are normal in busy systems: InnoDB aborts one victim. Reduce them with consistent lock ordering and short transactions, and make callers retry on 1213 (a few times with jitter).",
+ fix:`const [first, second] = a < b ? [a, b] : [b, a];
+await conn.query('SELECT id FROM accounts WHERE id IN (?, ?) ORDER BY id FOR UPDATE', [first, second]);
+// ...then apply both updates, commit.
+
+// caller:
+for (let i = 0; i < 3; i++) {
+  try { return await transfer(); }
+  catch (e) { if (e.errno !== 1213) throw e; await sleep(50 * (i + 1)); }
+}`},
+
+{id:"money",cat:"Schema",lv:"Easy",title:"Totals are off by one paisa",
+ sc:"Prices are stored as FLOAT. Invoices sometimes show 0.30000000000000004 or totals that differ by a cent from the payment gateway.",
+ q:"Best way to store money?",
+ o:["DOUBLE for more precision","DECIMAL(12,2), or integer minor units (cents) in a BIGINT","VARCHAR","FLOAT with ROUND on the frontend"],
+ a:1,
+ why:"Binary floating point cannot represent most decimals exactly. DECIMAL is exact in MySQL. Note that mysql2 returns DECIMAL as a string by default - that is intentional, keep it as string or use a decimal library instead of Number math. Many teams store integer cents and format at the edge.",
+ fix:`ALTER TABLE products MODIFY price DECIMAL(12,2) NOT NULL;
+-- or: price_cents BIGINT UNSIGNED NOT NULL`},
+
+{id:"bigint",cat:"Node + MySQL",lv:"Hard",title:"Order ids end in ...000 in the browser",
+ sc:"After moving to BIGINT ids, the frontend shows 9007199254740993 as 9007199254740992 and links to the wrong order.",
+ q:"What is happening and what do you do?",
+ o:["MySQL rounds BIGINT; use INT instead","JS numbers are 53-bit safe; configure mysql2 supportBigNumbers + bigNumberStrings so ids arrive as strings and send them as strings in JSON","JSON cannot hold numbers","Convert ids to floats"],
+ a:1,
+ why:"Number.MAX_SAFE_INTEGER is 2^53-1. Larger integers lose precision silently once parsed to a JS number. Treat large ids as strings end-to-end (API, URL, React keys).",
+ fix:`const pool = mysql.createPool({
+  /* ... */
+  supportBigNumbers: true,
+  bigNumberStrings: true,
+});`},
+
+{id:"tz",cat:"Schema",lv:"Medium",title:"Reports are off by 5.5 hours",
+ sc:"Servers run in UTC, developers in IST, and a DATETIME column shows different times in the API and the MySQL client.",
+ q:"What is the most robust policy?",
+ o:["Store local time strings everywhere","Store UTC (TIMESTAMP or DATETIME in UTC), set the mysql2 timezone option consistently, and convert to the user's zone only in the UI","Use VARCHAR for dates","Run the server in each user's timezone"],
+ a:1,
+ why:"DATETIME has no zone; TIMESTAMP is converted using the session time_zone. Pick UTC for storage, make the driver and session agree, and render with Intl.DateTimeFormat in the user's zone.",
+ fix:`const pool = mysql.createPool({ /* ... */ timezone: 'Z' });   // treat as UTC
+// per connection if needed: SET time_zone = '+00:00'`},
+
+{id:"like",cat:"Performance",lv:"Medium",title:"Product search is a full table scan",
+ sc:"Search uses WHERE name LIKE '%shoe%' on 2M products and takes seconds; the B-tree index on name is ignored.",
+ q:"Which fix scales best inside MySQL?",
+ o:["Add another B-tree index on name","FULLTEXT index with MATCH ... AGAINST (or an external search engine for fuzzy/ranking needs)","Wrap the column in LOWER()","Use LIKE 'shoe' without wildcards"],
+ a:1,
+ why:"A leading wildcard cannot use a B-tree index. FULLTEXT builds an inverted index for word search. Prefix searches (LIKE 'shoe%') can use a normal index.",
+ fix:`ALTER TABLE products ADD FULLTEXT KEY ft_name (name);
+SELECT id, name FROM products
+WHERE MATCH(name) AGAINST (? IN NATURAL LANGUAGE MODE) LIMIT 20;`},
+
+{id:"bulk",cat:"Node + MySQL",lv:"Medium",title:"Importing 200k CSV rows takes forever",
+ sc:"A script reads a CSV and runs one INSERT per row with await inside a for loop. It takes 25 minutes.",
+ q:"What is the best improvement?",
+ o:["Use Promise.all on 200k inserts at once","Batch rows into multi-row INSERTs (e.g. 1000 per statement) inside a transaction; for huge files consider LOAD DATA","Increase the Node heap","Insert from the browser"],
+ a:1,
+ why:"Each single-row INSERT pays a network round-trip and a commit. Batching cuts both. Promise.all of 200k would exhaust the pool and memory. Stream the file and flush batches to keep memory flat.",
+ fix:`for (let i = 0; i < rows.length; i += 1000) {
+  const chunk = rows.slice(i, i + 1000);
+  await conn.query('INSERT INTO items (sku, name, price) VALUES ?', [chunk]);
+}`},
+
+{id:"stream",cat:"Node + MySQL",lv:"Hard",title:"CSV export crashes the server",
+ sc:"GET /export loads 3M rows with pool.query, builds one big string and responds. The process dies with 'JavaScript heap out of memory'.",
+ q:"What is the right design?",
+ o:["Raise --max-old-space-size to 32 GB","Stream rows from MySQL and pipe them to the response (with backpressure)","Use LIMIT 1000000 and hope","Compress after building the string"],
+ a:1,
+ why:"Streaming keeps memory constant. With mysql2 use the callback API's .stream() (or the promise pool's underlying pool) and pipeline() into a transform and then res, so slow clients apply backpressure.",
+ fix:`import { pipeline } from 'node:stream/promises';
+import { Transform } from 'node:stream';
+
+const toCsv = new Transform({ objectMode: true,
+  transform(r, _e, cb) { cb(null, r.id + ',' + r.email + '\\n'); } });
+
+res.type('text/csv');
+await pipeline(
+  rawPool.query('SELECT id, email FROM users').stream(),  // callback-style pool
+  toCsv, res);`},
+
+{id:"stock",cat:"Concurrency",lv:"Medium",title:"Stock goes negative on flash sale",
+ sc:"Code reads stock, subtracts 1 in JavaScript and writes it back. During a sale, 100 units sell 130 times.",
+ code:`const [[p]] = await pool.query('SELECT stock FROM products WHERE id = ?', [id]);
+await pool.query('UPDATE products SET stock = ? WHERE id = ?', [p.stock - 1, id]);`,
+ q:"What is the cleanest fix?",
+ o:["Set the isolation level to READ UNCOMMITTED","One atomic statement: UPDATE products SET stock = stock - 1 WHERE id = ? AND stock > 0, then check affectedRows","Add a sleep between read and write","Increase pool size"],
+ a:1,
+ why:"This is a lost update: two requests read the same stock and write the same result. Move the arithmetic and the guard into SQL so the row lock makes it atomic.",
+ fix:`const [r] = await pool.query(
+  'UPDATE products SET stock = stock - 1 WHERE id = ? AND stock > 0', [id]);
+if (r.affectedRows === 0) return res.status(409).json({ error: 'Sold out' });`},
+
+{id:"replica",cat:"Architecture",lv:"Hard",title:"User updates profile, refresh shows old data",
+ sc:"Writes go to the primary, reads go to a replica. Right after saving, the profile page sometimes shows the old value.",
+ q:"Cause and common remedy?",
+ o:["Browser cache only; nothing to do server-side","Replication lag; route the user's reads to the primary for a short time after a write (read-your-writes) or for critical reads","The replica is corrupted; rebuild it daily","Use SELECT DISTINCT"],
+ a:1,
+ why:"Replication is asynchronous. Options: read from the primary after writes (sticky window via cookie/session timestamp), wait for GTID on the replica, or read critical data from the primary only.",
+ fix:`// after a write
+res.cookie('rw', Date.now(), { maxAge: 5000 });
+// on read
+const db = req.cookies.rw ? primaryPool : replicaPool;`},
+
+{id:"migr",cat:"Architecture",lv:"Hard",title:"Add a NOT NULL column with zero downtime",
+ sc:"You must add users.country NOT NULL to a 100M-row table while the site stays up and old app versions are still running.",
+ q:"Safest rollout?",
+ o:["Run ALTER ... NOT NULL during peak traffic","Expand/contract: add nullable column, deploy code that writes it, backfill in small batches, then enforce NOT NULL (or use an online schema tool)","Drop the table and re-import","Add the column on the replica only"],
+ a:1,
+ why:"Break the change into backward-compatible steps so each deploy is safe to roll back. Backfill in batches (e.g. 5k rows) to avoid long locks and replication lag. Check whether your MySQL version does the ALTER online (ALGORITHM=INSTANT/INPLACE) or use gh-ost / pt-online-schema-change.",
+ fix:`ALTER TABLE users ADD COLUMN country CHAR(2) NULL, ALGORITHM=INSTANT;
+-- deploy: app writes country
+UPDATE users SET country = 'IN' WHERE country IS NULL AND id BETWEEN ? AND ?; -- loop in batches
+ALTER TABLE users MODIFY country CHAR(2) NOT NULL;`},
+
+{id:"shutdown",cat:"Reliability",lv:"Medium",title:"Deploys cause a burst of 502s",
+ sc:"On each deploy, Kubernetes sends SIGTERM and the Node process exits immediately, killing in-flight requests and open transactions.",
+ q:"What should the app do on SIGTERM?",
+ o:["Ignore the signal","Stop accepting new connections, let in-flight requests finish, then end the MySQL pool and exit","process.exit(0) immediately","Restart MySQL"],
+ a:1,
+ why:"Graceful shutdown: server.close() stops new requests while existing ones finish, then pool.end() closes connections cleanly. Add a timeout so a stuck request cannot block the exit forever, and fail the readiness probe first.",
+ fix:`process.on('SIGTERM', () => {
+  server.close(async () => {
+    await pool.end();
+    process.exit(0);
+  });
+  setTimeout(() => process.exit(1), 10000).unref();
+});`}
+];
+
+const KEY = 'mysql-node-quiz-v1';
+let state = {};
+try { state = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} };
+
+let cat = 'All', lv = 'All';
+const $ = s => document.querySelector(s);
+const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+function chips(el, items, cur, set){
+  el.innerHTML = '';
+  items.forEach(t => {
+    const b = document.createElement('button');
+    b.className = 'chip'; b.textContent = t; b.setAttribute('aria-pressed', t === cur);
+    b.onclick = () => { set(t); render(); };
+    el.appendChild(b);
+  });
+}
+
+function render(){
+  const cats = ['All', ...new Set(Q.map(q => q.cat))];
+  chips($('#cats'), cats, cat, v => cat = v);
+  chips($('#lvls'), ['All','Easy','Medium','Hard'], lv, v => lv = v);
+
+  const list = Q.filter(q => (cat === 'All' || q.cat === cat) && (lv === 'All' || q.lv === lv));
+  const box = $('#list');
+  box.innerHTML = '';
+  if (!list.length) box.innerHTML = '<div class="empty">No questions match these filters.</div>';
+
+  list.forEach(q => {
+    const picked = state[q.id];
+    const done = picked !== undefined;
+    const card = document.createElement('article');
+    card.className = 'card';
+    card.innerHTML =
+      '<div class="meta"><span class="tag">' + esc(q.cat) + '</span><span class="tag lv-' + q.lv + '">' + q.lv + '</span></div>' +
+      '<h2>' + esc(q.title) + '</h2>' +
+      '<p class="sc">' + esc(q.sc) + '</p>' +
+      (q.code ? '<pre><code>' + esc(q.code) + '</code></pre>' : '') +
+      '<div class="q">' + esc(q.q) + '</div>' +
+      '<div class="opts"></div>' +
+      '<div class="hint">Hint: think about who enforces the guarantee - your Node process, or the database?</div>' +
+      '<div class="ex"><p><b>' + (done ? (picked === q.a ? 'Correct.' : 'Not quite.') : '') + '</b> ' + esc(q.why) + '</p>' +
+      '<p><b>Reference fix</b></p><pre><code>' + esc(q.fix) + '</code></pre></div>' +
+      '<div class="row"><button class="btn hbtn">Hint</button><button class="btn rbtn">Retry</button></div>';
+
+    const opts = card.querySelector('.opts');
+    q.o.forEach((t, i) => {
+      const b = document.createElement('button');
+      b.className = 'opt'; b.textContent = String.fromCharCode(65 + i) + '. ' + t;
+      if (done) {
+        b.disabled = true;
+        if (i === q.a) b.classList.add('right');
+        else if (i === picked) b.classList.add('wrong');
+      }
+      b.onclick = () => { state[q.id] = i; save(); render(); };
+      opts.appendChild(b);
+    });
+    if (done) card.querySelector('.ex').classList.add('on');
+    card.querySelector('.hbtn').onclick = () => card.querySelector('.hint').classList.toggle('on');
+    card.querySelector('.rbtn').onclick = () => { delete state[q.id]; save(); render(); };
+    box.appendChild(card);
+  });
+
+  const ans = Q.filter(q => state[q.id] !== undefined);
+  $('#sAns').textContent = ans.length;
+  $('#sTot').textContent = Q.length;
+  $('#sOk').textContent = ans.filter(q => state[q.id] === q.a).length;
+  $('#mt').style.width = (ans.length / Q.length * 100) + '%';
+}
+
+$('#reset').onclick = () => { if (confirm('Clear all answers?')) { state = {}; save(); render(); } };
+render();
+</script>
+</body>
+</html>
