@@ -10,6 +10,7 @@ import pandasStats from "./content/pandas.stats.json";
 import sklearnStats from "./content/scikit-learn.stats.json";
 import mlStats from "./content/machine-learning.stats.json";
 import nlpStats from "./content/nlp.stats.json";
+import rlStats from "./content/reinforcement-learning.stats.json";
 import nnStats from "./content/neural-networks.stats.json";
 
 /**
@@ -331,7 +332,35 @@ export const stacks: Stack[] = [
     load: () => import("./content/nlp.js").then((m) => m.content),
     loadVisuals: () => import("./content/nlp.js").then((m) => m.visuals),
   },
-  { slug: "reinforcement-learning", name: "Reinforcement Learning", section: "ai", stage: "Modern AI", icon: "🎮", accent: "#c2452d", tagline: "Agents, rewards, value functions, policies", blurb: "Markov decision processes, Bellman equations, Q-learning, policy gradients and deep RL, learned by stepping through small worlds.", audience: "Learners who finished neural networks", planned: ["Rewards and returns", "Q-learning", "Policy gradients", "Deep RL"] },
+  {
+    slug: "reinforcement-learning",
+    name: "Reinforcement Learning",
+    section: "ai",
+    stage: "Modern AI",
+    icon: "🎮",
+    accent: "#c2452d",
+    tagline: "Agents, rewards, value functions and policies",
+    blurb:
+      "Bandits and exploration, Markov decision processes, Bellman equations, dynamic programming, Monte Carlo, TD learning, SARSA and Q-learning, deep Q-networks, policy gradients, actor–critic and PPO, models, reward shaping, multi-agent learning and RLHF — every update rule worked by hand, as a diagram that moves and code that really ran.",
+    audience: "Learners who finished Python, NumPy and Neural Networks, and students taking a reinforcement-learning course",
+    labels: {
+      production: "In practice",
+      interview: "Exam and interview angle",
+      drillsTab: "Work it out",
+      drillsIntro: "Short calculations that exams and interviews love. Work each one out first, then open the step-by-step solution.",
+      drillQuestion: "What is the answer?",
+      drillPath: "Step by step",
+      drillFix: "Why",
+      drillPrevent: "Watch out",
+      drillInterview: "Remember",
+      drillDone: "✓ solved",
+      codeTab: "Practice problems",
+      codeIntro: "Build each idea from scratch in NumPy. Try it yourself first, then compare with the worked solution.",
+    },
+    stats: rlStats,
+    load: () => import("./content/reinforcement-learning.js").then((m) => m.content),
+    loadVisuals: () => import("./content/reinforcement-learning.js").then((m) => m.visuals),
+  },
   { slug: "computer-vision", name: "Computer Vision", section: "ai", stage: "Modern AI", icon: "👁", accent: "#4a7bd0", tagline: "Images, detection, segmentation", blurb: "Image processing, CNN classifiers, detection, segmentation and vision transformers.", audience: "Learners who finished neural networks", planned: ["Image processing", "Detection", "Segmentation", "Vision transformers"] },
   { slug: "speech-processing", name: "Speech Processing", section: "ai", stage: "Modern AI", icon: "🎙", accent: "#8a5fd0", tagline: "Audio, recognition, synthesis", blurb: "Signals and spectrograms, speech recognition, speaker features and text-to-speech.", audience: "Learners who finished neural networks", planned: ["Spectrograms", "Speech recognition", "Text-to-speech", "Speaker features"] },
   { slug: "generative-ai", name: "Generative AI", section: "ai", stage: "Modern AI", icon: "✨", accent: "#e0841f", tagline: "LLMs, prompting, RAG", blurb: "How large language models work, how to prompt them, retrieval-augmented generation and evaluation.", audience: "Developers building with LLMs", planned: ["Tokens and embeddings", "Transformers", "Prompting and RAG", "Fine-tuning"] },
