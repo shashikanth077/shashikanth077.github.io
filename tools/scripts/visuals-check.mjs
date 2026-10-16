@@ -26,6 +26,7 @@ const stacks = [
   { slug: "matplotlib", authored: true, generatedOutputs: true },
   { slug: "pandas", authored: true, generatedOutputs: true },
   { slug: "scikit-learn", authored: true },
+  { slug: "machine-learning", authored: true, generatedOutputs: true },
 ];
 const tmp = mkdtempSync(join(tmpdir(), "visuals-"));
 

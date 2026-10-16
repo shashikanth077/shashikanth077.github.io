@@ -8,6 +8,7 @@ import numpyStats from "./content/numpy.stats.json";
 import matplotlibStats from "./content/matplotlib.stats.json";
 import pandasStats from "./content/pandas.stats.json";
 import sklearnStats from "./content/scikit-learn.stats.json";
+import mlStats from "./content/machine-learning.stats.json";
 
 /**
  * Every learning stack the portal knows about. Two sections share one workspace:
@@ -241,7 +242,35 @@ export const stacks: Stack[] = [
     load: () => import("./content/scikit-learn.js").then((m) => m.content),
     loadVisuals: () => import("./content/scikit-learn.js").then((m) => m.visuals),
   },
-  { slug: "machine-learning", name: "Machine Learning", section: "ai", stage: "Core machine learning", icon: "📈", accent: "#7c5cff", tagline: "From regression to ensembles", blurb: "The ideas behind the models: bias and variance, loss functions, gradient descent, regularisation, ensembles and how to think about evaluation.", audience: "Learners who finished Python and Maths for AI", planned: ["Regression and classification", "Trees and ensembles", "Evaluation", "Clustering"] },
+  {
+    slug: "machine-learning",
+    name: "Machine Learning",
+    section: "ai",
+    stage: "Core machine learning",
+    icon: "📈",
+    accent: "#7c5cff",
+    tagline: "From data and statistics to classifiers, clusters and text",
+    blurb:
+      "Statistics, data preparation, distances, trees and ensembles, Naive Bayes, kNN, SVM, neural networks, evaluation, projections, 25 clustering methods and text mining — every worked calculation as a diagram you can drag and code you can run.",
+    audience: "Learners who finished Python, NumPy and the maths track, and students preparing for ML exams or interviews",
+    labels: {
+      production: "Where it shows up",
+      interview: "Exam and interview angle",
+      drillsTab: "Work it out",
+      drillsIntro: "Short calculations that exams and interviews love. Work each one out first, then open the step-by-step solution.",
+      drillQuestion: "What is the answer?",
+      drillPath: "Step by step",
+      drillFix: "Why",
+      drillPrevent: "Watch out",
+      drillInterview: "Remember",
+      drillDone: "✓ solved",
+      codeTab: "Practice problems",
+      codeIntro: "Build each idea from scratch in NumPy. Try it yourself first, then compare with the worked solution.",
+    },
+    stats: mlStats,
+    load: () => import("./content/machine-learning.js").then((m) => m.content),
+    loadVisuals: () => import("./content/machine-learning.js").then((m) => m.visuals),
+  },
   { slug: "neural-networks", name: "Neural Networks", section: "ai", stage: "Core machine learning", icon: "🕸", accent: "#d6489a", tagline: "Neurons, layers, backpropagation", blurb: "How a network computes and learns, one neuron and one gradient at a time.", audience: "Learners ready for deep learning", planned: ["Perceptron", "Activation functions", "Backpropagation", "Optimisers"] },
   { slug: "deep-learning", name: "Deep Learning", section: "ai", stage: "Core machine learning", icon: "🧠", accent: "#5a67d8", tagline: "CNNs, RNNs, transformers", blurb: "Convolutions, sequence models, attention and training deep networks in PyTorch.", audience: "Learners who finished neural networks", planned: ["CNNs", "Sequence models", "Attention", "Training at scale"] },
   { slug: "generative-ai", name: "Generative AI", section: "ai", stage: "Modern AI", icon: "✨", accent: "#e0841f", tagline: "LLMs, prompting, RAG", blurb: "How large language models work, how to prompt them, retrieval-augmented generation and evaluation.", audience: "Developers building with LLMs", planned: ["Tokens and embeddings", "Transformers", "Prompting and RAG", "Fine-tuning"] },
