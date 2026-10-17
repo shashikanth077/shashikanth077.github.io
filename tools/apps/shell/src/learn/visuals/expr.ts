@@ -11,6 +11,13 @@
 type Scope = Record<string, number>;
 export type Compiled = { (scope: Scope): number; names: string[] };
 
+/** Error function (Abramowitz & Stegun 7.1.26, |error| < 1.5e-7). */
+const erf = (x: number) => {
+  const t = 1 / (1 + 0.3275911 * Math.abs(x));
+  const y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x);
+  return x >= 0 ? y : -y;
+};
+
 const FUNCS: Record<string, (...a: number[]) => number> = {
   sin: Math.sin,
   cos: Math.cos,
@@ -43,6 +50,9 @@ const FUNCS: Record<string, (...a: number[]) => number> = {
   },
   /** normal probability density: norm(x, mean, sd) */
   norm: (x, m, s) => Math.exp(-0.5 * ((x - m) / s) ** 2) / (s * Math.sqrt(2 * Math.PI)),
+  erf,
+  /** normal cumulative distribution: ncdf(x, mean, sd) = P(X <= x) */
+  ncdf: (x, m, s) => 0.5 * (1 + erf((x - m) / (s * Math.SQRT2))),
   /** 1 when the condition is positive, else 0 — handy for visibility switches */
   step: (x) => (x > 0 ? 1 : 0),
 };

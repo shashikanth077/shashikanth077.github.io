@@ -1,0 +1,65 @@
+/* Live fraud stream lab (fr-) used inside concept diagrams. */
+.fr { container-type: inline-size; display: flex; flex-direction: column; gap: 0.8rem; padding: 0.9rem 1rem 1rem; }
+
+.fr-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr)); gap: 0.5rem; }
+.fr-tile { display: flex; flex-direction: column; gap: 0.15rem; padding: 0.6rem 0.8rem; border: 1px solid var(--line); border-left: 4px solid var(--line-strong); border-radius: var(--radius-sm); background: var(--surface); }
+.fr-tile b { font: 800 1.45rem var(--font-ui); letter-spacing: -0.03em; line-height: 1.1; }
+.fr-tile b small { font-size: 0.8rem; font-weight: 600; color: var(--text-faint); }
+.fr-tile span { font-size: 0.74rem; color: var(--text-soft); line-height: 1.35; }
+.fr-tile.is-good { border-left-color: var(--success); } .fr-tile.is-good b { color: var(--success); }
+.fr-tile.is-bad { border-left-color: var(--danger); } .fr-tile.is-bad b { color: var(--danger); }
+.fr-tile.is-warn { border-left-color: var(--warning); } .fr-tile.is-warn b { color: var(--warning); }
+
+.fr-main { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.9rem; align-items: start; }
+.fr-hist { padding: 0.4rem 0 0 !important; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm); }
+.fr-zone--review { fill: var(--warning); opacity: 0.14; }
+.fr-zone--decline { fill: var(--danger); opacity: 0.14; }
+.fr-bar--legit { fill: var(--tk-health, #2f8f6b); opacity: 0.85; }
+.fr-bar--fraud { fill: var(--danger); }
+.fr-line { stroke-width: 2.5; stroke-dasharray: 5 3; }
+.fr-line--review { stroke: var(--warning); }
+.fr-line--decline { stroke: var(--danger); }
+.fr-axis { fill: var(--text-faint); font: 600 10px var(--font-mono); }
+.fr-legend { display: flex; flex-wrap: wrap; gap: 0.9rem; font-size: 0.72rem; color: var(--text-soft); }
+.fr-legend span::before { content: ""; display: inline-block; width: 0.8rem; height: 0.8rem; margin-right: 0.35rem; border-radius: 3px; vertical-align: -1px; }
+.fr-legend .is-legit::before { background: var(--tk-health, #2f8f6b); }
+.fr-legend .is-fraud::before { background: var(--danger); }
+.fr-legend .is-review::before { background: var(--warning); opacity: 0.5; }
+.fr-legend .is-decline::before { background: var(--danger); opacity: 0.4; }
+
+.fr-sliders { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 1rem; }
+.fr-sliders label { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.3rem; font-size: 0.78rem; color: var(--text-soft); }
+.fr-sliders b { color: var(--text); font-family: var(--font-mono); }
+.fr-sliders small { color: var(--text-faint); font-size: 0.68rem; }
+.fr-sliders input[type="range"] { width: 100%; accent-color: var(--lp-accent); }
+
+.fr-feed { border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface); overflow: hidden; font-size: 0.78rem; }
+.fr-feed__head, .fr-row { display: grid; grid-template-columns: 2.4rem minmax(0, 1fr) 4.6rem 4.2rem 6.6rem; gap: 0.4rem; align-items: center; padding: 0.3rem 0.6rem; }
+.fr-feed__head { background: var(--bg-sunken); color: var(--text-faint); font: 700 0.64rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; }
+.fr-row { border-top: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+.fr-row > span:nth-child(2) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fr-score { position: relative; height: 1rem; border-radius: 4px; background: var(--bg-sunken); overflow: hidden; }
+.fr-score i { position: absolute; inset: 0 auto 0 0; background: var(--text-faint); opacity: 0.55; }
+.fr-score em { position: relative; padding-left: 0.3rem; font: 700 0.66rem var(--font-mono); font-style: normal; }
+.fr-chip { padding: 1px 6px; border-radius: 999px; font: 700 0.66rem var(--font-ui); text-align: center; background: var(--success-soft); color: var(--success); white-space: nowrap; }
+.fr-row.is-review .fr-chip { background: var(--warning-soft); color: var(--warning); }
+.fr-row.is-decline .fr-chip { background: var(--danger-soft); color: var(--danger); }
+.fr-row.is-fraud.is-approve { background: var(--danger-soft); }
+.fr-row.is-fraud.is-approve .fr-chip { background: var(--danger); color: #fff; }
+
+.fr-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.9rem; font-size: 0.8rem; color: var(--text-soft); }
+.fr-foot > span { flex: 1; min-width: 12rem; }
+.fr-foot b { color: var(--text); font-family: var(--font-mono); }
+.fr-foot .lp-btn { padding: 0.35rem 0.8rem; font-size: 0.8rem; }
+
+/* The lab sits in a column of varying width, so size by its own container, not the viewport. */
+@container (min-width: 44rem) {
+  .fr-main { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); }
+}
+@container (max-width: 34rem) {
+  .fr-feed__head, .fr-row { grid-template-columns: 2.2rem minmax(0, 1fr) 4.2rem 6.4rem; }
+  .fr-feed__head span:nth-child(4), .fr-row .fr-score { display: none; }
+}
+@container (max-width: 24rem) {
+  .fr-sliders { grid-template-columns: 1fr; }
+}

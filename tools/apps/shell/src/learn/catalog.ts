@@ -19,6 +19,7 @@ import rlStats from "./content/reinforcement-learning.stats.json";
 import speechStats from "./content/speech-processing.stats.json";
 import nnStats from "./content/neural-networks.stats.json";
 import awsStats from "./content/aws.stats.json";
+import fraudStats from "./content/fraud-detection.stats.json";
 
 /**
  * Every learning stack the portal knows about. Three sections share one workspace:
@@ -549,16 +550,45 @@ export const stacks: Stack[] = [
     loadVisuals: () => import("./content/langchain-langgraph-rag.js").then((m) => m.visuals),
   },
   {
+    slug: "fraud-detection",
+    name: "Real-time Fraud Detection",
+    section: "ai",
+    stage: "Real-world projects",
+    icon: "🛡",
+    accent: "#e0523f",
+    tagline: "Score every payment in milliseconds: features, models, thresholds, streaming and operations",
+    blurb:
+      "The first real-time project scenario, end to end: the decision and its latency budget, what a mistake costs both ways, a seeded transaction simulator, velocity and behaviour features, point-in-time correctness and late labels, rules, logistic regression, boosted trees, calibration and cost-based thresholds, evaluation on rare classes, a streaming architecture with feature store, fallbacks, review queues and reason codes, then drift, feedback loops, privacy and capacity. Includes a live fraud lab: move the thresholds and watch money saved change.",
+    audience: "Learners who finished machine learning and want to see a complete real-time system: problem, data, model, serving and operations",
+    labels: {
+      production: "In a real fraud system",
+      interview: "Interview angle",
+      drillsTab: "Work it out",
+      drillsIntro: "Short calculations that fraud interviews love. Work each one out first, then open the step-by-step solution.",
+      drillQuestion: "What is the answer?",
+      drillPath: "Step by step",
+      drillFix: "Why",
+      drillPrevent: "Watch out",
+      drillInterview: "Remember",
+      drillDone: "✓ solved",
+      codeTab: "Build it",
+      codeIntro: "Build the pieces in plain Python on the seeded simulator: streaming features, thresholds, drift monitors, deduplication and reason codes. Try each first, then compare with the worked solution.",
+    },
+    stats: fraudStats,
+    load: () => import("./content/fraud-detection.js").then((m) => m.content),
+    loadVisuals: () => import("./content/fraud-detection.js").then((m) => m.visuals),
+  },
+  {
     slug: "real-time-ai-projects",
-    name: "Real-time AI Project Scenarios",
+    name: "More real-time AI scenarios",
     section: "ai",
     stage: "Real-world projects",
     icon: "🚀",
-    accent: "#e0523f",
-    tagline: "End-to-end scenarios: fraud detection, RAG assistants, voice, vision and agents",
-    blurb: "Hands-on, end-to-end scenarios that put the tracks together: requirements, architecture, data and features, model, evaluation, latency and cost budgets, deployment and monitoring.",
-    audience: "Learners who finished the core tracks and want to see how real systems are built",
-    planned: ["Fraud detection", "Support assistant (RAG)", "Predictive maintenance", "Live recommendations", "Document intelligence", "Voice assistant", "Visual inspection", "Agentic IT-ops copilot"],
+    accent: "#b3402e",
+    tagline: "RAG assistants, predictive maintenance, recommendations, documents, voice, vision and agents",
+    blurb: "More end-to-end scenarios in the same format as fraud detection: requirements, architecture, data and features, model, evaluation, latency and cost budgets, deployment and monitoring.",
+    audience: "Learners who finished the fraud scenario and want the next real-world systems",
+    planned: ["Support assistant (RAG)", "Predictive maintenance", "Live recommendations", "Document intelligence", "Voice assistant", "Visual inspection", "Agentic IT-ops copilot"],
   },
 
   /* ---------------- Cloud Lab ---------------- */

@@ -37,6 +37,7 @@ const stacks = [
   { slug: "building-with-claude", authored: true, generatedOutputs: true },
   { slug: "langchain-langgraph-rag", authored: true, generatedOutputs: true },
   { slug: "aws", authored: true },
+  { slug: "fraud-detection", authored: true, generatedOutputs: true },
 ];
 const tmp = mkdtempSync(join(tmpdir(), "visuals-"));
 
@@ -47,6 +48,8 @@ const { compile, evalDefs, template } = await import(pathToFileURL(join(tmp, "ex
 // The cloud lab logic (IAM evaluation, CIDR maths, scaling sim), so every lab is exercised at build time.
 await build({ entryPoints: [join(learn, "visuals", "cloud.ts")], bundle: true, format: "esm", platform: "node", outfile: join(tmp, "cloud.mjs"), logLevel: "silent" });
 const cloud = await import(pathToFileURL(join(tmp, "cloud.mjs")).href);
+await build({ entryPoints: [join(learn, "visuals", "fraud.ts")], bundle: true, format: "esm", platform: "node", outfile: join(tmp, "fraud.mjs"), logLevel: "silent" });
+const fraud = await import(pathToFileURL(join(tmp, "fraud.mjs")).href);
 
 /** Compile and evaluate every formula in a live diagram at its default slider values. */
 function checkLive(stack, id, v) {
@@ -172,6 +175,15 @@ function check(stack, id, v) {
       if (ticks.some((t) => !Number.isFinite(t.ready))) bad(stack, id, "scale: simulation produced NaN");
       break;
     }
+    case "stream": {
+      if (!(v.reviewAt >= 0 && v.reviewAt <= v.declineAt && v.declineAt <= 1)) bad(stack, id, "stream: need 0 <= reviewAt <= declineAt <= 1");
+      if (!(v.separation >= 1 && v.separation <= 8)) bad(stack, id, "stream: separation must be within the slider range 1..8");
+      if (!(v.fraudRate >= 0.5 && v.fraudRate <= 6)) bad(stack, id, "stream: fraudRate must be within the slider range 0.5..6");
+      const sum = fraud.summarise(fraud.feed(1500, v.fraudRate, v.separation), v, v.reviewAt, v.declineAt);
+      if (sum.fraud < 5) bad(stack, id, `stream: only ${sum.fraud} fraud cases in 1,500 transactions — raise fraudRate`);
+      if (!Number.isFinite(sum.total)) bad(stack, id, "stream: cost is not finite");
+      break;
+    }
     default:
       bad(stack, id, `unknown type ${v.type}`);
   }
@@ -251,6 +263,34 @@ for (const { slug: stack, authored, generatedOutputs } of stacks) {
   const sim = cloud.simulateScaling({ capacityPer: 100, pattern: [100, 400, 400, 400, 400] }, 50, 1, 10, 2);
   eq("scale desired", sim.map((t) => t.desired), [2, 8, 8, 8, 8]);
   eq("scale ready", sim.map((t) => t.ready), [1, 1, 2, 8, 8]);
+}
+
+// Fraud lab logic and the maths helpers it shares with the formula diagrams.
+{
+  const eq = (label, got, want) => { if (JSON.stringify(got) !== JSON.stringify(want)) problems.push(`fraud logic ${label}: got ${JSON.stringify(got)}, want ${JSON.stringify(want)}`); };
+  const cost = { falseDeclineCost: 15, reviewCost: 3 };
+  const t1 = fraud.feed(800, 3, 4);
+  eq("deterministic", JSON.stringify(fraud.feed(800, 3, 4)) === JSON.stringify(t1), true);
+  const none = fraud.summarise(t1, cost, 1.01, 1.01);
+  eq("approve-all caught nothing", [none.caught, none.falseDeclines, none.reviewed], [0, 0, 0]);
+  eq("approve-all costs the baseline", Math.abs(none.total - none.baseline) < 1e-9, true);
+  const all = fraud.summarise(t1, cost, 0, 0);
+  eq("decline-all blocks every fraud and every good customer", [all.caught, all.falseDeclines], [all.fraud, all.n - all.fraud]);
+  const mid = fraud.summarise(t1, cost, 0.3, 0.7);
+  eq("every fraud is caught or missed", mid.caught + mid.missed, mid.fraud);
+  eq("every transaction gets one decision", mid.approved + mid.reviewed + mid.declined, mid.n);
+  const strict = fraud.summarise(t1, cost, 0.2, 0.4), lax = fraud.summarise(t1, cost, 0.6, 0.9);
+  eq("a stricter policy declines more", strict.declined >= lax.declined, true);
+  eq("a stricter policy misses less fraud", strict.missed <= lax.missed, true);
+  const good = fraud.feed(1500, 3, 8), poor = fraud.feed(1500, 3, 1);
+  const q = (t) => fraud.summarise(t, cost, 0.5, 0.5);
+  eq("a better model beats a weak one", q(good).total < q(poor).total, true);
+  // maths helpers
+  const { compile } = await import(pathToFileURL(join(tmp, "expr.mjs")).href);
+  const close = (a, b) => Math.abs(a - b) < 1e-5;
+  eq("ncdf(0) = 0.5", close(compile("ncdf(0, 0, 1)", [])({}), 0.5), true);
+  eq("ncdf(1.96) ≈ 0.975", Math.abs(compile("ncdf(1.96, 0, 1)", [])({}) - 0.9750021) < 1e-5, true);
+  eq("erf(1) ≈ 0.8427", Math.abs(compile("erf(1)", [])({}) - 0.8427008) < 1e-5, true);
 }
 
 rmSync(tmp, { recursive: true, force: true });

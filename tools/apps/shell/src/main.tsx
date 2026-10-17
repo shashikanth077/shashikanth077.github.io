@@ -14,6 +14,7 @@ import "./shell.css";
 import "./learn/learn.css";
 import "./learn/atlas.css";
 import "./learn/cloud.css";
+import "./learn/fraud.css";
 import "./learn/visuals/visuals.css";
 
 /**

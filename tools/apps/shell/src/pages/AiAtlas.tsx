@@ -20,8 +20,9 @@ const PROMISES = [
   { icon: "🔒", title: "Private by design", text: "Progress lives in your browser only. Nothing is uploaded, nothing needs an account." },
 ];
 
-const PROJECTS = [
-  { icon: "🛡", title: "Real-time fraud detection", text: "Streaming features, a scoring model and a 100 ms decision budget.", tags: ["streaming", "ML", "latency"] },
+/** `slug` marks a scenario that is already live (its track opens from the card). */
+const PROJECTS: { icon: string; title: string; text: string; tags: string[]; slug?: string }[] = [
+  { icon: "🛡", title: "Real-time fraud detection", text: "Streaming features, a scoring model and a 100 ms decision budget — with a live lab.", tags: ["streaming", "ML", "latency"], slug: "fraud-detection" },
   { icon: "💬", title: "Support assistant with RAG", text: "Grounded answers with citations, evaluation and human hand-off.", tags: ["RAG", "LLM", "evaluation"] },
   { icon: "🏭", title: "Predictive maintenance", text: "Sensor streams, anomaly detection and alerts engineers trust.", tags: ["time series", "alerts"] },
   { icon: "🛒", title: "Live recommendations", text: "Ranking, cold start and the feedback loop in production.", tags: ["ranking", "feedback"] },
@@ -200,24 +201,33 @@ export default function AiAtlas() {
 
       <section className="ai-projects" aria-labelledby="ai-projects-title">
         <div className="ai-projects__head">
-          <span className="ai-soon">COMING SOON</span>
+          <span className="ai-soon">{PROJECTS.some((x) => x.slug && bySlug(x.slug)?.load) ? "FIRST SCENARIO LIVE · MORE COMING SOON" : "COMING SOON"}</span>
           <h2 id="ai-projects-title">Real-time AI project scenarios</h2>
-          <p>Learn how the pieces fit in the real world. Each scenario will walk through the requirements, the architecture, data and features, the model, evaluation, a latency and cost budget, deployment and monitoring — with a diagram you can step through and code that really runs.</p>
+          <p>Learn how the pieces fit in the real world. Each scenario walks through the requirements, the architecture, data and features, the model, evaluation, a latency and cost budget, deployment and monitoring — with a diagram you can step through and code that really runs.</p>
           <ol className="ai-projects__flow" aria-label="What every scenario covers">
             {["Problem", "Data", "Model", "Pipeline", "Serving", "Monitoring"].map((x) => <li key={x}>{x}</li>)}
           </ol>
         </div>
         <ul className="ai-projects__grid">
-          {PROJECTS.map((p) => (
-            <li key={p.title} className="ai-project">
-              <span aria-hidden="true">{p.icon}</span>
-              <div>
-                <h3>{p.title}</h3>
-                <p>{p.text}</p>
-                <ul>{p.tags.map((t) => <li key={t}>{t}</li>)}</ul>
-              </div>
-            </li>
-          ))}
+          {PROJECTS.map((p) => {
+            const live = p.slug ? bySlug(p.slug) : undefined;
+            const body = (
+              <>
+                <span aria-hidden="true">{p.icon}</span>
+                <div>
+                  <h3>{p.title}{live?.load && <em className="ai-project__live">live</em>}</h3>
+                  <p>{p.text}</p>
+                  <ul>{p.tags.map((t) => <li key={t}>{t}</li>)}</ul>
+                  {live?.load && <b className="ai-project__go">Open the scenario →</b>}
+                </div>
+              </>
+            );
+            return (
+              <li key={p.title} className={live?.load ? "is-live" : undefined}>
+                {live?.load ? <Link to={stackPath(live)} className="ai-project">{body}</Link> : <div className="ai-project">{body}</div>}
+              </li>
+            );
+          })}
         </ul>
       </section>
 

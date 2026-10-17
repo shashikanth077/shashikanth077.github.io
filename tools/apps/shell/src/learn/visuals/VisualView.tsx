@@ -4,6 +4,7 @@ import { FlowDiagram, SequenceDiagram } from "./Diagrams.js";
 import { BarsDiagram, MatMulDiagram, PlotDiagram } from "./MathViews.js";
 import { CellsDiagram, TraceDiagram } from "./PythonViews.js";
 import { ArchDiagram, CidrLab, IamLab, ScaleLab } from "./CloudLabs.js";
+import { StreamLab } from "./FraudLab.js";
 import { QueueSim } from "./QueueSim.js";
 import type { Visual } from "./types.js";
 import { useStepper, type Stepper } from "./useStepper.js";
@@ -24,11 +25,12 @@ const KIND_LABEL: Record<Visual["type"], string> = {
   iam: "Policy lab",
   cidr: "Subnet planner",
   scale: "Scaling lab",
+  stream: "Live fraud lab",
 };
 
 /** Self-driving labs: they bring their own controls (no shared step player). */
-type Lab = Extract<Visual, { type: "queue" | "arch" | "iam" | "cidr" | "scale" }>;
-const isLab = (v: Visual): v is Lab => v.type === "queue" || v.type === "arch" || v.type === "iam" || v.type === "cidr" || v.type === "scale";
+type Lab = Extract<Visual, { type: "queue" | "arch" | "iam" | "cidr" | "scale" | "stream" }>;
+const isLab = (v: Visual): v is Lab => v.type === "queue" || v.type === "arch" || v.type === "iam" || v.type === "cidr" || v.type === "scale" || v.type === "stream";
 
 const LAB_HINT: Record<Lab["type"], string> = {
   queue: "Visual explanation",
@@ -36,6 +38,7 @@ const LAB_HINT: Record<Lab["type"], string> = {
   iam: "Toggle policies · pick a request",
   cidr: "Drag the sliders",
   scale: "Drag the sliders",
+  stream: "Move the thresholds · watch the cost",
 };
 
 function LabView({ v }: { v: Lab }) {
@@ -45,6 +48,7 @@ function LabView({ v }: { v: Lab }) {
     case "iam": return <IamLab v={v} />;
     case "cidr": return <CidrLab v={v} />;
     case "scale": return <ScaleLab v={v} />;
+    case "stream": return <StreamLab v={v} />;
   }
 }
 

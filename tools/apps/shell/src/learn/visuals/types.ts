@@ -276,7 +276,27 @@ export interface ScaleVisual extends Base {
   pattern: number[];
 }
 
-export type Visual = SequenceVisual | FlowVisual | LanesVisual | CompareVisual | LayersVisual | QueueVisual | TraceVisual | CellsVisual | PlotVisual | BarsVisual | MatMulVisual | ArchVisual | IamVisual | CidrVisual | ScaleVisual;
+/**
+ * Live fraud stream: a seeded feed of transactions scored by a model, decided by two
+ * thresholds (approve / review / decline), with running business numbers.
+ */
+export interface StreamVisual extends Base {
+  type: "stream";
+  /** Share of transactions that are fraud, in percent (boosted far above real life so you can see it). */
+  fraudRate: number;
+  /** How far apart legitimate and fraudulent scores sit (model quality), 1 = barely, 8 = excellent. */
+  separation: number;
+  /** Scores at or above this go to a person (0..1). */
+  reviewAt: number;
+  /** Scores at or above this are declined (0..1). */
+  declineAt: number;
+  /** Average cost of wrongly declining a good customer (lost sale, support, churn), in currency units. */
+  falseDeclineCost: number;
+  /** Cost of one manual review. */
+  reviewCost: number;
+}
+
+export type Visual = SequenceVisual | FlowVisual | LanesVisual | CompareVisual | LayersVisual | QueueVisual | TraceVisual | CellsVisual | PlotVisual | BarsVisual | MatMulVisual | ArchVisual | IamVisual | CidrVisual | ScaleVisual | StreamVisual;
 
 /** concept id (e.g. "async:2") or question id → visual */
 export type VisualMap = Record<string, Visual>;
