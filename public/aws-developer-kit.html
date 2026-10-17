@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AWS Developer Interactive Kit</title>
+<meta name="description" content="Interactive study kit for AWS developer services: Lambda, API Gateway, DynamoDB, S3, SQS/SNS, Step Functions, Cognito, IAM, IaC, CI/CD, containers, observability and security.">
+<style>
+:root{--bg:#f5f6f8;--card:#fff;--ink:#15181e;--mute:#5b6472;--line:#dde1e8;--brand:#ea580c;--brand2:#2563eb;--ok:#15803d;--okbg:#dcfce7;--bad:#b91c1c;--badbg:#fee2e2;--code:#0f172a;--codeink:#e2e8f0}
+@media (prefers-color-scheme:dark){:root{--bg:#0e1116;--card:#171b22;--ink:#e8ebf0;--mute:#9aa4b2;--line:#2a313c;--brand:#fb923c;--brand2:#7aa7ff;--ok:#4ade80;--okbg:#12301f;--bad:#f87171;--badbg:#3a1618;--code:#0a0d12}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{padding:18px 16px 8px;max-width:1100px;margin:0 auto}
+h1{margin:0;font-size:1.5rem}
+.sub{color:var(--mute);margin:2px 0 0;font-size:.95rem}
+.layout{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:230px 1fr;gap:16px;padding:12px 16px 80px}
+@media(max-width:760px){.layout{grid-template-columns:1fr}}
+nav{position:sticky;top:8px;align-self:start;max-height:calc(100vh - 16px);overflow:auto}
+@media(max-width:760px){nav{position:static;max-height:none}}
+.nb{display:flex;justify-content:space-between;align-items:center;width:100%;text-align:left;border:1px solid transparent;background:none;color:var(--ink);padding:7px 10px;border-radius:8px;font:inherit;font-size:.92rem;cursor:pointer}
+.nb:hover{background:var(--card)}
+.nb[aria-current=true]{background:var(--card);border-color:var(--brand);font-weight:600}
+.nb small{color:var(--mute)}
+.sec{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--mute);margin:12px 10px 4px}
+.prog{height:6px;background:var(--line);border-radius:9px;overflow:hidden;margin:8px 10px}
+.prog i{display:block;height:100%;background:var(--brand);width:0;transition:width .3s}
+main{min-width:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:14px}
+h2{margin:0 0 4px;font-size:1.3rem}
+h3{margin:14px 0 6px;font-size:1rem}
+.tabs{display:flex;gap:6px;margin:10px 0 14px;flex-wrap:wrap}
+.tab{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:5px 14px;cursor:pointer;font:inherit;font-size:.9rem}
+.tab[aria-selected=true]{background:var(--brand);border-color:var(--brand);color:#fff}
+pre{background:var(--code);color:var(--codeink);padding:12px 14px;border-radius:8px;overflow:auto;font:13px/1.5 ui-monospace,Menlo,Consolas,monospace;margin:8px 0}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.9em}
+ul{padding-left:20px;margin:6px 0}li{margin:4px 0}
+.pill{display:inline-block;font-size:.75rem;border:1px solid var(--line);border-radius:99px;padding:1px 9px;color:var(--mute);margin-right:4px}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:6px 12px;font:inherit;font-size:.9rem;cursor:pointer}
+.btn:hover{border-color:var(--brand)}
+.btn.p{background:var(--brand);border-color:var(--brand);color:#fff}
+.opt{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:8px;padding:9px 12px;margin:6px 0;font:inherit;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--brand)}
+.opt.right{background:var(--okbg);border-color:var(--ok)}
+.opt.wrong{background:var(--badbg);border-color:var(--bad)}
+.why{border-left:4px solid var(--brand2);padding:4px 12px;margin:8px 0;background:var(--bg);border-radius:0 8px 8px 0}
+.fc{perspective:900px;height:150px;margin:10px 0;cursor:pointer}
+.fci{position:relative;width:100%;height:100%;transition:transform .45s;transform-style:preserve-3d}
+.fc.flip .fci{transform:rotateY(180deg)}
+.fcf,.fcb{position:absolute;inset:0;backface-visibility:hidden;border:1px solid var(--line);border-radius:12px;display:flex;align-items:center;justify-content:center;text-align:center;padding:16px;background:var(--bg)}
+.fcb{transform:rotateY(180deg);border-color:var(--brand)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0}
+label{font-size:.88rem;color:var(--mute);display:block}
+input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:100%}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.big{font-size:1.5rem;font-weight:700;color:var(--brand)}
+.note{font-size:.85rem;color:var(--mute)}
+</style>
+</head>
+<body>
+<header>
+  <h1>AWS Developer Interactive Kit</h1>
+  <p class="sub">Learn, flip flashcards, take quizzes and try small labs for the core AWS developer services. Progress is saved in your browser.</p>
+</header>
+<div class="layout">
+  <nav id="nav" aria-label="Modules"></nav>
+  <main id="main"></main>
+</div>
+
+<script>
+/* ---------- CONTENT ---------- */
+const M = [
+{id:"lambda",t:"Lambda",sec:"Compute",
+ sum:"Run code without managing servers. You pay per request and per GB-second of duration.",
+ pts:["Memory 128 MB to 10,240 MB; CPU scales with memory. Max timeout 15 minutes.","Sync invoke (API Gateway, SDK) returns the result; async invoke (S3, SNS, EventBridge) retries twice and can send failures to a DLQ or on-failure destination.","Event source mappings (SQS, Kinesis, DynamoDB Streams) make Lambda poll for you, in batches. Report partial batch failures so one bad message does not retry the whole batch.","Cold start = init of the runtime and your code. Reduce with smaller packages, lazy imports, provisioned concurrency or SnapStart (supported runtimes).","Put SDK clients and DB connections OUTSIDE the handler so warm invocations reuse them. Use /tmp (up to 10 GB) for scratch only.","Reserved concurrency caps and guarantees a function's share; provisioned concurrency pre-warms environments."],
+ code:`export const handler = async (event) => {
+  // SQS batch with partial failure reporting
+  const failures = [];
+  for (const r of event.Records) {
+    try { await process(JSON.parse(r.body)); }
+    catch (e) { failures.push({ itemIdentifier: r.messageId }); }
+  }
+  return { batchItemFailures: failures };
+};`,
+ fc:[["Max Lambda timeout?","15 minutes"],["How do you give a Lambda access to DynamoDB?","Attach an IAM execution role with least-privilege policy; never embed keys."],["Reserved vs provisioned concurrency?","Reserved = guaranteed and capped slice of account concurrency. Provisioned = pre-initialised environments to avoid cold starts."],["Where to initialise SDK clients?","Outside the handler, so warm invocations reuse them."]],
+ qz:[["Your SQS-triggered Lambda reprocesses an entire batch when one message fails. What fixes this?",["Increase memory","Return batchItemFailures with the failed messageIds (enable ReportBatchItemFailures)","Switch to FIFO","Lower the timeout"],1,"Partial batch response tells Lambda which messages failed; the successful ones are deleted from the queue."],["An API needs consistently low latency with no cold starts. Best option?",["Reserved concurrency","Provisioned concurrency","Bigger timeout","Lambda@Edge"],1,"Provisioned concurrency keeps execution environments initialised."],["A function must run for 40 minutes. What now?",["Raise the timeout to 40 min","Use Step Functions / ECS Fargate / AWS Batch for long work","Use more memory","Use async invoke"],1,"Lambda is capped at 15 minutes; split into steps or use a container service."]]},
+
+{id:"apigw",t:"API Gateway",sec:"Compute",
+ sum:"Managed front door for APIs: auth, throttling, caching, request validation and routing to Lambda or HTTP backends.",
+ pts:["REST API: most features (usage plans, API keys, request validation, caching, WAF). HTTP API: cheaper, lower latency, JWT authorizers. WebSocket API: two-way connections.","Authorizers: IAM (SigV4), Cognito user pool, Lambda authorizer (custom), JWT (HTTP API).","Throttling: account limit plus per-stage/per-method limits; clients get 429 when exceeded. Usage plans + API keys are for metering, NOT security.","Stages (dev/prod) and stage variables let one API have multiple environments. Canary releases shift a % of traffic.","Default integration timeout is about 29 seconds, so long jobs should be async (return 202 and poll or use WebSocket).","Enable CORS on the API, and return the CORS headers from Lambda proxy responses."],
+ code:`// Lambda proxy integration response
+return {
+  statusCode: 200,
+  headers: { 'Content-Type': 'application/json',
+             'Access-Control-Allow-Origin': 'https://app.example.com' },
+  body: JSON.stringify({ ok: true })
+};`,
+ fc:[["REST vs HTTP API?","REST has more features (caching, WAF, usage plans); HTTP API is cheaper and faster with JWT support."],["Which HTTP code on throttling?","429 Too Many Requests"],["Are API keys a security feature?","No. They identify/meter clients for usage plans; use authorizers for auth."],["Backend needs 5 minutes?","Go asynchronous: queue/Step Functions, return 202."]],
+ qz:[["You want to authenticate users from a Cognito user pool at the API with minimal code. Use:",["API key","Cognito/JWT authorizer","Resource policy only","Nothing, Lambda checks"],1,"Built-in authorizers validate the token before invoking the backend."],["Browser calls to your API fail with a CORS error. Where do you fix it?",["Browser flags","API CORS config and the response headers","Route 53","IAM role"],1,"The API must answer preflight and return Access-Control-Allow-* headers."],["Which API type gives request caching and WAF integration?",["HTTP API","REST API","WebSocket API","All equal"],1,"REST APIs offer stage caching and WAF association."]]},
+
+{id:"dynamo",t:"DynamoDB",sec:"Data",
+ sum:"Serverless key-value / document NoSQL with single-digit-ms latency at any scale. You design tables around access patterns.",
+ pts:["Primary key = partition key (+ optional sort key). Choose a high-cardinality partition key to avoid hot partitions.","Query uses the key (fast); Scan reads everything (slow, costly). Use filters only to trim results, not to avoid design.","LSI: same partition key, different sort key, created at table creation only. GSI: any keys, eventually consistent, own capacity.","1 RCU = one strongly consistent read of up to 4 KB per second (eventually consistent = half; transactional = double). 1 WCU = one write of up to 1 KB per second.","On-demand mode for spiky/unknown traffic; provisioned + auto scaling for predictable traffic.","Conditional writes (attribute_not_exists) give optimistic locking and idempotency. TTL deletes expired items free. Streams feed Lambda. Item size limit is 400 KB.","DAX is an in-memory cache for read-heavy eventually consistent reads."],
+ code:`import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb';
+await ddb.send(new PutCommand({
+  TableName: 'Orders',
+  Item: { pk: 'USER#42', sk: 'ORDER#2026-10-17#9001', total: 499 },
+  ConditionExpression: 'attribute_not_exists(pk) AND attribute_not_exists(sk)'  // no overwrite
+}));`,
+ fc:[["Hot partition fix?","Use a higher-cardinality key, add a random/calculated suffix (write sharding)."],["GSI consistency?","Eventually consistent only."],["Max item size?","400 KB"],["Cheapest way to expire items?","TTL attribute (epoch seconds)."]],
+ qz:[["Reads of 4 KB eventually consistent cost how many RCU per item?",["1","0.5","2","4"],1,"One RCU supports 2 eventually consistent 4 KB reads per second."],["You need to query by email but the table key is userId. What do you add?",["Scan with filter","A GSI with email as partition key","An LSI","A bigger table"],1,"An LSI cannot change the partition key, and it cannot be added later."],["Prevent two writers silently overwriting each other:",["Retry loop","Conditional write on a version attribute","Strong consistency","On-demand mode"],1,"Optimistic locking with ConditionExpression rejects stale writes."]]},
+
+{id:"s3",t:"S3",sec:"Data",
+ sum:"Object storage with virtually unlimited scale, 11 nines durability and strong read-after-write consistency.",
+ pts:["Object up to 5 TB; a single PUT up to 5 GB; use multipart upload for large files (recommended above ~100 MB).","Presigned URLs let a browser upload/download directly with temporary permission, so large files never pass through your server.","Storage classes: Standard, Intelligent-Tiering, Standard-IA, One Zone-IA, Glacier tiers. Lifecycle rules transition or expire objects.","Security: Block Public Access, bucket policies, IAM, SSE-S3 / SSE-KMS encryption (on by default), VPC endpoints.","Versioning protects against overwrite/delete; MFA delete adds protection. Cross-Region Replication needs versioning.","Event notifications to Lambda, SQS, SNS or EventBridge on object create/remove."],
+ code:`import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+const url = await getSignedUrl(s3,
+  new PutObjectCommand({ Bucket: 'uploads', Key: 'u42/avatar.png', ContentType: 'image/png' }),
+  { expiresIn: 300 });   // client PUTs directly to S3`,
+ fc:[["Upload a 20 GB file reliably?","Multipart upload (parallel parts, retry per part)."],["Let a user upload without exposing credentials?","Presigned URL (or presigned POST)."],["Auto-delete logs after 90 days?","Lifecycle expiration rule."],["Is S3 eventually consistent?","No: strong read-after-write for objects."]],
+ qz:[["Mobile users upload 2 GB videos. The best architecture?",["Send through API Gateway","Presigned multipart upload straight to S3","Base64 in DynamoDB","Lambda streams to EBS"],1,"API Gateway and Lambda have payload limits; direct-to-S3 scales and costs less."],["Data is rarely accessed but must be available in ms, unknown pattern. Pick:",["Glacier Deep Archive","Intelligent-Tiering","EBS","Standard only"],1,"Intelligent-Tiering moves objects between tiers automatically."],["Block accidental public exposure account-wide:",["Bucket ACLs","S3 Block Public Access","Obscure names","CloudFront"],1,"Block Public Access overrides permissive ACLs/policies."]]},
+
+{id:"msg",t:"SQS, SNS, EventBridge",sec:"Integration",
+ sum:"Decouple producers and consumers with queues, pub/sub topics and event buses.",
+ pts:["SQS Standard: at-least-once, best-effort ordering, nearly unlimited throughput. FIFO: ordered per message group id and exactly-once processing via deduplication.","Visibility timeout (default 30 s, max 12 h) hides a message while a consumer works; set it above your processing time or you get duplicates.","Retention default 4 days (max 14). Long polling (up to 20 s) cuts empty receives and cost. Message size up to 1 MiB.","Dead-letter queue: after maxReceiveCount failed receives, message moves to the DLQ for inspection and redrive.","SNS fan-out: publish once, many subscribers (SQS, Lambda, HTTP, email). Use filter policies to route.","EventBridge: event bus with rules and content filtering, SaaS and AWS service events, schedules (cron) and archive/replay."],
+ code:`// SNS -> multiple SQS queues (fan-out), each with its own filter
+await sns.send(new PublishCommand({
+  TopicArn, Message: JSON.stringify(order),
+  MessageAttributes: { type: { DataType: 'String', StringValue: 'premium' } }
+}));`,
+ fc:[["Duplicate processing with SQS?","Standard is at-least-once: make consumers idempotent."],["Poison messages?","DLQ with maxReceiveCount, then investigate/redrive."],["One event, many consumers?","SNS topic fan-out to SQS queues (or EventBridge rules)."],["Ordered processing?","FIFO queue with MessageGroupId."]],
+ qz:[["Jobs take 5 minutes but are processed twice. Likely cause?",["Retention too long","Visibility timeout shorter than processing time","Missing DLQ","Long polling"],1,"The message reappears before the first consumer deletes it."],["Order service must notify billing, shipping and email independently:",["One queue, 3 consumers","SNS topic fan-out to three SQS queues","Direct HTTP calls","Cron"],1,"Each consumer gets its own copy and retry behaviour."],["Run a Lambda every night at 02:00:",["CloudWatch alarm","EventBridge Scheduler / rule with cron","SQS delay","S3 event"],1,"EventBridge schedules invoke targets on a cron or rate."]]},
+
+{id:"sfn",t:"Step Functions",sec:"Integration",
+ sum:"Orchestrate multi-step workflows as state machines with retries, branching and human/long waits.",
+ pts:["Standard workflows: up to 1 year, exactly-once state execution, full history. Express: up to 5 minutes, high volume, at-least-once.","States: Task, Choice, Parallel, Map, Wait, Pass, Succeed, Fail.","Built-in Retry (with backoff) and Catch per state replace hand-written try/catch loops.","SDK integrations call 200+ AWS services directly without Lambda glue.","Callback pattern (.waitForTaskToken) pauses until an external system responds."],
+ code:`{ "StartAt": "Charge",
+  "States": {
+    "Charge": { "Type": "Task", "Resource": "arn:aws:states:::lambda:invoke",
+      "Retry": [{ "ErrorEquals": ["States.TaskFailed"], "IntervalSeconds": 2, "MaxAttempts": 3, "BackoffRate": 2 }],
+      "Catch": [{ "ErrorEquals": ["States.ALL"], "Next": "Refund" }], "Next": "Ship" },
+    "Ship": { "Type": "Task", "Resource": "arn:aws:states:::lambda:invoke", "End": true },
+    "Refund": { "Type": "Fail" } } }`,
+ fc:[["Standard vs Express?","Standard: long, exactly-once, auditable. Express: short, high-throughput, at-least-once."],["Run steps in parallel?","Parallel state (different branches) or Map state (same steps over a list)."],["Wait for a human approval?","Task token callback pattern."],["Rollback on failure (saga)?","Catch then run compensating states."]],
+ qz:[["A workflow needs a 3-day approval step. Choose:",["Express workflow","Standard workflow with waitForTaskToken","Lambda with sleep","SQS delay"],1,"Standard supports durations up to a year."],["Process 10,000 records with the same logic in parallel:",["Parallel state","Map state (distributed for large scale)","Choice state","Wait state"],1,"Map iterates over an array concurrently."],["Where do you define retry with exponential backoff?",["In Lambda code only","Retry field on the state","CloudWatch","IAM"],1,"IntervalSeconds, MaxAttempts and BackoffRate are declarative."]]},
+
+{id:"cognito",t:"Cognito",sec:"Security",
+ sum:"User sign-up/sign-in and temporary AWS credentials for your apps.",
+ pts:["User pools = directory + authentication. They issue JWTs: ID token (who), access token (what you can call), refresh token.","Identity pools (federated identities) exchange a token for temporary AWS credentials via IAM roles.","Hosted UI and OAuth 2.0 flows; use Authorization Code with PKCE for SPAs and mobile.","Social/SAML/OIDC federation, MFA, Lambda triggers (pre-sign-up, post-confirmation, pre-token-generation).","Validate JWT signature, issuer, audience and expiry on your backend; groups/claims drive authorization."],
+ code:`// Verify a Cognito access token in Node
+import { CognitoJwtVerifier } from 'aws-jwt-verify';
+const verifier = CognitoJwtVerifier.create({
+  userPoolId: 'ap-south-1_abc', tokenUse: 'access', clientId: 'xyz' });
+const claims = await verifier.verify(token);   // throws if invalid`,
+ fc:[["User pool vs identity pool?","User pool authenticates users (JWT). Identity pool gives AWS credentials."],["Which OAuth flow for a SPA?","Authorization Code + PKCE."],["Add a custom claim?","Pre-token-generation Lambda trigger."],["Where to store refresh tokens in a web app?","Prefer httpOnly secure cookies via a backend; avoid localStorage for long-lived secrets."]],
+ qz:[["Your mobile app must upload straight to S3 as the signed-in user. Use:",["User pool only","Identity pool mapping to an IAM role","Root keys","Public bucket"],1,"Identity pools vend scoped temporary credentials."],["API Gateway should accept only valid app users:",["API key","Cognito authorizer","NACL","Lambda env var"],1,"The authorizer validates the JWT before routing."],["Run code right after a user confirms their email:",["Post-confirmation Lambda trigger","CloudTrail","Cron","S3 event"],0,"User pool Lambda triggers hook into the auth lifecycle."]]},
+
+{id:"iam",t:"IAM",sec:"Security",
+ sum:"Who can do what on which resource. The foundation for every service above.",
+ pts:["Evaluation: explicit Deny always wins; otherwise needs an explicit Allow; default is deny.","Use roles (temporary credentials via STS) for Lambda, EC2, ECS and cross-account access; avoid long-lived access keys.","Identity-based policies attach to users/roles; resource-based policies (S3, SQS, KMS, Lambda) attach to the resource and can grant cross-account access.","Permission boundaries and SCPs limit the maximum permissions; they never grant by themselves.","Least privilege: scope Action and Resource, add Conditions (aws:SourceArn, aws:PrincipalOrgID, MFA).","On ECS, the task role is for your code; the task execution role is for ECS to pull images and write logs."],
+ code:`{ "Version": "2012-10-17",
+  "Statement": [{ "Effect": "Allow",
+    "Action": ["dynamodb:GetItem", "dynamodb:PutItem"],
+    "Resource": "arn:aws:dynamodb:ap-south-1:111122223333:table/Orders" }] }`,
+ fc:[["Allow + Deny on same action?","Deny wins."],["Credentials for an EC2/Lambda app?","Attach a role; SDK gets temporary credentials automatically."],["What does an SCP do?","Sets guardrails (max permissions) for accounts in an Organization; grants nothing."],["Cross-account access?","Role assumption (sts:AssumeRole) or resource policy."]],
+ qz:[["An app runs on ECS Fargate and calls S3. Where do S3 permissions go?",["Execution role","Task role","Root user","Security group"],1,"The task role is assumed by your application code."],["A user's policy allows s3:*, but an SCP denies s3:DeleteBucket. Result for DeleteBucket?",["Allowed","Denied","Depends on region","MFA decides"],1,"SCPs cap permissions; an explicit deny wins."],["Best way to give a CI pipeline AWS access from GitHub?",["Long-lived access keys in secrets","OIDC federation to an IAM role","Share the root password","Public bucket"],1,"OIDC gives short-lived credentials with no stored keys."]]},
+
+{id:"iac",t:"CloudFormation, SAM, CDK",sec:"Deploy",
+ sum:"Define infrastructure as code so environments are repeatable and reviewable.",
+ pts:["CloudFormation: templates create stacks. Use change sets to preview, drift detection to find manual edits, and rollback on failure.","SAM: serverless shorthand (AWS::Serverless::Function, Api, SimpleTable) that transforms to CloudFormation. sam build / sam deploy / sam local invoke.","CDK: write infra in TypeScript/Python; cdk synth produces CloudFormation; cdk diff previews; cdk deploy applies.","Parameters, Mappings, Conditions, Outputs and cross-stack Exports keep templates reusable.","DeletionPolicy: Retain/Snapshot protects data resources when a stack is deleted."],
+ code:`// CDK (TypeScript)
+const fn = new lambda.Function(this, 'Api', {
+  runtime: lambda.Runtime.NODEJS_20_X, handler: 'index.handler',
+  code: lambda.Code.fromAsset('dist'), timeout: Duration.seconds(10) });
+table.grantReadWriteData(fn);   // generates least-privilege IAM`,
+ fc:[["Preview changes before deploy?","CloudFormation change set / cdk diff."],["Detect manual console edits?","Drift detection."],["Keep a database when stack deleted?","DeletionPolicy: Retain (or Snapshot)."],["SAM vs CDK?","SAM = template shorthand for serverless; CDK = general-purpose language that synthesises CloudFormation."]],
+ qz:[["A deploy failed halfway. What does CloudFormation do by default?",["Leaves partial resources","Rolls back to the last stable state","Deletes the account","Retries forever"],1,"Stack creation rolls back on failure unless disabled."],["You want to unit-test infra code in TypeScript:",["Raw YAML","CDK","Console","Beanstalk"],1,"CDK supports assertions on synthesised templates."],["Test a Lambda locally before deploying:",["sam local invoke","aws s3 sync","cdk destroy","aws ec2 reboot"],0,"SAM CLI emulates the Lambda runtime in Docker."]]},
+
+{id:"cicd",t:"CI/CD",sec:"Deploy",
+ sum:"CodeBuild, CodeDeploy and CodePipeline automate build, test and release.",
+ pts:["CodePipeline orchestrates stages (source, build, test, approve, deploy).","CodeBuild runs buildspec.yml (phases: install, pre_build, build, post_build; artifacts; cache). Env secrets from Secrets Manager / Parameter Store.","CodeDeploy deployment types: in-place (EC2/on-prem) and blue/green (ECS, Lambda, EC2). Lambda supports canary and linear traffic shifting with alarms and automatic rollback.","appspec file defines hooks (BeforeInstall, AfterInstall, ApplicationStart, ValidateService).","Elastic Beanstalk policies: all-at-once (fast, downtime), rolling, rolling with additional batch, immutable (safe), blue/green via swap."],
+ code:`version: 0.2
+phases:
+  install:   { commands: [ npm ci ] }
+  build:     { commands: [ npm test, npm run build ] }
+artifacts:
+  files: [ '**/*' ]
+  base-directory: dist`,
+ fc:[["Safest Beanstalk deployment?","Immutable (or blue/green with swap)."],["Gradual Lambda release?","CodeDeploy canary/linear with alias traffic shifting."],["Where is the build recipe?","buildspec.yml in the repo root."],["Manual approval step?","CodePipeline approval action."]],
+ qz:[["Release a new Lambda version to 10% of users first, auto-rollback on alarm:",["Overwrite $LATEST","CodeDeploy canary with an alias","Delete old version","Provisioned concurrency"],1,"Aliases + weighted shifting enable canary and rollback."],["Fast deploy with downtime acceptable (dev):",["Immutable","All at once","Blue/green","Canary"],1,"All-at-once updates every instance simultaneously."],["CodeBuild needs a DB password:",["Hard-code in buildspec","Secrets Manager reference","Commit .env","Plain env var in repo"],1,"Pull secrets securely at build time."]]},
+
+{id:"containers",t:"ECS, Fargate, ECR",sec:"Compute",
+ sum:"Run containers: ECS orchestrates, Fargate removes server management, ECR stores images.",
+ pts:["Task definition = blueprint (image, CPU/memory, ports, env, roles, logging). Service keeps N tasks running behind a load balancer.","Launch types: Fargate (serverless) vs EC2 (you manage hosts, more control, GPUs).","ECR: private registry with image scanning and lifecycle policies.","Service auto scaling by CPU/memory/ALB request count; rolling or blue/green deployments.","Secrets can be injected from Secrets Manager / SSM into containers.","EKS is the managed Kubernetes alternative when you need the Kubernetes API."],
+ code:`// ECS task definition snippet
+{ "family": "api", "cpu": "512", "memory": "1024", "networkMode": "awsvpc",
+  "executionRoleArn": "arn:aws:iam::111122223333:role/ecsExec",
+  "taskRoleArn": "arn:aws:iam::111122223333:role/apiTask",
+  "containerDefinitions": [{ "name": "api", "image": "111122223333.dkr.ecr.ap-south-1.amazonaws.com/api:1.4",
+    "portMappings": [{ "containerPort": 3000 }] }] }`,
+ fc:[["Fargate means?","No EC2 hosts to manage; you pay for task vCPU/memory."],["Task role vs execution role?","Task role = app permissions. Execution role = ECS pulls image/logs."],["Registry for images?","Amazon ECR."],["Need Kubernetes?","Amazon EKS."]],
+ qz:[["Run a Node API with no server patching. Choose:",["ECS on EC2","ECS on Fargate","Self-managed Docker","Lightsail only"],1,"Fargate abstracts the host."],["Container cannot pull its image from ECR. Check:",["Task role","Task execution role","Security group egress only","KMS alias"],1,"The execution role needs ECR pull and logs permissions."],["Scale tasks by traffic:",["Manual","Service auto scaling on ALBRequestCountPerTarget","Cron","Reserved instances"],1,"Target tracking keeps requests per task steady."]]},
+
+{id:"observe",t:"CloudWatch & X-Ray",sec:"Operate",
+ sum:"See what your app is doing: logs, metrics, alarms and distributed traces.",
+ pts:["CloudWatch Logs: log groups/streams, retention, Logs Insights queries, metric filters.","Metrics: standard (Lambda Errors, Duration, Throttles) and custom (PutMetricData or Embedded Metric Format from logs). Alarms trigger SNS, Auto Scaling or actions.","X-Ray traces a request across services; segments, subsegments, annotations (indexed, searchable) vs metadata (not indexed). Enable active tracing on Lambda/API Gateway.","Use structured JSON logs with a correlation/request id.","CloudTrail records API calls (who did what) for audit; it is not application logging."],
+ code:`-- CloudWatch Logs Insights
+fields @timestamp, @message
+| filter @message like /ERROR/
+| stats count() by bin(5m)`,
+ fc:[["Find slow service in a chain?","X-Ray service map / traces."],["Searchable trace data?","Annotations (metadata is not indexed)."],["Who deleted the bucket?","CloudTrail."],["Alert on Lambda errors?","CloudWatch alarm on the Errors metric, notify via SNS."]],
+ qz:[["You need to filter traces by customerId. Use:",["Metadata","Annotation","Log group","Tag on Lambda"],1,"Annotations are indexed for filter expressions."],["Which service shows who called DeleteTable?",["CloudWatch metrics","CloudTrail","X-Ray","Config only"],1,"CloudTrail is the audit log of API activity."],["Count errors per 5 minutes from logs:",["Logs Insights query","S3 select","IAM simulator","Trusted Advisor"],0,"Insights supports filter and stats aggregation."]]},
+
+{id:"crypto",t:"KMS, Secrets, Parameter Store",sec:"Security",
+ sum:"Protect data and configuration with managed keys and secrets.",
+ pts:["KMS keys never leave KMS in plaintext. Envelope encryption: GenerateDataKey, encrypt data locally with the data key, store the encrypted data key beside the data.","Key policies + grants control key use; customer managed keys allow rotation control and audit in CloudTrail.","Secrets Manager: automatic rotation (e.g. RDS), cross-region replication, paid per secret. Parameter Store: free standard tier, simple config and SecureString.","Never put secrets in env vars in plain text in IaC or in code; fetch at runtime (cache them) with a role.","S3, DynamoDB, EBS and RDS integrate with KMS (SSE-KMS)."],
+ code:`import { SecretsManagerClient, GetSecretValueCommand } from '@aws-sdk/client-secrets-manager';
+const sm = new SecretsManagerClient({});          // outside handler
+let cache;
+export const getDb = async () =>
+  cache ??= JSON.parse((await sm.send(new GetSecretValueCommand({ SecretId: 'prod/db' }))).SecretString);`,
+ fc:[["Encrypt >4 KB with KMS?","Envelope encryption with a data key (KMS direct Encrypt is limited to 4 KB)."],["Auto-rotate DB password?","Secrets Manager rotation."],["Cheap app config?","SSM Parameter Store."],["Audit key usage?","CloudTrail logs every KMS call."]],
+ qz:[["Encrypting 1 GB files with KMS. Approach?",["Encrypt directly with KMS","Envelope encryption via GenerateDataKey","Base64","Store plaintext"],1,"Use a data key locally and protect it with KMS."],["Need automatic RDS credential rotation:",["Parameter Store String","Secrets Manager","Env var","IAM user"],1,"Secrets Manager has managed rotation Lambdas."],["Lambda reads a secret on every invocation and gets throttled. Fix:",["Cache it outside the handler","Increase timeout","Remove IAM","Use /tmp"],0,"Cache with a short TTL to cut API calls."]]}
+];
+
+/* ---------- STATE ---------- */
+const KEY = "aws-dev-kit-v1";
+let S = {}; try { S = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) {}
+S.q = S.q || {}; S.f = S.f || {};
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+let cur = "labs", tab = "learn", fi = 0;
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+
+/* ---------- NAV ---------- */
+function total(){ return M.reduce((n, m) => n + m.qz.length, 0); }
+function done(){ return Object.values(S.q).filter(v => v.ok).length; }
+function nav(){
+  let h = '<div class="prog"><i style="width:' + (done()/total()*100) + '%"></i></div><div class="note" style="margin:0 10px 6px">Quiz: ' + done() + '/' + total() + ' correct</div>';
+  h += '<button class="nb" data-id="labs" aria-current="' + (cur==="labs") + '">Labs (calculators)</button>';
+  let last = "";
+  M.forEach(m => {
+    if (m.sec !== last) { h += '<div class="sec">' + m.sec + '</div>'; last = m.sec; }
+    const c = m.qz.filter((_, i) => S.q[m.id + i] && S.q[m.id + i].ok).length;
+    h += '<button class="nb" data-id="' + m.id + '" aria-current="' + (cur===m.id) + '">' + m.t + '<small>' + c + '/' + m.qz.length + '</small></button>';
+  });
+  $("#nav").innerHTML = h;
+  $("#nav").querySelectorAll(".nb").forEach(b => b.onclick = () => { cur = b.dataset.id; tab = "learn"; fi = 0; render(); scrollTo(0, 0); });
+}
+
+/* ---------- MODULE VIEWS ---------- */
+function module(m){
+  let h = '<div class="card"><h2>' + m.t + '</h2><p class="note">' + esc(m.sum) + '</p><div class="tabs" role="tablist">';
+  ["learn","cards","quiz"].forEach(t => h += '<button class="tab" role="tab" data-t="' + t + '" aria-selected="' + (tab===t) + '">' + {learn:"Learn",cards:"Flashcards",quiz:"Quiz"}[t] + '</button>');
+  h += '</div><div id="pane"></div></div>';
+  $("#main").innerHTML = h;
+  $("#main").querySelectorAll(".tab").forEach(b => b.onclick = () => { tab = b.dataset.t; fi = 0; module(m); });
+  const p = $("#pane");
+  if (tab === "learn") {
+    p.innerHTML = '<h3>Key points</h3><ul>' + m.pts.map(x => '<li>' + esc(x) + '</li>').join("") + '</ul><h3>Example</h3><pre><code>' + esc(m.code) + '</code></pre>';
+  } else if (tab === "cards") {
+    const c = m.fc[fi];
+    const known = S.f[m.id + fi];
+    p.innerHTML = '<div class="note">Card ' + (fi+1) + ' of ' + m.fc.length + ' (click to flip)</div>' +
+      '<div class="fc" id="fc"><div class="fci"><div class="fcf"><b>' + esc(c[0]) + '</b></div><div class="fcb">' + esc(c[1]) + '</div></div></div>' +
+      '<div class="row"><button class="btn" id="pv">Prev</button><button class="btn" id="nx">Next</button><button class="btn p" id="kn">' + (known ? "Marked known" : "I know this") + '</button></div>';
+    $("#fc").onclick = e => e.currentTarget.classList.toggle("flip");
+    $("#pv").onclick = () => { fi = (fi + m.fc.length - 1) % m.fc.length; module(m); };
+    $("#nx").onclick = () => { fi = (fi + 1) % m.fc.length; module(m); };
+    $("#kn").onclick = () => { S.f[m.id + fi] = !known; save(); module(m); };
+  } else {
+    p.innerHTML = m.qz.map((q, qi) => {
+      const st = S.q[m.id + qi];
+      return '<div class="qb" data-qi="' + qi + '"><p><b>' + (qi+1) + '. ' + esc(q[0]) + '</b></p>' +
+        q[1].map((o, oi) => '<button class="opt' + (st ? (oi===q[2] ? " right" : (oi===st.pick ? " wrong" : "")) : "") + '" data-o="' + oi + '"' + (st ? " disabled" : "") + '>' + esc(o) + '</button>').join("") +
+        (st ? '<div class="why">' + esc(q[3]) + '</div><button class="btn rt">Retry</button>' : "") + '</div>';
+    }).join('<hr style="border:0;border-top:1px solid var(--line)">');
+    p.querySelectorAll(".qb").forEach(box => {
+      const qi = +box.dataset.qi;
+      box.querySelectorAll(".opt").forEach(b => b.onclick = () => {
+        const pick = +b.dataset.o;
+        S.q[m.id + qi] = { pick, ok: pick === m.qz[qi][2] }; save(); module(m); nav();
+      });
+      const r = box.querySelector(".rt");
+      if (r) r.onclick = () => { delete S.q[m.id + qi]; save(); module(m); nav(); };
+    });
+  }
+}
+
+/* ---------- LABS ---------- */
+function labs(){
+  $("#main").innerHTML =
+  '<div class="card"><h2>Lab 1: DynamoDB capacity units</h2><p class="note">Work out RCU/WCU for a workload.</p>' +
+  '<div class="grid"><div><label>Item size (KB)</label><input id="d_sz" type="number" value="6" min="0.1" step="0.1"></div>' +
+  '<div><label>Reads per second</label><input id="d_r" type="number" value="100" min="0"></div>' +
+  '<div><label>Writes per second</label><input id="d_w" type="number" value="40" min="0"></div>' +
+  '<div><label>Read type</label><select id="d_t"><option value="1">Strongly consistent</option><option value="0.5" selected>Eventually consistent</option><option value="2">Transactional</option></select></div></div>' +
+  '<div class="grid" style="margin-top:12px"><div><div class="note">RCU needed</div><div class="big" id="d_rcu">-</div></div><div><div class="note">WCU needed</div><div class="big" id="d_wcu">-</div></div></div>' +
+  '<p class="note">Reads round item size UP to 4 KB blocks, writes round UP to 1 KB. Transactional writes cost double.</p></div>' +
+
+  '<div class="card"><h2>Lab 2: Lambda monthly cost</h2><p class="note">Uses illustrative x86 list prices: $0.20 per 1M requests, $0.0000166667 per GB-second, free tier 1M requests and 400,000 GB-s. Check current pricing.</p>' +
+  '<div class="grid"><div><label>Invocations / month</label><input id="l_n" type="number" value="5000000"></div>' +
+  '<div><label>Avg duration (ms)</label><input id="l_d" type="number" value="120"></div>' +
+  '<div><label>Memory (MB)</label><input id="l_m" type="number" value="512"></div></div>' +
+  '<div class="grid" style="margin-top:12px"><div><div class="note">GB-seconds</div><div class="big" id="l_gb">-</div></div><div><div class="note">Estimated cost (USD)</div><div class="big" id="l_c">-</div></div></div></div>' +
+
+  '<div class="card"><h2>Lab 3: Which service?</h2><p class="note">Pick a requirement and see the usual AWS answer.</p><select id="w_s"></select><div class="why" id="w_a" style="margin-top:10px"></div></div>' +
+
+  '<div class="card"><h2>Lab 4: SQS visibility timeout</h2><p class="note">A consumer needs the processing time below. A message is delivered twice if processing outlasts the visibility timeout.</p>' +
+  '<div class="grid"><div><label>Processing time (s)</label><input id="v_p" type="number" value="45"></div><div><label>Visibility timeout (s)</label><input id="v_v" type="number" value="30"></div></div>' +
+  '<div class="why" id="v_r" style="margin-top:10px"></div></div>';
+
+  const ddb = () => {
+    const sz = +$("#d_sz").value, r = +$("#d_r").value, w = +$("#d_w").value, t = +$("#d_t").value;
+    $("#d_rcu").textContent = Math.ceil(Math.ceil(sz/4) * r * t);
+    $("#d_wcu").textContent = Math.ceil(Math.ceil(sz) * w);
+  };
+  ["d_sz","d_r","d_w","d_t"].forEach(i => $("#"+i).oninput = ddb); ddb();
+
+  const lam = () => {
+    const n = +$("#l_n").value, d = +$("#l_d").value, m = +$("#l_m").value;
+    const gb = n * (d/1000) * (m/1024);
+    const cost = Math.max(0, n - 1e6) / 1e6 * 0.20 + Math.max(0, gb - 400000) * 0.0000166667;
+    $("#l_gb").textContent = Math.round(gb).toLocaleString();
+    $("#l_c").textContent = "$" + cost.toFixed(2);
+  };
+  ["l_n","l_d","l_m"].forEach(i => $("#"+i).oninput = lam); lam();
+
+  const W = [
+    ["Run code on events, no servers","Lambda (triggered by API Gateway, S3, SQS, EventBridge, DynamoDB Streams)."],
+    ["Store user-uploaded files","S3, with presigned URLs for direct upload."],
+    ["Single-digit ms key-value lookups at scale","DynamoDB (add DAX for microsecond reads)."],
+    ["Decouple a slow job from the web request","SQS queue + worker (Lambda or ECS), DLQ for failures."],
+    ["Notify many systems of one event","SNS fan-out or EventBridge rules."],
+    ["Multi-step workflow with retries and approvals","Step Functions."],
+    ["Sign-up/sign-in for a web or mobile app","Cognito user pool (+ identity pool for AWS credentials)."],
+    ["Store DB password with auto-rotation","Secrets Manager."],
+    ["Trace a slow request across services","X-Ray."],
+    ["Run a container without managing servers","ECS on Fargate."],
+    ["Repeatable infrastructure","CloudFormation / SAM / CDK."],
+    ["Audit who changed a resource","CloudTrail."]
+  ];
+  $("#w_s").innerHTML = W.map((x, i) => '<option value="' + i + '">' + esc(x[0]) + '</option>').join("");
+  const wa = () => { $("#w_a").textContent = W[+$("#w_s").value][1]; };
+  $("#w_s").onchange = wa; wa();
+
+  const vt = () => {
+    const p = +$("#v_p").value, v = +$("#v_v").value;
+    $("#v_r").textContent = p > v
+      ? "Duplicate delivery risk: processing (" + p + "s) outlasts the timeout (" + v + "s). Raise the visibility timeout to at least " + Math.ceil(p*1.2) + "s, or extend it while working (ChangeMessageVisibility). Make the consumer idempotent anyway."
+      : "OK: the message stays hidden until processing finishes. Keep some headroom and still design for at-least-once delivery.";
+  };
+  ["v_p","v_v"].forEach(i => $("#"+i).oninput = vt); vt();
+}
+
+function render(){
+  nav();
+  if (cur === "labs") labs(); else module(M.find(m => m.id === cur));
+}
+render();
+</script>
+</body>
+</html>
