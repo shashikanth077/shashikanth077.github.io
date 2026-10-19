@@ -1,0 +1,533 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AWS Lambda Interview Guide</title>
+<meta name="description" content="End-to-end interactive AWS Lambda guide for interviews: lifecycle, scaling, retries, event sources, security, cost, 35 model answers and downloadable notes.">
+<style>
+:root{--bg:#f5f6f8;--card:#fff;--ink:#15181e;--mute:#5b6472;--line:#dde1e8;--brand:#ea580c;--blue:#2563eb;--ok:#15803d;--okbg:#dcfce7;--bad:#b91c1c;--badbg:#fee2e2;--warn:#b45309;--warnbg:#fef3c7;--code:#0f172a;--codeink:#e2e8f0}
+@media (prefers-color-scheme:dark){:root{--bg:#0e1116;--card:#171b22;--ink:#e8ebf0;--mute:#9aa4b2;--line:#2a313c;--brand:#fb923c;--blue:#7aa7ff;--ok:#4ade80;--okbg:#12301f;--bad:#f87171;--badbg:#3a1618;--warn:#fbbf24;--warnbg:#3a2c0e;--code:#0a0d12}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{max-width:1120px;margin:0 auto;padding:18px 16px 6px}
+h1{margin:0;font-size:1.55rem}
+.sub{color:var(--mute);margin:2px 0 10px}
+.dl{display:flex;gap:8px;flex-wrap:wrap}
+.layout{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:220px 1fr;gap:16px;padding:8px 16px 80px}
+@media(max-width:780px){.layout{grid-template-columns:1fr}}
+nav{position:sticky;top:8px;align-self:start;max-height:calc(100vh - 16px);overflow:auto}
+@media(max-width:780px){nav{position:static;max-height:none;display:flex;flex-wrap:wrap;gap:4px}.sec{display:none}}
+.nb{display:block;width:100%;text-align:left;border:1px solid transparent;background:none;color:var(--ink);padding:7px 10px;border-radius:8px;font:inherit;font-size:.92rem;cursor:pointer}
+@media(max-width:780px){.nb{width:auto;border-color:var(--line);background:var(--card)}}
+.nb:hover{background:var(--card)}
+.nb[aria-current=true]{background:var(--card);border-color:var(--brand);font-weight:600}
+.sec{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--mute);margin:12px 10px 4px}
+main{min-width:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:14px}
+h2{margin:0 0 6px;font-size:1.35rem}
+h3{margin:16px 0 6px;font-size:1rem}
+.lbl{display:inline-block;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;font-weight:700;padding:1px 8px;border-radius:99px;margin-bottom:4px}
+.l-plain{background:var(--okbg);color:var(--ok)}.l-hood{background:var(--line);color:var(--ink)}.l-int{background:var(--warnbg);color:var(--warn)}.l-gotcha{background:var(--badbg);color:var(--bad)}
+pre{background:var(--code);color:var(--codeink);padding:12px 14px;border-radius:8px;overflow:auto;font:13px/1.5 ui-monospace,Menlo,Consolas,monospace;margin:8px 0}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.9em}
+p{margin:6px 0}ul{padding-left:20px;margin:6px 0}li{margin:4px 0}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:6px 12px;font:inherit;font-size:.9rem;cursor:pointer}
+.btn:hover{border-color:var(--brand)}.btn.p{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+label{font-size:.85rem;color:var(--mute);display:block}
+input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:100%}
+.big{font-size:1.4rem;font-weight:700;color:var(--brand)}
+.note{font-size:.85rem;color:var(--mute)}
+.env{display:inline-block;min-width:96px;padding:8px 10px;margin:4px;border-radius:8px;border:1px solid var(--line);text-align:center;font-size:.82rem}
+.env.busy{background:var(--warnbg);border-color:var(--warn)}.env.idle{background:var(--okbg);border-color:var(--ok)}
+.log{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font:12.5px/1.5 ui-monospace,Menlo,monospace;max-height:150px;overflow:auto}
+.flow{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.node{border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.85rem;background:var(--bg)}
+.node.on{border-color:var(--brand);background:var(--warnbg);font-weight:600}
+table{border-collapse:collapse;width:100%;font-size:.9rem;display:block;overflow:auto}
+th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+th{background:var(--bg)}
+details{border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin:8px 0;background:var(--card)}
+summary{cursor:pointer;font-weight:600}
+.tag{font-size:.72rem;border:1px solid var(--line);border-radius:99px;padding:0 8px;margin-left:6px;color:var(--mute);font-weight:400}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:3px 12px;font-size:.85rem;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--brand);border-color:var(--brand);color:#fff}
+.why{border-left:4px solid var(--blue);padding:4px 12px;margin:8px 0;background:var(--bg);border-radius:0 8px 8px 0}
+@media print{nav,.dl,.btn,.chips,header .sub{display:none!important}.layout{display:block}.card,details{break-inside:avoid}details>*{display:block}}
+</style>
+</head>
+<body>
+<header>
+  <h1>AWS Lambda: end-to-end interview guide</h1>
+  <p class="sub">Concepts explained three ways (plain words, under the hood, how to say it in an interview), live simulators, 35 model answers and downloadable notes.</p>
+  <div class="dl">
+    <button class="btn p" id="dMd">Download study guide (.md)</button>
+    <button class="btn" id="dQa">Download Q&amp;A (.html, offline)</button>
+    <button class="btn" id="dSam">Download SAM template + handler</button>
+    <button class="btn" id="dPrint">Print / save as PDF</button>
+  </div>
+</header>
+<div class="layout"><nav id="nav" aria-label="Sections"></nav><main id="main"></main></div>
+
+<script>
+/* ================= CONTENT ================= */
+const T3 = String.fromCharCode(96).repeat(3);
+
+const SECTIONS = [
+{id:"what",g:"Foundations",t:"What Lambda is",
+ plain:"Lambda runs your function when something happens (an HTTP call, a file upload, a queue message, a schedule). You upload code, choose memory and a timeout, and AWS handles servers, patching, scaling and availability across Availability Zones. You pay for requests and for the time your code runs, and nothing when it is idle.",
+ hood:"Lambda runs functions in Firecracker micro-VMs on a fleet managed by AWS. Each micro-VM hosts one execution environment (runtime + your code + /tmp). An environment handles exactly ONE request at a time. More simultaneous requests means more environments. The Invoke API is the single front door; every trigger (API Gateway, S3, SQS) ends up calling it.",
+ say:"Lambda is event-driven, pay-per-use compute with scale-to-zero. The trade-off is limits (15 min, memory/CPU ceiling), cold starts and statelessness, so it fits spiky, event-driven, short-lived work and glue logic, not long-running or very latency-critical steady workloads.",
+ gotchas:["Stateless: never rely on memory or /tmp surviving between invocations (reuse is an optimisation, not a guarantee).","Max timeout 15 minutes; sync request/response payload 6 MB.","Memory 128 MB to 10,240 MB; CPU is allocated in proportion to memory."],
+ code:`// handler.mjs  (Node.js 22 on arm64 is a good default)
+export const handler = async (event, context) => {
+  console.log(JSON.stringify({ msg: 'invoked', requestId: context.awsRequestId }));
+  return { statusCode: 200, body: JSON.stringify({ hello: 'world' }) };
+};`},
+
+{id:"lifecycle",g:"Foundations",t:"Execution lifecycle & cold starts",
+ plain:"The first request after a deploy (or after scale-up) needs a fresh environment to be created: that is a cold start. Later requests reuse the same environment, which is a warm start and is much faster.",
+ hood:"Phases: INIT (download code, start the runtime, run extensions, run your top-level/static code; limited to about 10 seconds), INVOKE (run the handler up to the timeout), SHUTDOWN (environment is frozen between invocations, then eventually destroyed). Anything created outside the handler (SDK clients, DB connections, loaded config) is created once per environment. INIT is billed for on-demand functions, so heavy init costs money as well as latency. Mitigations: smaller bundles, lazy-load rarely used modules, arm64, more memory (faster CPU), SnapStart (Java, Python, .NET), provisioned concurrency (pre-initialised environments).",
+ say:"Cold start is the one-time environment creation cost. I measure it from the INIT Duration in the REPORT log line and from X-Ray, then reduce it by bundling and tree-shaking, initialising only what is needed, choosing a lighter runtime, and if latency SLOs still require it, using provisioned concurrency or SnapStart.",
+ gotchas:["Cold starts affect only a small percentage of requests in steady traffic but hit hard on spikes and low-traffic functions.","VPC no longer adds the big ENI cold-start penalty it once did (Hyperplane ENIs), but heavy init code still does.","Top-level await and big dependency graphs make INIT slow."],
+ code:`import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import { DynamoDBDocumentClient, GetCommand } from '@aws-sdk/lib-dynamodb';
+
+// INIT: runs once per execution environment
+const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
+
+export const handler = async (event) => {
+  // INVOKE: runs every request, reuses ddb
+  const { Item } = await ddb.send(new GetCommand({ TableName: process.env.TABLE, Key: { pk: event.id } }));
+  return Item;
+};`},
+
+{id:"invoke",g:"Invocation",t:"Invocation models",
+ plain:"There are three ways Lambda is called. Synchronous: the caller waits for the answer (API Gateway). Asynchronous: the caller hands over an event and moves on (S3, SNS, EventBridge). Poll-based: Lambda itself reads from a stream or queue (SQS, Kinesis, DynamoDB Streams) and calls your function with batches.",
+ hood:"Sync: errors are returned to the caller, and the caller owns retries. Async: Lambda puts the event on an internal queue, retries failures twice (3 attempts total) with delays, keeps events up to 6 hours, then sends to the on-failure destination or DLQ. Poll-based uses an Event Source Mapping (ESM), a Lambda-managed poller that batches, scales and retries according to the source type.",
+ say:"I choose the model by who owns the retry and ordering. Sync for user-facing request/response, async for fire-and-forget with destinations for failures, and ESM for queues/streams where I need batching, back-pressure and partial-batch failure handling.",
+ gotchas:["Async default: MaximumRetryAttempts 2 and MaximumEventAge up to 6 h; both are configurable.","Your function can be invoked more than once for the same event: design for idempotency.","Prefer on-failure destinations (with context) over a bare DLQ for new designs; DLQs still work for SQS/SNS."],
+ table:[["","Sync","Async","Poll-based (ESM)"],["Examples","API Gateway, ALB, Function URL, SDK RequestResponse","S3, SNS, EventBridge, SDK Event","SQS, Kinesis, DynamoDB Streams, MSK"],["Who retries","Caller","Lambda (2 retries)","Lambda: SQS message returns after visibility timeout; streams retry until success/expiry"],["Failure handling","Return error","Destination / DLQ","DLQ on queue, on-failure destination, bisect batch, partial batch response"],["Throttle (429)","Returned to caller","Retried for up to 6 h","Poller backs off"]]},
+
+{id:"scaling",g:"Invocation",t:"Concurrency & scaling",
+ plain:"Concurrency is how many copies of your function run at the same moment. If 100 requests arrive each second and each takes 200 ms, you need about 20 running at once.",
+ hood:"Concurrency = requests per second x average duration (seconds). Each environment serves one request at a time. Account limit defaults to 1,000 concurrent executions per Region (can be raised). A function can add up to 1,000 new environments every 10 seconds. Reserved concurrency sets both a guaranteed share and a hard cap for a function (no extra cost); provisioned concurrency keeps environments warm (costs money). When the limit is hit, sync callers get 429 TooManyRequests.",
+ say:"I size with Little's law: concurrency = RPS x duration. I use reserved concurrency to protect downstream systems (like an RDS database) and to stop one function starving others, and provisioned concurrency only for latency-critical paths, optionally with Application Auto Scaling schedules.",
+ gotchas:["Setting reserved concurrency to 0 effectively turns the function off (an emergency brake).","Lambda can scale faster than your database; cap it or use RDS Proxy.","For SQS, set ESM Maximum Concurrency to throttle the consumer without throttling the function."],
+ code:`# SAM snippet
+MyFn:
+  Type: AWS::Serverless::Function
+  Properties:
+    ReservedConcurrentExecutions: 50
+    ProvisionedConcurrencyConfig: { ProvisionedConcurrentExecutions: 5 }  # needs an alias/AutoPublishAlias`},
+
+{id:"errors",g:"Reliability",t:"Errors, retries & idempotency",
+ plain:"Things fail: timeouts, bad input, a downstream outage. Lambda may retry, so the same event can reach your code twice. Your code must be safe to run twice (idempotent).",
+ hood:"Idempotency pattern: compute a key (event id or business key), conditionally write it to DynamoDB (attribute_not_exists) with a TTL, run the work, then mark complete. If the key already exists, return the stored result. Powertools for AWS Lambda has an idempotency utility doing this. For SQS, report only failed messages with batchItemFailures. For streams, use bisect-on-error and a max retry/age so a poison record cannot block a shard forever.",
+ say:"Retries plus at-least-once delivery means idempotency is non-negotiable. I add a dead-letter or failure destination, alarms on DLQ depth and Errors, and partial batch responses so good messages are not reprocessed.",
+ gotchas:["SQS visibility timeout should be at least 6x the function timeout (AWS guidance) so in-flight messages do not reappear mid-run.","Timeouts do not roll back side effects. A function that timed out after charging a card will run again.","Recursive loops (S3 to Lambda writing to same bucket) can run up a bill; Lambda has recursion detection for some services but design to avoid it."],
+ code:`// Idempotent write guard (DynamoDB)
+try {
+  await ddb.send(new PutCommand({
+    TableName: 'Idem', Item: { pk: eventId, ttl: Math.floor(Date.now()/1000) + 86400 },
+    ConditionExpression: 'attribute_not_exists(pk)'
+  }));
+} catch (e) {
+  if (e.name === 'ConditionalCheckFailedException') return { duplicate: true };
+  throw e;
+}
+await doWork(event);`},
+
+{id:"sources",g:"Integrations",t:"Event sources & patterns",
+ plain:"Lambda is the glue. The common patterns: API (API Gateway or Function URL), file processing (S3), queue worker (SQS), pub/sub fan-out (SNS/EventBridge), stream processing (Kinesis/DynamoDB Streams), scheduled jobs (EventBridge Scheduler), workflows (Step Functions).",
+ hood:"S3 and SNS are async. SQS/Kinesis/DynamoDB Streams use ESM. For Kinesis/DynamoDB Streams, ordering is per shard; ParallelizationFactor (1-10) raises concurrency per shard while preserving per-key order. FIFO SQS preserves order per MessageGroupId, and concurrency is bounded by the number of active groups. Step Functions is better than Lambda calling Lambda: you get retries, state, visibility and no idle waiting cost.",
+ say:"I match source to need: SQS to buffer and smooth load, SNS/EventBridge to fan out, Kinesis for ordered replayable streams, Step Functions for multi-step orchestration. I avoid chaining Lambdas synchronously.",
+ gotchas:["API Gateway REST default integration timeout is about 29 s, so long work must be async.","S3 events can be delivered more than once and out of order.","Lambda in an SQS ESM: functions can scale up fast; use batch size, batching window and maximum concurrency deliberately."],
+ code:`// SQS consumer with partial batch failure
+export const handler = async ({ Records }) => {
+  const batchItemFailures = [];
+  await Promise.all(Records.map(async (r) => {
+    try { await handle(JSON.parse(r.body)); }
+    catch { batchItemFailures.push({ itemIdentifier: r.messageId }); }
+  }));
+  return { batchItemFailures };   // enable ReportBatchItemFailures on the mapping
+};`},
+
+{id:"vpc",g:"Networking & data",t:"VPC, databases & connections",
+ plain:"By default Lambda runs in an AWS-managed network with internet access. Attach it to your VPC when it must reach private resources like RDS or ElastiCache. Then it only reaches the internet or AWS services through a NAT gateway or VPC endpoints.",
+ hood:"Lambda creates shared Hyperplane ENIs in your subnets, so VPC attachment adds little latency. Place the function in private subnets across at least two AZs. Use gateway endpoints for S3/DynamoDB (free) and interface endpoints for other services to avoid NAT costs. Relational databases have limited connections; thousands of concurrent Lambdas can exhaust them. Use RDS Proxy (connection pooling, IAM auth) and keep connections outside the handler.",
+ say:"VPC only when needed. Private subnets in two AZs, VPC endpoints instead of NAT where possible, RDS Proxy plus reserved concurrency to protect the database, and DynamoDB where the access pattern fits because it needs no connection management.",
+ gotchas:["A VPC-attached function has NO internet unless there is a NAT route.","Security groups control egress to the DB; the DB security group must allow the function's group.","Forgetting to close/reuse connections gives 'too many connections' under load."],
+ code:`# SAM
+VpcConfig:
+  SecurityGroupIds: [ !Ref FnSg ]
+  SubnetIds: [ !Ref PrivA, !Ref PrivB ]`},
+
+{id:"security",g:"Security",t:"Security & permissions",
+ plain:"Two separate permission questions: what can my function do (execution role) and who can call my function (resource-based policy).",
+ hood:"Execution role: trust policy lets lambda.amazonaws.com assume it; permission policies grant least-privilege access (plus AWSLambdaBasicExecutionRole for logs). Resource-based policy: allows API Gateway, S3, SNS etc. (or another account) to invoke the function; use SourceArn/SourceAccount conditions to prevent the confused-deputy problem. Secrets: Secrets Manager or Parameter Store fetched at init and cached; environment variables are encrypted at rest with KMS but visible to anyone who can read configuration. Function URLs: auth type AWS_IAM or NONE. Code signing can enforce trusted artifacts.",
+ say:"Separate role per function, scoped to exact actions and resources, resource policy with SourceArn, secrets from Secrets Manager rather than plain environment variables, and CloudTrail for audit.",
+ gotchas:["AccessDenied calling DynamoDB = execution role. AccessDenied when S3/API Gateway invokes Lambda = resource-based policy.","A Function URL with auth NONE is public.","Wildcard Resource: '*' on the role is a classic review finding."],
+ code:`{ "Version": "2012-10-17", "Statement": [{
+    "Effect": "Allow",
+    "Action": ["dynamodb:GetItem", "dynamodb:PutItem", "dynamodb:Query"],
+    "Resource": ["arn:aws:dynamodb:ap-south-1:111122223333:table/Orders",
+                 "arn:aws:dynamodb:ap-south-1:111122223333:table/Orders/index/*"] }] }`},
+
+{id:"perf",g:"Optimisation",t:"Performance & cost tuning",
+ plain:"More memory gives more CPU, so a function can finish faster. Sometimes the faster run costs the same or less. Tune by measuring, not guessing.",
+ hood:"Cost = requests x price + GB-seconds (memory GB x duration seconds, billed per 1 ms) + provisioned concurrency + data transfer. About 1,769 MB equals one vCPU. CPU-bound code improves with memory up to a point; I/O-bound code (waiting on the network) often does not. arm64 (Graviton) is typically cheaper per ms and often faster. Use AWS Lambda Power Tuning (open-source Step Functions tool) to find the cost/speed sweet spot. Other levers: batch SQS messages, reduce payloads, reuse connections, avoid polling in code, cache config, set tight timeouts, shorten log retention.",
+ say:"I run power tuning for each hot function, move to arm64, keep init light, batch where possible, and set timeouts and concurrency so a bug cannot burn money. Lambda is cheap for spiky workloads; for steady high utilisation, Fargate/EC2 can win.",
+ gotchas:["Over-provisioned memory on I/O-bound code just costs more.","Excessive logging costs more in CloudWatch than the compute.","Lambda 'cost per invocation' is not the whole bill: NAT, API Gateway and data transfer often dominate."],
+ code:`// Rough cost model
+GB_s = invocations * (duration_ms / 1000) * (memory_MB / 1024)
+cost = max(0, invocations - free) * price_per_request + GB_s * price_per_GB_s`},
+
+{id:"deploy",g:"Operations",t:"Packaging, versions & safe deploys",
+ plain:"A version is a frozen snapshot of code and config. An alias is a friendly pointer (like prod) to a version. You release by moving the alias, optionally sending only 10% of traffic to the new version first.",
+ hood:"$LATEST is mutable; published versions are immutable. Aliases support weighted routing, and CodeDeploy (via SAM AutoPublishAlias + DeploymentPreference) does Canary10Percent5Minutes / Linear shifts with CloudWatch alarms and automatic rollback. Packaging: zip (50 MB direct, 250 MB unzipped including layers) or container image up to 10 GB (from ECR). Layers (max 5) share dependencies. Extensions run alongside (monitoring agents). Tooling: SAM, CDK, Terraform, Serverless Framework.",
+ say:"Infrastructure as code, one artifact promoted through environments, alias-based canary with alarms and automatic rollback, and a feature-flag for risky changes.",
+ gotchas:["Environment variables are part of the version; changing them needs a new version.","Provisioned concurrency attaches to a version/alias, not $LATEST.","Layers count toward the 250 MB unzipped limit."],
+ code:`MyFn:
+  Type: AWS::Serverless::Function
+  Properties:
+    AutoPublishAlias: live
+    DeploymentPreference:
+      Type: Canary10Percent5Minutes
+      Alarms: [ !Ref ErrorAlarm ]`},
+
+{id:"observe",g:"Operations",t:"Observability",
+ plain:"You need logs (what happened), metrics (how much, how fast), and traces (where time went).",
+ hood:"Logs go to CloudWatch Logs automatically; use structured JSON and the request id. Key metrics: Invocations, Errors, Throttles, Duration, ConcurrentExecutions, IteratorAge (streams), AsyncEventsDropped, DeadLetterErrors. The REPORT line shows Duration, Billed Duration, Memory Size, Max Memory Used and Init Duration. X-Ray active tracing shows downstream latency. Lambda Insights adds system-level metrics. Powertools gives Logger/Tracer/Metrics (Embedded Metric Format).",
+ say:"Structured logs with correlation id, alarms on Errors, Throttles, p99 Duration and DLQ depth, X-Ray for cross-service latency, and dashboards per service. Debug a timeout by checking X-Ray subsegments and downstream latency first.",
+ gotchas:["Throttles do not show as Errors; alarm on both.","Lambda log retention defaults to never expire: set it.","Do not log secrets or full PII payloads."],
+ code:`-- Logs Insights: slowest cold starts
+filter @type = "REPORT" and ispresent(@initDuration)
+| stats max(@initDuration), avg(@duration) by bin(1h)`},
+
+{id:"e2e",g:"End to end",t:"End-to-end request journey",
+ plain:"Follow one HTTP request through a typical serverless API to see where each concept applies.",
+ hood:"See the stepper below (interactive).",
+ say:"Walk the interviewer through the path: edge, auth, throttling, Lambda placement, init, handler, data call, response, telemetry.",
+ gotchas:[],journey:true}
+];
+
+const QA = [
+["Basic","What is AWS Lambda and when would you not use it?","Lambda is event-driven, serverless compute that scales automatically and bills per request and per ms of execution. I would not use it for jobs longer than 15 minutes, workloads needing sustained high CPU/GPU, very predictable steady load where containers are cheaper, or ultra-low-latency paths where even occasional cold starts are unacceptable (unless provisioned concurrency is used)."],
+["Basic","Explain cold start vs warm start.","A cold start creates a new execution environment: download code, start runtime, run INIT code. A warm start reuses an existing idle environment and only runs the handler. Cold starts matter on spikes and low-traffic functions. I reduce them with small bundles, lazy initialisation, arm64, SnapStart or provisioned concurrency."],
+["Basic","What is the execution environment and what can you reuse?","It is the sandbox (micro-VM) with runtime, code and /tmp. Between invocations it is frozen and may be reused. I put SDK clients, DB connections and cached config outside the handler. I never assume state survives, because Lambda can discard environments at any time."],
+["Basic","How are memory and CPU related?","You choose only memory (128 MB to 10,240 MB). CPU, network and I/O scale proportionally; roughly 1,769 MB gives one vCPU. So more memory can reduce duration for CPU-bound code, sometimes lowering total cost."],
+["Basic","What are the main Lambda limits?","Timeout 15 min; memory up to 10 GB; sync payload 6 MB; /tmp 512 MB up to 10 GB; zip 50 MB upload / 250 MB unzipped; container image 10 GB; 1,000 default concurrent executions per Region (raisable); environment variables 4 KB total."],
+["Basic","Difference between execution role and resource-based policy?","The execution role defines what the function can do to other AWS services (assumed by Lambda). The resource-based policy defines who or what may invoke the function (API Gateway, S3, another account). Mixing them up is a common source of AccessDenied errors."],
+["Basic","What are versions and aliases?","A version is an immutable snapshot of code and configuration. An alias is a named pointer to a version, and can split traffic by weights between two versions. Aliases enable canary releases and instant rollback."],
+["Intermediate","Sync vs async vs event source mapping invocation?","Sync: caller waits and handles errors/retries. Async: Lambda queues the event and retries twice, with destinations or a DLQ for failures. Event source mapping: Lambda polls SQS/Kinesis/DynamoDB Streams and invokes with batches; retry behaviour depends on the source."],
+["Intermediate","How does Lambda scale and how do you protect a database?","Each environment handles one request at a time, so concurrency equals RPS x duration. Lambda adds up to 1,000 environments per function every 10 seconds, bounded by account limits. To protect an RDS database I cap with reserved concurrency (or SQS maximum concurrency) and use RDS Proxy for connection pooling."],
+["Intermediate","Reserved vs provisioned concurrency?","Reserved is a free guaranteed slice that is also a cap; it protects other functions and downstream systems. Provisioned keeps pre-initialised environments ready to remove cold starts and is billed. Provisioned counts inside the reserved/account limits."],
+["Intermediate","What happens when a Lambda is throttled?","Sync callers receive a 429 and must retry. Async invocations are retried by Lambda for up to 6 hours. Poll-based sources back off and retry. I monitor the Throttles metric, raise limits or add queue buffering."],
+["Intermediate","How do you make a Lambda idempotent?","Derive an idempotency key from the event or business id, do a conditional write in DynamoDB (attribute_not_exists) with TTL before side effects, and return the stored result on duplicates. Powertools for AWS Lambda has an idempotency utility that implements this."],
+["Intermediate","DLQ vs on-failure destination?","A DLQ (SQS/SNS) receives only the failed event payload. Destinations (SQS, SNS, Lambda, EventBridge) support success and failure, and include invocation context such as error details. For new async designs I prefer destinations."],
+["Intermediate","How do you handle partial failures in an SQS batch?","Enable ReportBatchItemFailures and return the failed messageIds in batchItemFailures. Only those messages become visible again; successful ones are deleted. Also set a DLQ with maxReceiveCount on the queue."],
+["Intermediate","Why set the SQS visibility timeout larger than the function timeout?","If the message becomes visible while the function is still processing it, another invocation picks it up and you get duplicates. AWS recommends at least six times the function timeout to allow for retries and batching."],
+["Intermediate","How do you connect Lambda to RDS safely?","Put Lambda in private subnets with a security group allowed by the DB, use RDS Proxy to pool connections and optionally IAM auth, create the client outside the handler, store credentials in Secrets Manager, and cap concurrency."],
+["Intermediate","A VPC Lambda cannot call a public API or DynamoDB. Why?","VPC functions have no internet by default. Add a NAT gateway route in private subnets, or use VPC endpoints (gateway endpoints for S3/DynamoDB, interface endpoints for others)."],
+["Intermediate","How do layers work and when should you use them?","A layer is a zip extracted into /opt, shared across functions (max 5 per function). Good for shared libraries or binaries. Be careful: layers count toward the 250 MB unzipped limit and versioning must be managed. For large dependencies, container images may be simpler."],
+["Intermediate","API Gateway returns 504 for a Lambda that takes 40 seconds. Fix?","The default API Gateway integration timeout is about 29 seconds. Make the work asynchronous: return 202 and process through SQS or Step Functions, then let the client poll or use WebSocket/webhook. Or speed up the function."],
+["Intermediate","Lambda timing out intermittently. How do you debug?","Check the REPORT line (Duration, Max Memory, Init Duration), X-Ray subsegments for slow downstream calls, connection reuse, VPC/NAT problems, memory/CPU starvation and cold starts. Then fix by tuning memory, adding timeouts to downstream calls shorter than the function timeout, or caching."],
+["Intermediate","How do you reduce Lambda cost?","Right-size memory with Power Tuning, use arm64, shorten duration (reuse connections, cache), batch events, set sensible timeouts, limit logging and retention, avoid NAT with VPC endpoints, and consider other compute when utilisation is steady and high."],
+["Intermediate","Function URL vs API Gateway?","Function URL gives a dedicated HTTPS endpoint with IAM or no auth, simple and free. API Gateway adds throttling, usage plans, request validation, authorizers, caching, WAF and custom domains/stages. Use Function URL for simple webhooks/internal use and API Gateway for full API management."],
+["Intermediate","How do you safely deploy a new Lambda version?","Publish a version, shift an alias gradually with CodeDeploy (canary or linear), attach CloudWatch alarms for automatic rollback, and keep infrastructure in SAM/CDK. Pre- and post-traffic hook functions can run smoke tests."],
+["Intermediate","How do you manage secrets in Lambda?","Store them in Secrets Manager or SSM Parameter Store SecureString, grant the role access, fetch at INIT and cache with a TTL (Powertools Parameters helps). Avoid hard-coding or plain environment variables for sensitive values."],
+["Advanced","Explain concurrency maths for 500 RPS with 300 ms average duration.","Concurrency = 500 x 0.3 = 150 simultaneous executions on average; plan for headroom (p99 duration and bursts), say 200-250. Check the account limit and per-function scaling rate, and consider provisioned concurrency if traffic arrives as a sudden step."],
+["Advanced","How does Lambda handle ordering with Kinesis or DynamoDB Streams?","Records are ordered per shard and processed in order; a failing batch blocks that shard until it succeeds or expires. Use bisect-on-failure, maximum retry attempts/record age and an on-failure destination so a poison record does not block forever. ParallelizationFactor raises concurrency per shard while preserving ordering per partition key."],
+["Advanced","How would you design an image-processing pipeline?","Client gets a presigned URL and uploads to S3; S3 event goes to SQS (buffer and retry), a Lambda consumer resizes images and writes outputs to another bucket (avoid same-bucket recursion), metadata to DynamoDB, failures to a DLQ, with partial batch responses, idempotency on the object key/version, and alarms on queue age."],
+["Advanced","Lambda vs Fargate for a new service?","Lambda: spiky or low traffic, event-driven, short tasks, minimal ops, scale to zero. Fargate: long-running or steady high throughput, custom networking/binaries, WebSockets or long connections, predictable per-vCPU cost, no 15 minute limit. A hybrid is common: Fargate for the core API, Lambda for event glue."],
+["Advanced","What is SnapStart and when do you use it?","SnapStart takes a snapshot of the initialised execution environment after INIT and restores it for new environments, cutting cold starts significantly for supported runtimes (Java, and also Python and .NET). Caveats: uniqueness (random seeds, connections, timestamps) must be re-established using runtime hooks."],
+["Advanced","How do you avoid a runaway recursive Lambda cost incident?","Never let a function write to the resource that triggers it (use separate buckets/prefixes), set reserved concurrency and alarms on Invocations, use recursion detection, budgets/anomaly detection, and DLQs with retry limits."],
+["Advanced","Design a flash-sale order API on serverless.","API Gateway with throttling and WAF, Lambda validates and writes the order intent to SQS (FIFO per product if ordering matters) or directly to DynamoDB with conditional stock decrement, consumer Lambdas with controlled concurrency, idempotency keys, Step Functions for payment/fulfilment saga, provisioned concurrency pre-scaled for the event, and DLQs/alarms/dashboards."],
+["Advanced","How do you test Lambda functions?","Unit-test the pure business logic separately from the handler. Integration-test against real or emulated services (SAM local, LocalStack, or a dedicated AWS test account), contract tests for events (sample event JSON), and deploy-time smoke tests via CodeDeploy hooks. Use dependency injection for AWS clients."],
+["Advanced","Lambda calling Lambda synchronously: good idea?","Usually not. You pay for the waiting function, couple failure modes, and compound timeouts. Prefer events (SQS/SNS/EventBridge) or Step Functions for orchestration with retries, state and visibility."],
+["Advanced","Where do Lambda@Edge and CloudFront Functions fit?","Both run at CloudFront. CloudFront Functions are tiny JavaScript functions for sub-millisecond header/URL manipulation at massive scale. Lambda@Edge supports heavier logic (network calls, larger code) on viewer and origin events but with higher latency and cost and deployment from us-east-1."],
+["Advanced","How would you stream a large response from Lambda?","Use Lambda response streaming with a Function URL (or supported integrations): the handler writes to a response stream so the client gets the first bytes early and payloads can exceed the 6 MB buffered limit. Good for large downloads, SSR and LLM output."]
+];
+
+/* ================= HELPERS ================= */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const KEY = "lambda-guide-v1";
+let S = {}; try { S = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) {}
+S.done = S.done || {};
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+function dl(name, text, mime){
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([text], {type: mime || "text/plain"}));
+  a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+/* ================= DOWNLOADS ================= */
+function mdGuide(){
+  let o = "# AWS Lambda: end-to-end interview guide\n\n";
+  SECTIONS.forEach(s => {
+    o += "## " + s.t + "\n\n**In plain words.** " + s.plain + "\n\n**Under the hood.** " + s.hood + "\n\n**How to say it in an interview.** " + s.say + "\n\n";
+    if (s.gotchas && s.gotchas.length) o += "**Gotchas**\n\n" + s.gotchas.map(g => "- " + g).join("\n") + "\n\n";
+    if (s.table) o += s.table.map((r, i) => "| " + r.join(" | ") + " |" + (i === 0 ? "\n|" + r.map(() => "---").join("|") + "|" : "")).join("\n") + "\n\n";
+    if (s.code) o += T3 + "\n" + s.code + "\n" + T3 + "\n\n";
+  });
+  o += "## Interview questions and model answers\n\n";
+  QA.forEach((q, i) => o += "### " + (i+1) + ". " + q[1] + " (" + q[0] + ")\n\n" + q[2] + "\n\n");
+  return o;
+}
+function qaHtml(){
+  return "<!doctype html><html><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>Lambda Interview Q&A</title><style>body{font:16px/1.6 system-ui;max-width:780px;margin:0 auto;padding:20px}details{border:1px solid #ccd;border-radius:8px;padding:8px 12px;margin:8px 0}summary{cursor:pointer;font-weight:600}small{color:#667}</style></head><body><h1>AWS Lambda interview Q&amp;A</h1>" +
+    QA.map((q, i) => "<details><summary>" + (i+1) + ". " + esc(q[1]) + " <small>(" + q[0] + ")</small></summary><p>" + esc(q[2]) + "</p></details>").join("") + "</body></html>";
+}
+const SAM = `AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Production-style Lambda API (HTTP API + DynamoDB + SQS DLQ)
+Globals:
+  Function:
+    Runtime: nodejs22.x
+    Architectures: [arm64]
+    MemorySize: 512
+    Timeout: 10
+    Tracing: Active
+    Environment:
+      Variables: { TABLE: !Ref Table, POWERTOOLS_SERVICE_NAME: orders }
+Resources:
+  Table:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions: [ { AttributeName: pk, AttributeType: S } ]
+      KeySchema: [ { AttributeName: pk, KeyType: HASH } ]
+      TimeToLiveSpecification: { AttributeName: ttl, Enabled: true }
+  Dlq:
+    Type: AWS::SQS::Queue
+    Properties: { MessageRetentionPeriod: 1209600 }
+  Fn:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: handler.handler
+      CodeUri: src/
+      AutoPublishAlias: live
+      ReservedConcurrentExecutions: 50
+      DeadLetterQueue: { Type: SQS, TargetArn: !GetAtt Dlq.Arn }
+      Policies:
+        - DynamoDBCrudPolicy: { TableName: !Ref Table }
+      Events:
+        Api: { Type: HttpApi, Properties: { Path: /orders, Method: post } }
+  ErrorAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      Namespace: AWS/Lambda
+      MetricName: Errors
+      Dimensions: [ { Name: FunctionName, Value: !Ref Fn } ]
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+`;
+const HANDLER = `// src/handler.mjs  - validation, idempotency, structured logs, timeouts
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb';
+
+const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({}));   // INIT: reused when warm
+const TABLE = process.env.TABLE;
+const log = (level, msg, extra = {}) => console.log(JSON.stringify({ level, msg, ...extra }));
+
+export const handler = async (event, context) => {
+  const requestId = context.awsRequestId;
+  let body;
+  try { body = JSON.parse(event.body ?? '{}'); }
+  catch { return res(400, { error: 'Invalid JSON' }); }
+  if (!body.orderId || typeof body.total !== 'number') return res(422, { error: 'orderId and total required' });
+
+  // Stop before Lambda kills us: leave 500 ms to return a clean error
+  const signal = AbortSignal.timeout(Math.max(context.getRemainingTimeInMillis() - 500, 100));
+
+  try {
+    await ddb.send(new PutCommand({
+      TableName: TABLE,
+      Item: { pk: 'ORDER#' + body.orderId, total: body.total, createdAt: new Date().toISOString() },
+      ConditionExpression: 'attribute_not_exists(pk)'                // idempotent create
+    }), { abortSignal: signal });
+    log('info', 'order created', { requestId, orderId: body.orderId });
+    return res(201, { orderId: body.orderId });
+  } catch (e) {
+    if (e.name === 'ConditionalCheckFailedException') return res(200, { orderId: body.orderId, duplicate: true });
+    log('error', 'failed', { requestId, err: e.name });
+    return res(500, { error: 'Internal error', requestId });
+  }
+};
+const res = (statusCode, obj) => ({ statusCode, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(obj) });
+`;
+$("#dMd").onclick = () => dl("lambda-interview-guide.md", mdGuide(), "text/markdown");
+$("#dQa").onclick = () => dl("lambda-interview-qa.html", qaHtml(), "text/html");
+$("#dSam").onclick = () => { dl("template.yaml", SAM, "text/yaml"); setTimeout(() => dl("handler.mjs", HANDLER, "text/javascript"), 300); };
+$("#dPrint").onclick = () => { cur = "all"; render(); setTimeout(() => print(), 200); };
+
+/* ================= VIEWS ================= */
+let cur = "what";
+const NAVX = [["sim","Simulators"],["qa","Interview Q&A"]];
+function nav(){
+  let h = "", last = "";
+  SECTIONS.forEach(s => {
+    if (s.g !== last) { h += '<div class="sec">' + s.g + '</div>'; last = s.g; }
+    h += '<button class="nb" data-id="' + s.id + '" aria-current="' + (cur===s.id) + '">' + s.t + '</button>';
+  });
+  h += '<div class="sec">Practice</div>';
+  NAVX.forEach(x => h += '<button class="nb" data-id="' + x[0] + '" aria-current="' + (cur===x[0]) + '">' + x[1] + '</button>');
+  $("#nav").innerHTML = h;
+  $("#nav").querySelectorAll(".nb").forEach(b => b.onclick = () => { cur = b.dataset.id; render(); scrollTo(0, 0); });
+}
+function sectionHtml(s){
+  let h = '<div class="card"><h2>' + esc(s.t) + '</h2>' +
+    '<span class="lbl l-plain">In plain words</span><p>' + esc(s.plain) + '</p>' +
+    '<span class="lbl l-hood">Under the hood</span><p>' + esc(s.hood) + '</p>' +
+    '<span class="lbl l-int">Say it in the interview</span><p>' + esc(s.say) + '</p>';
+  if (s.gotchas && s.gotchas.length) h += '<span class="lbl l-gotcha">Gotchas</span><ul>' + s.gotchas.map(g => '<li>' + esc(g) + '</li>').join("") + '</ul>';
+  if (s.table) h += '<table>' + s.table.map((r, i) => '<tr>' + r.map(c => (i===0 ? '<th>' : '<td>') + esc(c) + (i===0 ? '</th>' : '</td>')).join("") + '</tr>').join("") + '</table>';
+  if (s.code) h += '<pre><code>' + esc(s.code) + '</code></pre>';
+  if (s.journey) h += '<div id="jr"></div>';
+  return h + '</div>';
+}
+
+/* ---- journey ---- */
+const J = [
+["Client","The browser sends POST /orders over HTTPS with a JWT. DNS resolves your custom domain to API Gateway (optionally via CloudFront)."],
+["API Gateway","TLS terminates here. It validates the JWT (authorizer), applies throttling/usage limits and request validation, then calls the Lambda Invoke API synchronously. Auth and throttling failures never reach Lambda, so you are not billed for them."],
+["Lambda service","The Invoke API checks the resource-based policy (may API Gateway call this function?) and finds an idle execution environment. If none exists, it creates one (cold start) subject to concurrency limits; otherwise 429."],
+["Init (cold only)","Code is downloaded, runtime starts, and your top-level code runs: SDK clients, config, connections. This is the Init Duration in the REPORT line."],
+["Handler","Your handler receives event and context. Validate input, enforce idempotency, run business logic. The environment serves only this request until it returns."],
+["Downstream","The SDK calls DynamoDB using temporary credentials from the execution role. Add timeouts shorter than the function timeout, and retry with backoff only for safe operations."],
+["Response","The handler returns statusCode/body. API Gateway maps it to HTTP. The environment is frozen and kept warm for a while for the next request."],
+["Telemetry","stdout goes to CloudWatch Logs; Duration, Errors, Throttles and ConcurrentExecutions go to metrics; X-Ray stitches the trace. Alarms notify you through SNS."]
+];
+let ji = 0;
+function journey(){
+  const box = $("#jr"); if (!box) return;
+  box.innerHTML = '<h3>Step through one request</h3><div class="flow">' + J.map((x, i) => '<span class="node' + (i===ji ? " on" : "") + '">' + (i+1) + '. ' + x[0] + '</span>').join("") + '</div>' +
+    '<div class="why"><b>' + esc(J[ji][0]) + '.</b> ' + esc(J[ji][1]) + '</div>' +
+    '<div class="row"><button class="btn" id="jp">Back</button><button class="btn p" id="jn">Next</button></div>';
+  $("#jp").onclick = () => { ji = (ji + J.length - 1) % J.length; journey(); };
+  $("#jn").onclick = () => { ji = (ji + 1) % J.length; journey(); };
+}
+
+/* ---- simulators ---- */
+let envs = [], nid = 1, logs = [];
+function simHtml(){
+  return '<div class="card"><h2>Simulator 1: cold vs warm starts</h2><p class="note">Each environment handles one request at a time. Start requests, finish them, and watch Lambda reuse or create environments.</p>' +
+  '<div class="grid"><div><label>Reserved concurrency cap</label><input id="cap" type="number" value="5" min="1"></div></div>' +
+  '<div class="row"><button class="btn p" id="s1">Start 1 request</button><button class="btn" id="s5">Burst of 5</button><button class="btn" id="fin">Finish all running</button><button class="btn" id="idle">Idle 15 min (recycle idle)</button><button class="btn" id="rst">Reset</button></div>' +
+  '<div id="envs"></div><div class="log" id="slog"></div></div>' +
+
+  '<div class="card"><h2>Simulator 2: concurrency calculator</h2>' +
+  '<div class="grid"><div><label>Requests per second</label><input id="c_r" type="number" value="500"></div><div><label>Avg duration (ms)</label><input id="c_d" type="number" value="300"></div><div><label>Concurrency limit</label><input id="c_l" type="number" value="1000"></div></div>' +
+  '<div class="grid" style="margin-top:10px"><div><div class="note">Concurrent executions needed</div><div class="big" id="c_o">-</div></div><div><div class="note">Status</div><div id="c_s"></div></div></div></div>' +
+
+  '<div class="card"><h2>Simulator 3: memory vs cost tuner</h2><p class="note">Enter the duration you measured at each memory size (defaults model a CPU-bound function). Illustrative price $0.0000166667 per GB-second.</p>' +
+  '<table id="mt"><tr><th>Memory (MB)</th><th>Measured duration (ms)</th><th>Cost per 1M invocations</th></tr></table><p id="mbest" class="why"></p></div>' +
+
+  '<div class="card"><h2>Simulator 4: retry timeline (async invoke)</h2><p class="note">Async events are attempted up to 3 times. Pick how many attempts fail.</p>' +
+  '<select id="rt"><option value="0">First attempt succeeds</option><option value="1">1st fails, retry succeeds</option><option value="2">1st and 2nd fail, 3rd succeeds</option><option value="3">All 3 fail</option></select><div class="why" id="rto"></div></div>';
+}
+function simInit(){
+  const draw = () => {
+    $("#envs").innerHTML = envs.length ? envs.map(e => '<span class="env ' + e.s + '">Env ' + e.id + '<br>' + (e.s==="busy" ? "running" : "idle (warm)") + '</span>').join("") : '<p class="note">No environments yet (scale to zero).</p>';
+    $("#slog").innerHTML = logs.slice(-30).map(esc).join("<br>");
+    $("#slog").scrollTop = 1e6;
+  };
+  const start = () => {
+    const idle = envs.find(e => e.s === "idle");
+    if (idle) { idle.s = "busy"; logs.push("Request -> Env " + idle.id + ": WARM start (handler only)"); }
+    else if (envs.length >= +$("#cap").value) logs.push("Request -> THROTTLED (429): concurrency cap " + $("#cap").value + " reached");
+    else { const e = {id: nid++, s: "busy"}; envs.push(e); logs.push("Request -> Env " + e.id + ": COLD start (INIT + handler)"); }
+  };
+  $("#s1").onclick = () => { start(); draw(); };
+  $("#s5").onclick = () => { for (let i = 0; i < 5; i++) start(); draw(); };
+  $("#fin").onclick = () => { envs.forEach(e => e.s = "idle"); logs.push("Requests finished: environments stay warm for reuse"); draw(); };
+  $("#idle").onclick = () => { const n = envs.filter(e => e.s === "idle").length; envs = envs.filter(e => e.s !== "idle"); logs.push(n + " idle environment(s) recycled: next request is cold"); draw(); };
+  $("#rst").onclick = () => { envs = []; logs = []; nid = 1; draw(); };
+  draw();
+
+  const cc = () => {
+    const n = Math.ceil(+$("#c_r").value * (+$("#c_d").value / 1000));
+    $("#c_o").textContent = n.toLocaleString();
+    const l = +$("#c_l").value;
+    $("#c_s").innerHTML = n > l ? '<b style="color:var(--bad)">Over limit by ' + (n-l) + ': expect 429 throttling. Request a quota increase or buffer with SQS.</b>' : '<b style="color:var(--ok)">Within limit (' + Math.round(n/l*100) + '% used). Keep headroom for bursts.</b>';
+  };
+  ["c_r","c_d","c_l"].forEach(i => $("#"+i).oninput = cc); cc();
+
+  const defs = [[128,2000],[512,480],[1024,230],[1769,130],[3008,120]];
+  const tb = $("#mt");
+  defs.forEach((d, i) => {
+    const r = tb.insertRow();
+    r.innerHTML = '<td>' + d[0] + '</td><td><input type="number" id="m' + i + '" value="' + d[1] + '"></td><td id="mc' + i + '"></td>';
+  });
+  const mc = () => {
+    let best = null;
+    defs.forEach((d, i) => {
+      const c = 1e6 * (+$("#m"+i).value / 1000) * (d[0] / 1024) * 0.0000166667 + 0.2;
+      $("#mc"+i).textContent = "$" + c.toFixed(2);
+      if (!best || c < best.c) best = {c, mem: d[0], ms: +$("#m"+i).value};
+    });
+    $("#mbest").textContent = "Cheapest here: " + best.mem + " MB at " + best.ms + " ms ($" + best.c.toFixed(2) + " per 1M, including request charge). More memory often finishes faster, so the cost curve is U-shaped for CPU-bound code. For I/O-bound code the duration barely drops, so lowest memory wins.";
+  };
+  defs.forEach((_, i) => $("#m"+i).oninput = mc); mc();
+
+  const ra = () => {
+    const f = +$("#rt").value;
+    const steps = ["Attempt 1 (immediate)", "Attempt 2 (after about 1 min)", "Attempt 3 (after about 2 more min)"];
+    let t = "";
+    for (let i = 0; i < 3; i++) {
+      if (i < f) t += steps[i] + ": FAILED. ";
+      else if (i === f) { t += steps[i] + ": SUCCESS. Done."; break; }
+    }
+    if (f === 3) t += "All attempts failed: event goes to the on-failure destination or DLQ (if configured), otherwise it is dropped. Make sure alarms exist.";
+    $("#rto").textContent = t + " (Retry count and max event age are configurable: 0-2 retries, 60 s to 6 h.)";
+  };
+  $("#rt").onchange = ra; ra();
+}
+
+/* ---- Q&A ---- */
+let qLvl = "All", qOpen = false;
+function qaView(){
+  const main = $("#main");
+  const list = QA.map((q, i) => ({q, i})).filter(x => qLvl === "All" || x.q[0] === qLvl);
+  const got = Object.keys(S.done).filter(k => S.done[k]).length;
+  main.innerHTML = '<div class="card"><h2>Interview Q&amp;A</h2><p class="note">Try answering out loud first, then open the model answer. Tick the ones you could answer confidently. Confident: <b>' + got + '</b>/' + QA.length + '</p>' +
+    '<div class="chips">' + ["All","Basic","Intermediate","Advanced"].map(l => '<button class="chip" data-l="' + l + '" aria-pressed="' + (qLvl===l) + '">' + l + '</button>').join("") + '<button class="chip" id="rnd">Random question</button></div>' +
+    '<div id="rq"></div>' +
+    list.map(x => '<details data-i="' + x.i + '"><summary>' + (x.i+1) + '. ' + esc(x.q[1]) + '<span class="tag">' + x.q[0] + '</span></summary><p>' + esc(x.q[2]) + '</p><label style="display:flex;gap:6px;align-items:center"><input type="checkbox" style="width:auto" ' + (S.done[x.i] ? "checked" : "") + '> I can answer this confidently</label></details>').join("") + '</div>';
+  main.querySelectorAll("[data-l]").forEach(b => b.onclick = () => { qLvl = b.dataset.l; qaView(); });
+  main.querySelectorAll("details").forEach(d => d.querySelector("input").onchange = e => { S.done[d.dataset.i] = e.target.checked; save(); });
+  $("#rnd").onclick = () => {
+    const pick = list[Math.floor(Math.random() * list.length)];
+    if (!pick) return;
+    $("#rq").innerHTML = '<div class="why"><b>Mock question:</b> ' + esc(pick.q[1]) + '<br><details><summary>Show model answer</summary><p>' + esc(pick.q[2]) + '</p></details></div>';
+  };
+}
+
+function render(){
+  nav();
+  const main = $("#main");
+  if (cur === "all") { main.innerHTML = SECTIONS.map(sectionHtml).join("") + '<div class="card"><h2>Interview Q&amp;A</h2>' + QA.map((q, i) => '<details open><summary>' + (i+1) + '. ' + esc(q[1]) + '</summary><p>' + esc(q[2]) + '</p></details>').join("") + '</div>'; journey(); return; }
+  if (cur === "qa") return qaView();
+  if (cur === "sim") { main.innerHTML = simHtml(); return simInit(); }
+  const s = SECTIONS.find(x => x.id === cur);
+  main.innerHTML = sectionHtml(s) + '<div class="row"><button class="btn" id="pv">Previous</button><button class="btn p" id="nx">Next</button></div>';
+  if (s.journey) journey();
+  const order = [...SECTIONS.map(x => x.id), "sim", "qa"];
+  const i = order.indexOf(cur);
+  $("#pv").onclick = () => { cur = order[(i + order.length - 1) % order.length]; render(); scrollTo(0, 0); };
+  $("#nx").onclick = () => { cur = order[(i + 1) % order.length]; render(); scrollTo(0, 0); };
+}
+render();
+</script>
+</body>
+</html>
