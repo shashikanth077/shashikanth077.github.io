@@ -60,6 +60,14 @@ const Label = ({ children }) => (
 );
 
 function ProjectVisual({ index }) {
+  const visuals = [
+    ["clinical / rules-engine", "Rules, connected.", "Clinical data", "Rules engine", "Validation"],
+    ["enterprise / vendor-portal", "Enquiries, organised.", "Vendor request", "PHP portal", "Response workflow"],
+    ["enterprise / live-systems", "Complexity, balanced.", "Live events", "Streaming API", "Insights"],
+    ["commerce / operations", "Commerce, in sync.", "Inventory", "Order API", "Fulfilment"],
+  ];
+  const visual = visuals[index] || visuals[0];
+
   return (
     <div
       className={`${s.projectVisual} ${s[`visual${index}`]}`}
@@ -70,34 +78,22 @@ function ProjectVisual({ index }) {
         <i />
         <i />
         <span>
-          {
-            [
-              "clinical / rules-engine",
-              "enterprise / live-systems",
-              "commerce / operations",
-            ][index]
-          }
+          {visual[0]}
         </span>
       </div>
       <div className={s.diagram}>
         <div className={s.diagramHeading}>
           <span>
-            {
-              [
-                "Rules, connected.",
-                "Complexity, balanced.",
-                "Commerce, in sync.",
-              ][index]
-            }
+            {visual[1]}
           </span>
           <b>0{index + 1}</b>
         </div>
         <div className={s.nodes}>
-          <span>{["Clinical data", "Live events", "Inventory"][index]}</span>
+          <span>{visual[2]}</span>
           <i>→</i>
-          <span>{["Rules engine", "Streaming API", "Order API"][index]}</span>
+          <span>{visual[3]}</span>
           <i>→</i>
-          <span>{["Validation", "Insights", "Fulfilment"][index]}</span>
+          <span>{visual[4]}</span>
         </div>
         <div className={s.visualLines}>
           {[42, 74, 55, 88, 68, 94, 78, 100, 85, 65, 90, 72].map(
@@ -138,8 +134,8 @@ export default function Index() {
   return (
     <div className={s.site}>
       <Seo
-        title="Shashikanth H R | Full-Stack Engineer · 10+ Years of Experience"
-        description="Full-stack engineer with 10+ years building enterprise web applications. Explore my work in healthcare, energy, banking and commerce, and my projects on GitHub."
+        title="Shashikanth H R | Full-Stack & AI Engineer · 10+ Years of Experience"
+        description="Full-stack engineer and AI Engineering student with 10+ years building enterprise web applications, Python FastAPI services, RAG solutions, and agentic AI workflows across healthcare, energy, banking, and commerce."
         path="/"
       />
       <Head>
@@ -211,8 +207,9 @@ export default function Index() {
             </h1>
             <p className={s.heroDescription}>
               Full-stack engineer with <strong>10+ years of experience</strong>{" "}
-              turning complex challenges into intuitive digital products. From
-              enterprise platforms to tools that make everyday work simpler.
+              turning complex challenges into intuitive digital products and
+              grounded AI systems. From enterprise platforms to tools that make
+              everyday work simpler.
             </p>
             <div className={s.actions}>
               <a className={s.primary} href="#portfolio">

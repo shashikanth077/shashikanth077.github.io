@@ -3,11 +3,11 @@ export const siteConfig = {
   fullName: "Shashikanth Hosur Ramegowda",
   shortName: "Shashikanth H R",
   pageTitle:
-    "Shashikanth H R — Full-Stack Developer | Node.js & React.js Specialist",
+    "Shashikanth H R — Full-Stack & AI Engineer | Node.js, React, RAG",
   cvFile: "/Shashikanth_Hosur_Ramegowda.pdf",
   siteUrl: "https://shashikant-hr.me",
   description:
-    "Full-Stack Developer specializing in building scalable web applications across healthcare, energy, banking, insurance, and retail. Currently pursuing a Master's in AI Engineering at VILNIUS TECH. Experienced in React, Node.js, TypeScript, GraphQL, APIs, and scalable system architecture.",
+    "Full-Stack Developer and AI Engineering student specializing in scalable web applications, retrieval-augmented generation, and agentic AI systems across healthcare, energy, banking, insurance, and retail. Experienced in React, Node.js, Python, FastAPI, Pydantic, TypeScript, GraphQL, LangChain, and LangGraph.",
   ogImage: "/img/hero/profile.png",
   socialLinks: {
     linkedin: "https://www.linkedin.com/in/shashikanth-hr/",
@@ -46,6 +46,9 @@ export const heroTitles = [
 export const marqueeItems = [
   "React",
   "Node.js",
+  "Python",
+  "FastAPI",
+  "Pydantic",
   "TypeScript",
   "Redux Toolkit",
   "Docker",
@@ -71,7 +74,7 @@ export const homeData = {
   designation: "Full-Stack Developer | Node.js & React.js Specialist",
   address: "Vilnius, Lithuania",
   img: "/img/hero/profile.png",
-  bio: "Full-Stack Developer specializing in building scalable web applications across healthcare, energy, banking, insurance, and retail. Currently pursuing a Master's in AI Engineering at VILNIUS TECH. Experienced in React, Node.js, TypeScript, GraphQL, APIs, and scalable system architecture.",
+  bio: "Full-Stack Developer and AI Engineering student building scalable web applications and intelligent workflows across healthcare, energy, banking, insurance, and retail. Experienced in React, Node.js, Python, FastAPI, Pydantic, TypeScript, GraphQL, LangChain, LangGraph, RAG, and agentic AI systems.",
   numberOfProject: 15,
   numberofyear: 10,
 };
@@ -82,8 +85,8 @@ export const aboutData = {
   title: "I Build Scalable, High-Performance Web Applications",
   mainImage: "/img/about/1.png",
   text: [
-    "Full-Stack Software Engineer with 10+ years of progressive experience designing and delivering scalable web applications across multinational organisations including Wipro, IBM, Sonata Software, and Theorem Inc. Most recently served as Principal Engineer at Wipro, architecting clinical trial platforms with Micro-Frontend architecture.",
-    "Proficient in React, Node.js, GraphQL/REST APIs, microservices, Docker, Kubernetes, and CI/CD pipelines. Proven expertise shipping mission-critical systems including clinical trial platforms, real-time energy management systems, and investor advisory portals. Currently based in Vilnius, Lithuania, pursuing a Master's in Engineering of Artificial Intelligence at VILNIUS TECH (VGTU), and open to Full-Stack or Front-End Developer roles.",
+    "Full-Stack Software Engineer with 10+ years of progressive experience designing and delivering scalable web applications across multinational organisations including Wipro, IBM, Sonata Software, and Theorem Inc. Most recently served as Principal Engineer at Wipro, architecting clinical trial platforms with Micro-Frontend architecture and RAG-powered agentic workflows.",
+    "Proficient in React, Node.js, Python, FastAPI, Pydantic, GraphQL/REST APIs, microservices, Docker, Kubernetes, and CI/CD pipelines, with hands-on experience using LangChain and LangGraph for grounded AI workflows. Proven expertise shipping mission-critical systems including clinical trial platforms, real-time energy management systems, and investor advisory portals. Currently based in Vilnius, Lithuania, pursuing a Master's in Engineering of Artificial Intelligence at VILNIUS TECH (VGTU), and open to Full-Stack or AI Engineering roles.",
   ],
 };
 
@@ -108,7 +111,7 @@ export const featuresData = [
   },
   {
     title: "AI Engineering",
-    text: "Advancing into AI Engineering with a Master's at VILNIUS TECH. Skilled in AI-assisted development using GitHub Copilot, Cursor, and Claude — integrating AI into production workflows.",
+    text: "Advancing into AI Engineering with a Master's at VILNIUS TECH. Building AI services with Python, FastAPI, Pydantic, LangChain, and LangGraph, alongside AI-assisted development using GitHub Copilot, Cursor, and Claude.",
     metric: "Master's at VILNIUS TECH",
   },
 ];
@@ -128,18 +131,47 @@ export const portfolioData = [
       "Node.js",
       "MongoDB",
       "Micro-Frontend",
+      "RAG",
+      "LangChain",
+      "LangGraph",
+      "Agentic AI",
+      "Python",
+      "FastAPI",
+      "Pydantic",
       "Docker",
       "Kubernetes",
     ],
     description: [
       "Architected a full-stack clinical trial business rules engine using React, Redux Toolkit, Node.js, and MongoDB, improving data accuracy for healthcare IT operations.",
-      "Enabled parallel deployments across 3 independent teams by implementing a Micro-Frontend architecture, and drove CI/CD pipelines using GitLab, Docker, and Kubernetes for reliable production releases.",
+      "Extended the clinical trial platform with Python-based retrieval-augmented generation using FastAPI, Pydantic, LangChain, and LangGraph, connecting domain knowledge to agentic workflows for grounded search, reasoning, and business-rule assistance. Enabled parallel deployments across 3 independent teams through a Micro-Frontend architecture and drove CI/CD with GitLab, Docker, and Kubernetes.",
     ],
     highlights: [
       "Reduced development time by 30% using AI-assisted tooling (Cursor, Claude, Copilot)",
+      "Applied RAG with LangChain and LangGraph to support grounded clinical workflows",
+      "Built typed Python AI APIs with FastAPI and Pydantic validation",
+      "Designed agentic AI flows with explicit state and controlled tool orchestration",
       "Enabled parallel deployments across 3 independent teams via Micro-Frontend",
       "Drove reliable CI/CD pipelines with GitLab, Docker & Kubernetes",
       "Mentored developers through code reviews, sprint planning, and technical design",
+    ],
+  },
+  {
+    img: "/img/portfolio/2.png",
+    category: "Enterprise Applications",
+    client: "IBM India Private Limited",
+    date: "2021 – 2024",
+    title: "Vendor Enquiry Portal",
+    role: "Senior System Analyst",
+    tech: ["PHP", "CodeIgniter", "MySQL", "JavaScript", "REST APIs"],
+    description: [
+      "Built and enhanced an IBM vendor enquiry portal using PHP, CodeIgniter, MySQL, JavaScript, and REST APIs, giving business users a reliable workflow for vendor enquiries and responses.",
+      "Improved maintainability by structuring reusable CodeIgniter modules, validating enquiry data at the application boundary, and optimising MySQL-backed workflows for day-to-day enterprise operations.",
+    ],
+    highlights: [
+      "Delivered a PHP and CodeIgniter portal for vendor enquiry management",
+      "Designed MySQL-backed enquiry and response workflows",
+      "Improved maintainability through reusable application modules",
+      "Supported enterprise users with reliable REST-integrated workflows",
     ],
   },
   {
@@ -219,6 +251,9 @@ export const techStack = [
     items: [
       "Node.js",
       "Express.js",
+      "Python",
+      "FastAPI",
+      "Pydantic",
       "PHP",
       "Laravel",
       "GraphQL",
@@ -256,7 +291,21 @@ export const techStack = [
   },
   {
     category: "AI-Assisted Dev",
-    items: ["GitHub Copilot", "Claude", "Cursor"],
+    items: ["GitHub Copilot", "Claude", "Cursor", "Prompt Engineering"],
+  },
+  {
+    category: "Generative AI & Agents",
+    items: [
+      "Generative AI",
+      "RAG",
+      "LangChain",
+      "LangGraph",
+      "Agentic AI Systems",
+      "Tool Calling",
+      "Vector Search",
+      "AI Evaluation",
+      "Python AI Services",
+    ],
   },
 ];
 
@@ -266,7 +315,7 @@ export const serviceData = [
     name: "Full-Stack Development",
     img: "/img/service/1.png",
     description: [
-      "Expert full-stack development using React, Redux Toolkit, Node.js, PHP, TypeScript, GraphQL, and MySQL. Delivered clinical-data management platforms, real-time energy grid balancing systems, insurance data platforms, wealth management portals, and e-commerce applications.",
+      "Expert full-stack development using React, Redux Toolkit, Node.js, Python, FastAPI, Pydantic, PHP, TypeScript, GraphQL, and MySQL. Delivered clinical-data management platforms, real-time energy grid balancing systems, insurance data platforms, wealth management portals, and e-commerce applications.",
       "Track record of measurable delivery gains — including a 30% reduction in development time through AI-assisted tooling, and improved order-processing speed through UI workflow redesign, back-end API optimisation, and modular microservice-oriented application design.",
       "Experienced working within Agile/Scrum sprints, conducting code reviews, and reducing post-deployment defects through automated smoke testing and CI/CD.",
     ],
@@ -341,14 +390,14 @@ export const portfolioIntro = {
   eyebrow: "Experience",
   heading: "Featured Projects",
   description:
-    "Enterprise-scale products I've architected and delivered across healthcare, energy, fintech, and e-commerce.",
+    "Enterprise-scale products I've architected and delivered across healthcare, energy, fintech, e-commerce, and AI-enabled clinical workflows.",
 };
 
 export const skillsIntro = {
   eyebrow: "Tech Stack",
   heading: "Technologies I Work With",
   description:
-    "10+ years of hands-on experience across the full stack — from React frontends to Node.js APIs, GraphQL, PHP backends, and cloud infrastructure.",
+    "10+ years of hands-on experience across the full stack — from React frontends and Node.js APIs to Python, FastAPI, Pydantic, PHP backends, cloud infrastructure, RAG, and agentic AI workflows.",
 };
 
 export const processIntro = {
@@ -385,6 +434,9 @@ export const careerTimeline = [
       "React",
       "Node.js",
       "MongoDB",
+      "RAG",
+      "LangChain",
+      "LangGraph",
       "Docker",
       "Kubernetes",
       "Micro-Frontend",
